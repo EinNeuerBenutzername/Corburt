@@ -1,0 +1,64 @@
+# depslib dependency file v1.0
+1639291386 source:g:\-guten\prog\c\proj\corburt\curburt.c
+	<stdio.h>
+	<locale.h>
+	"include/cbbase.h"
+	"include/cbplayer.h"
+	"include/cbio.h"
+
+1639806776 g:\-guten\prog\c\proj\corburt\include\cbbase.h
+	"cr.h"
+	"msg.h"
+	"mtwister.h"
+	<time.h>
+	<wchar.h>
+	<stdarg.h>
+	<stdlib.h>
+	<limits.h>
+
+1630202463 g:\-guten\prog\c\proj\corburt\include\platform.h
+	<stdio.h>
+	<windows.h>
+	<io.h>
+	<unistd.h>
+
+1639806669 g:\-guten\prog\c\proj\corburt\include\msg.h
+	<wchar.h>
+
+1629803367 g:\-guten\prog\c\proj\corburt\include\mtwister.h
+
+1571584339 g:\-guten\prog\c\proj\corburt\include\rlutil.h
+	<iostream>
+	<string>
+	<cstdio>
+	<stdio.h>
+	<string.h>
+	<windows.h>
+	<conio.h>
+	<termios.h>
+	<unistd.h>
+	<sys/ioctl.h>
+	<sys/types.h>
+	<sys/time.h>
+
+1638674841 g:\-guten\prog\c\proj\corburt\include\cr.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<errno.h>
+	<ctype.h>
+	<stdint.h>
+	<io.h>
+	<conio.h>
+	<windows.h>
+	<unistd.h>
+	<termios.h>
+	<fcntl.h>
+	<signal.h>
+	<sys/ioctl.h>
+
+1639806577 g:\-guten\prog\c\proj\corburt\include\cbplayer.h
+
+1639291435 g:\-guten\prog\c\proj\corburt\include\cbio.h
+	"cbbase.h"
+
