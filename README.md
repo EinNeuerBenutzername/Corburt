@@ -8,16 +8,26 @@ Corburt is a pretty simple text-based RPG game developed based on the ideas of *
 
 - written in plain C code (C99).
 - multi-platform support: should work on Windows, Linux, MacOS and several \*nixes.
+- no external dependencies (hopefully).
+- open source.
+
+## Drawbacks
+
+- it's in a very early stage of development.
+- might not be finished.
+- might not work properly on non-Windows platforms.
+- not yet C++-compatible.
+- I am lazy and might not be available for improvements and bug fixes.
 
 ## Requirements
 
-- your compiler should support C99 for these standard C libraries:
+- your compiler should support C95 for these standard C libraries:
   - <time.h>
   - <wchar.h> (C95)
   - <locale.h>
   - <stdarg.h>
   - <stdlib.h>
-  - you may also remove the <wchar.h> dependency and complie in C89.
+  - you may also remove the <wchar.h> dependency and complie in ANSI C.
   - it is recommended to use GCC compiler.
 - your platform should support the [Crossline](https://github.com/jcwangxp/Crossline) library.
   - it is said to support Windows, Linux, Unix, and MacOS.
@@ -28,4 +38,5 @@ Corburt is a pretty simple text-based RPG game developed based on the ideas of *
 - **Jankenpopp** and other developers of *93 Realms*
 - **JC Wang** (@jcwangxp) for [Crossline](https://github.com/jcwangxp/Crossline)
 - **Evan Sultanik** (@ESultanik) for [MTwister](https://github.com/ESultanik/mtwister)
-- My friend **emf** and **Jack Q**
+- My friend **emf** and **Jack Q** for supporting me
+- You, probably ;)
