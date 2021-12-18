@@ -1,1 +1,31 @@
 # Corburt
+
+## About
+
+Corburt is a pretty simple text-based RPG game developed based on the ideas of *SimpleMUD*. The original codebase for SimpleMUD was written in C++ by Ron Penton, the author of MUD Game Programming book.
+
+## Features/Highlights
+
+- written in plain C code (C99).
+- multi-platform support: should work on Windows, Linux, MacOS and several \*nixes.
+
+## Requirements
+
+- your compiler should support C99 for these standard C libraries:
+  - <time.h>
+  - <wchar.h> (C95)
+  - <locale.h>
+  - <stdarg.h>
+  - <stdlib.h>
+  - you may also remove the <wchar.h> dependency and complie in C89.
+  - it is recommended to use GCC compiler.
+- your platform should support the [Crossline](https://github.com/jcwangxp/Crossline) library.
+  - it is said to support Windows, Linux, Unix, and MacOS.
+
+## Acknowledgements
+
+- **Ron Penton**, author of *MUD Game Programming*
+- **Jankenpopp** and other developers of *93 Realms*
+- **JC Wang** (@jcwangxp) for [Crossline](https://github.com/jcwangxp/Crossline)
+- **Evan Sultanik** (@ESultanik) for [MTwister](https://github.com/ESultanik/mtwister)
+- My friend **emf** and **Jack Q**
