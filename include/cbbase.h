@@ -7,7 +7,6 @@
 #include <wchar.h>
 #include <stdarg.h>
 #include <stdlib.h> //malloc() realloc() free() exit()
-#include <limits.h>
 
 typedef enum foo{false,true} foo;//enum bool
 typedef unsigned int nat;//natural number, 32-bit
