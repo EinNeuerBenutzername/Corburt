@@ -41,3 +41,13 @@ Corburt is a pretty simple text-based RPG game developed based on the ideas of *
 - **Evan Sultanik** (@ESultanik) for [MTwister](https://github.com/ESultanik/mtwister)
 - My friend **emf** and **Jack Q** for supporting me
 - You, probably ;)
+
+## Version history
+### Demo Version
+- 0.0.1 (Dec 2021)
+  - the very beginning of Corburt!
+  - basic file IO functions implemented.
+  - basic player information implemented.
+  - messaging system implemented.
+  - added tracelogs for info and debugging.
+  - several bugs introduced.
