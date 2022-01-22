@@ -1,5 +1,6 @@
 #ifndef Corburt_Player_h_Include_Guard
 #define Corburt_Player_h_Include_Guard
+#include "dbitem.h"
 const bat exp2next[]={
     [0]=20,
     [1]=64,
@@ -130,8 +131,17 @@ const wchar_t *ranks[]={
     L"Admin",
     L"Dev"
 };
-void showstatus();
-void showstatus(){
+void pshowstats();
+void pshowinventory();
+void pshowexp();
+enum direction{
+    dir_East,dir_West,dir_North,dir_South,dir_Up,dir_Down
+};
+void pmove(enum direction dir);
+void pattack();
+void ptrain();
+void peditstats();
+void pshowstats(){
     printc(Default,
         msg_player_info,
         player.name,
@@ -144,5 +154,41 @@ void showstatus(){
         player.stats.con,player.stats.pts
     );
 }
-
+void pshowinventory(){
+    wchar_t *itemname=mallocpointer(128*sizeof(wchar_t));
+    wchar_t *itemname2=mallocpointer(128*sizeof(wchar_t));
+    wmemset(itemname,0,128);
+    wmemset(itemname2,0,128);
+    nat itemscount=0;
+    for(nat i=0;i<64;i++){
+        if(inventory.items[i]!=0)itemscount++;
+    }
+    getitemname(inventory.weapon,itemname);
+    getitemname(inventory.armor,itemname2);
+    printc(Default,
+        msg_player_inv,
+        inventory.money,
+        itemname,
+        itemname2,
+        itemscount,inventory.unlocked
+    );
+    for(nat i=0;i<64;i++){
+        if(inventory.items[i]!=0){
+            wmemset(itemname,0,128);
+            getitemname(inventory.items[i],itemname);
+            if(itemscount>1)printc(Default,L"%ls, ",itemname);
+            else printc(Default,L"%ls",itemname);
+            itemscount--;
+            if(itemscount==0)break;
+        }
+    }
+    printc(Default,msg_line);
+    freepointer(itemname);
+    freepointer(itemname2);
+}
+void pshowexp(){}
+void pmove(enum direction dir){nat n=dir;n++;if(n<5)return;}
+void pattack(){}
+void ptrain(){}
+void peditstats(){}
 #endif

@@ -35,6 +35,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="include/cbbase.h" />
+		<Unit filename="include/cbcurses.h" />
 		<Unit filename="include/cbio.h" />
 		<Unit filename="include/cbplayer.h" />
 		<Unit filename="include/cr.h" />

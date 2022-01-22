@@ -1,21 +1,30 @@
 #ifndef Corburt_Base_h_Include_Guard
 #define Corburt_Base_h_Include_Guard
-#include "cr.h"
 #include "msg.h"
 #include "mtwister.h"
 #include <time.h>
 #include <wchar.h>
 #include <stdarg.h>
 #include <stdlib.h> //malloc() realloc() free() exit()
+#include <stdbool.h>
+#include <limits.h>
+#include <inttypes.h>
 
-typedef enum foo{false,true} foo;//enum bool
-typedef unsigned int nat;//natural number, 32-bit
-typedef unsigned long long bat;//64-bit integer
+enum foo{foo_false,foo_true};
+typedef enum foo foo;//enum bool
+typedef uint_fast32_t nat;//32-bit natural number
+typedef uint_fast64_t bat;//64-bit unsigned integer
 //typedef unsigned __int64 bat;
 typedef float real;
 MTRand mtrand;
+foo quit_game=false;
 foo isle=true; //platform endianess. this is not a flag.
+wchar_t *inputbuf;
 wchar_t *buffer;
+struct input{
+    nat deletable;
+    wchar_t *line;
+}input;
 struct player{
     wchar_t name[32];
     nat rnk;
@@ -33,31 +42,46 @@ struct player{
         nat con;
         nat pts;
     } stats;
-} player={L"",1,1,0,10,10,{0,0,0,0,0,0,0,21}};
+    nat roomid;
+} player={L"",1,1,0,10,10,{0,0,0,0,0,0,0,21},0};
 struct inventory{
     nat unlocked;
     nat items[64];
     nat weapon;
     nat armor;
     bat money;
-};
+} inventory={16,{0},1,2,0};
 struct save{
     struct player plr;
 };
 struct save saves[10];
-#ifdef Corburt_Explicit_Pointer_Trace
-    nat pointerinuse=0;
-#endif
+nat pointerinuse=0;
 
 //basic
+enum errorenum{
+    error_cannotmalloc,
+    error_cannotrealloc,
+    error_badcharbit
+};
+void printc(int color,const wchar_t *format,...);
+const wchar_t *wsprintfc(const wchar_t *text,...);
+void tracelog(int color,const wchar_t *format,...);
+void fatalerror(enum errorenum error_id);
+void *mallocpointer(size_t bytes);
+void *mallocpointer_(size_t bytes); // visible when Corburt_Pointer_Trace_Level is bigger than 2
+void *reallocpointer(void *pointer,size_t bytes);
+void freepointer(void *pointer);
+void freepointer_(void *pointer);
+void scanline(wchar_t *scan_str,int scans);
+void wcslower(wchar_t **target_str_pos);
 void printc(int color,const wchar_t *format,...){
-    crossline_color_set(color);
+    cbc_setcolor(color);
     fflush(stdout);
     va_list args;
     va_start(args,format);
     vwprintf(format,args);
     va_end(args);
-    crossline_color_set(Default);
+    cbc_setcolor(Default);
     fflush(stdout);
 }
 const wchar_t *wsprintfc(const wchar_t *text,...){ //obsolete function
@@ -70,83 +94,108 @@ const wchar_t *wsprintfc(const wchar_t *text,...){ //obsolete function
 }
 void tracelog(int color,const wchar_t *format,...){
 #ifdef Corburt_Debug
-    crossline_color_set(color);
+    cbc_setcolor(color);
     va_list args;
     va_start(args,format);
     vwprintf(format,args);
     va_end(args);
-    crossline_color_set(Default);
+    cbc_setcolor(Default);
 #else
     return;
 #endif
 }
-enum errorenum{
-    error_cannotmalloc,
-    error_cannotrealloc
-};
 void fatalerror(enum errorenum error_id){
+    const wchar_t *msg;
     switch(error_id){
     case error_cannotmalloc:
-        printc(Red,msg_error_cannotmalloc);
-        exit(-1);
+        msg=msg_error_cannotmalloc;break;
     case error_cannotrealloc:
-        printc(Red,msg_error_cannotrealloc);
-        exit(-1);
+        msg=msg_error_cannotrealloc;break;
+    case error_badcharbit:
+        msg=msg_error_badcharbit;break;
+    default:
+        msg=msg_error_unknown;break;
     }
+    printc(Red,msg);
+    exit(-1);
 }
 void *mallocpointer(size_t bytes){
     void *pointer=NULL;
     pointer=malloc(bytes);
     if(pointer==NULL)fatalerror(error_cannotmalloc);
-#ifdef Corburt_Explicit_Pointer_Trace
-    pointerinuse++;
-    tracelog(Green,msg_trace_malloced,bytes);
-    tracelog(Green,msg_trace_pointerinuse,pointerinuse);
-#endif
+    if(Corburt_Pointer_Trace_Level>0){
+        pointerinuse++;
+        tracelog(Green,msg_trace_malloced,bytes);
+        tracelog(Green,msg_trace_pointerinuse,pointerinuse);
+    }
+    return pointer;
+}
+void *mallocpointer_(size_t bytes){
+    void *pointer=NULL;
+    pointer=malloc(bytes);
+    if(pointer==NULL)fatalerror(error_cannotmalloc);
+    if(Corburt_Pointer_Trace_Level>1){
+        pointerinuse++;
+        tracelog(Green,msg_trace_malloced,bytes);
+        tracelog(Green,msg_trace_pointerinuse,pointerinuse);
+    }
     return pointer;
 }
 void *reallocpointer(void *pointer,size_t bytes){
     return realloc(pointer,bytes);
     if(pointer==NULL)fatalerror(error_cannotmalloc);
-#ifdef Corburt_Explicit_Pointer_Trace
-    tracelog(Green,msg_trace_realloced,bytes);
-#endif
+    if(Corburt_Pointer_Trace_Level>0){
+        tracelog(Green,msg_trace_realloced,bytes);
+    }
     return pointer;
 }
 void freepointer(void *pointer){
     if(pointer==NULL)return;
     free(pointer);
-#ifdef Corburt_Explicit_Pointer_Trace
-    pointerinuse--;
-    tracelog(Green,msg_trace_freed);
-    tracelog(Green,msg_trace_pointerinuse,pointerinuse);
-#endif
+    if(Corburt_Pointer_Trace_Level>0){
+        pointerinuse--;
+        tracelog(Green,msg_trace_freed);
+        tracelog(Green,msg_trace_pointerinuse,pointerinuse);
+    }
+    pointer=NULL;
+}
+void freepointer_(void *pointer){
+    if(pointer==NULL)return;
+    free(pointer);
+    if(Corburt_Pointer_Trace_Level>1){
+        pointerinuse--;
+        tracelog(Green,msg_trace_freed);
+        tracelog(Green,msg_trace_pointerinuse,pointerinuse);
+    }
     pointer=NULL;
 }
 void scanline(wchar_t *scan_str,int scans){
-    crossline_color_set(Yellow);
+    cbc_setcolor(Yellow);
     fflush(stdout);
     fgetws(scan_str,scans,stdin);
     if(scan_str[wcslen(scan_str)-1]==L'\n'){
         scan_str[wcslen(scan_str)-1]=0;
     }
     fflush(stdin);
-    crossline_color_set(Default);
+    cbc_setcolor(Default);
+
     fflush(stdout);
 }
 void wcslower(wchar_t **target_str_pos){
-    wchar_t *target_str=*target_str_pos;
-    for(unsigned int i=0;i<wcslen(target_str);i++){
-        if(target_str[i]<=L'Z'&&target_str[i]>=L'A'){
-            target_str[i]+=(L'a'-L'A');
+    for(nat i=0;i<wcslen(*target_str_pos);i++){
+        if((*target_str_pos)[i]<=90&&(*target_str_pos)[i]>=65){
+            (*target_str_pos)[i]+=32;
         }
     }
-    target_str_pos=&target_str;
 }
 //misc
+void asserttypesize();
 real match(wchar_t *str1,wchar_t *str2);
 void checkendianess();
 void initrng();
+void asserttypesize(){
+    if(CHAR_BIT!=8)fatalerror(error_badcharbit);
+}
 real match(wchar_t *str1,wchar_t *str2){
     if(wcslen(str1)==0)return 0.0f;
     wchar_t *str1l=mallocpointer(sizeof(wchar_t)*(wcslen(str1)+1));
@@ -186,7 +235,7 @@ void checkendianess(){
     }
 }
 void initrng(){
-    time_t seed;
+    bat seed;
     tracelog(Green,msg_trace_rnginit);
     tracelog(Green,msg_trace_rngseed,seed=time(NULL));
     mtrand=seedRand(seed);

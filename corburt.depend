@@ -1,20 +1,22 @@
 # depslib dependency file v1.0
-1639291386 source:g:\-guten\prog\c\proj\corburt\curburt.c
+1642848902 source:g:\-guten\prog\c\proj\corburt\curburt.c
 	<stdio.h>
-	<locale.h>
+	"include/cbcurses.h"
 	"include/cbbase.h"
 	"include/cbplayer.h"
 	"include/cbio.h"
+	"include/cbfio.h"
 
-1639806776 g:\-guten\prog\c\proj\corburt\include\cbbase.h
-	"cr.h"
+1642854753 g:\-guten\prog\c\proj\corburt\include\cbbase.h
 	"msg.h"
 	"mtwister.h"
 	<time.h>
 	<wchar.h>
 	<stdarg.h>
 	<stdlib.h>
+	<stdbool.h>
 	<limits.h>
+	<inttypes.h>
 
 1630202463 g:\-guten\prog\c\proj\corburt\include\platform.h
 	<stdio.h>
@@ -22,10 +24,12 @@
 	<io.h>
 	<unistd.h>
 
-1639806669 g:\-guten\prog\c\proj\corburt\include\msg.h
+1642855084 g:\-guten\prog\c\proj\corburt\include\msg.h
+	<inttypes.h>
 	<wchar.h>
 
-1629803367 g:\-guten\prog\c\proj\corburt\include\mtwister.h
+1642854862 g:\-guten\prog\c\proj\corburt\include\mtwister.h
+	<inttypes.h>
 
 1571584339 g:\-guten\prog\c\proj\corburt\include\rlutil.h
 	<iostream>
@@ -41,7 +45,7 @@
 	<sys/types.h>
 	<sys/time.h>
 
-1638674841 g:\-guten\prog\c\proj\corburt\include\cr.h
+1641553056 g:\-guten\prog\c\proj\corburt\include\cr.h
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -57,8 +61,57 @@
 	<signal.h>
 	<sys/ioctl.h>
 
-1639806577 g:\-guten\prog\c\proj\corburt\include\cbplayer.h
+1642853240 g:\-guten\prog\c\proj\corburt\include\cbplayer.h
+	"dbitem.h"
 
-1639291435 g:\-guten\prog\c\proj\corburt\include\cbio.h
+1642851470 g:\-guten\prog\c\proj\corburt\include\cbio.h
+	"cbbase.h"
+	"cbplayer.h"
+
+1641100514 g:\-guten\prog\c\proj\corburt\include\ncursesw\ncurses.h
+	<ncursesw/ncurses_dll.h>
+	<stdint.h>
+	<stdnoreturn.h>
+	<stdio.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdbool.h>
+	<libutf8.h>
+	<wchar.h>
+	<ncursesw/unctrl.h>
+
+1641100515 g:\-guten\prog\c\proj\corburt\include\ncursesw\ncurses_dll.h
+
+1641100514 g:\-guten\prog\c\proj\corburt\include\ncursesw\unctrl.h
+	<ncursesw/curses.h>
+
+1641100514 g:\-guten\prog\c\proj\corburt\include\ncursesw\curses.h
+	<ncursesw/ncurses_dll.h>
+	<stdint.h>
+	<stdnoreturn.h>
+	<stdio.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdbool.h>
+	<libutf8.h>
+	<wchar.h>
+	<ncursesw/unctrl.h>
+
+1642849434 g:\-guten\prog\c\proj\corburt\include\cbcurses.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<locale.h>
+	<windows.h>
+	<conio.h>
+	<sys/ioctl.h>
+	<termios.h>
+	<unistd.h>
+	<signal.h>
+
+1642842725 g:\-guten\prog\c\proj\corburt\include\cbfio.h
+	"cbbase.h"
+
+1642853473 g:\-guten\prog\c\proj\corburt\include\dbitem.h
 	"cbbase.h"
 

@@ -1,206 +1,121 @@
 #ifndef Corburt_IO_h_Include_Guard
 #define Corburt_IO_h_Include_Guard
 #include "cbbase.h"
-//io
-void makewcsle(wchar_t *wcs);
-void makewcsbe(wchar_t *wcs);
-nat readwcs(wchar_t *wcs,size_t len,FILE *fp);
-void writewcs(wchar_t *wcs,size_t len,FILE *fp);
-nat makenatle(nat n);
-nat makenatbe(nat n);
-nat readnat(nat *n,FILE *fp);
-void writenat(nat n,FILE *fp);
-nat makebatle(bat b);
-nat makebatbe(bat b);
-nat readbat(bat *b,FILE *fp);
-void writebat(bat b,FILE *fp);
-void makewcsle(wchar_t *wcs){
-    if(isle)return;
-    for(nat i=0;i<wcslen(wcs);i++){
-        unsigned char c[sizeof(wchar_t)];
-        wchar_t result;
-        for(nat j=0;j<sizeof(wchar_t);j++){
-            c[j]=(wcs[i]>>(8*i))&255;
-            result+=(wchar_t)c[i]<<((sizeof(nat)-i-1)*8);
-        }
-        wcs[i]=result;
-    }
-}
-void makewcsbe(wchar_t *wcs){
-    if(!isle)return;
-    for(nat i=0;i<wcslen(wcs);i++){
-        unsigned char c[sizeof(wchar_t)];
-        wchar_t result;
-        for(nat j=0;j<sizeof(wchar_t);j++){
-            c[j]=(wcs[i]>>(8*i))&255;
-            result+=(wchar_t)c[i]<<((sizeof(nat)-i-1)*8);
-        }
-        wcs[i]=result;
-    }
-}
-nat readwcs(wchar_t *wcs,size_t len,FILE *fp){
-    if(fread(wcs,len*sizeof(wchar_t),1,fp)!=1)return 0;
-    if(!isle)makewcsbe(wcs);
-    return 1;
-}
-void writewcs(wchar_t *wcs,size_t len,FILE *fp){
-    makewcsle(wcs);
-    fwrite(wcs,len*sizeof(wchar_t),1,fp);
-}
-nat makenatle(nat n){
-    unsigned char c[sizeof(nat)];
-    if(isle)return n;
-    nat result;
-    for(nat i=0;i<sizeof(nat);i++){
-        c[i]=(n>>8*i)&255;
-        result+=(nat)c[i]<<((sizeof(nat)-i-1)*8);
-    }
-    return result;
-}
-nat makenatbe(nat n){
-    unsigned char c[sizeof(nat)];
-    if(!isle)return n;
-    nat result;
-    for(nat i=0;i<sizeof(nat);i++){
-        c[i]=(n>>8*i)&255;
-        result+=(nat)c[i]<<((sizeof(nat)-i-1)*8);
-    }
-    return result;
-}
-nat readnat(nat *n,FILE *fp){
-    nat r;
-    if(fread(&r,sizeof(nat),1,fp)!=1)return 0;
-    if(!isle)r=makenatbe(r);
-    *n=r;
-    return 1;
-}
-void writenat(nat n,FILE *fp){
-    n=makenatle(n);
-    fwrite(&n,sizeof(nat),1,fp);
-}
-nat makebatle(bat b){
-    unsigned char c[sizeof(bat)];
-    if(isle)return b;
-    bat result;
-    for(nat i=0;i<sizeof(bat);i++){
-        c[i]=(b>>8*i)&255;
-        result+=(bat)c[i]<<((sizeof(bat)-i-1)*8);
-    }
-    return result;
-}
-nat makebatbe(bat b){
-    unsigned char c[sizeof(bat)];
-    if(!isle)return b;
-    bat result;
-    for(nat i=0;i<sizeof(bat);i++){
-        c[i]=(b>>8*i)&255;
-        result+=(bat)c[i]<<((sizeof(bat)-i-1)*8);
-    }
-    return result;
-}
-nat readbat(bat *b,FILE *fp){
-    bat r;
-    if(fread(&r,sizeof(bat),1,fp)!=1)return 0;
-    if(!isle)r=makebatbe(r);
-    *b=r;
-    return 1;
-}
-void writebat(bat b,FILE *fp){
-    b=makebatle(b);
-    fwrite(&b,sizeof(bat),1,fp);
-}
+#include "cbplayer.h"
+wchar_t *inputbufl=NULL;
+foo fullmatch(wchar_t *wcs1,const wchar_t *wcs2);
+foo matchcommands(wchar_t *cmd);
+void processinput();
 
-void readsaves();
-void savesaves();
-nat readplayerstats(struct player *p,FILE *fp);
-void saveplayerstats(struct player p,FILE *fp);
-void readsaves(){
-    FILE *save_file=NULL;
-    save_file=fopen("save.txt","r");
-    if(save_file==NULL){
-        printc(Cyan,msg_global_nosave);
-        save_file=fopen("save.txt","w");
-        fclose(save_file);
-    }else{
-        printc(Cyan,msg_global_scansave);
-        nat readsaves_foundsaves=0;
-
-        //read
-        while(readplayerstats(&saves[readsaves_foundsaves].plr,save_file)){
-            readsaves_foundsaves++;
-        }
-        fclose(save_file);
-
-        if(readsaves_foundsaves==0){
-            printc(Cyan|Bright,msg_global_saveempty);
-        }else if(readsaves_foundsaves==1){
-            printc(Cyan|Bright,msg_global_savecount,readsaves_foundsaves);
-            printc(Cyan|Bright,L"%ls\n",saves[0].plr.name);
-        }else{
-            printc(Cyan|Bright,msg_global_savecounts,readsaves_foundsaves);
-            printc(Cyan|Bright,L"%ls",saves[0].plr.name);
-            for(nat i=1;i<readsaves_foundsaves;i++)printc(Cyan|Bright,L", %ls",saves[i].plr.name);
-            printc(Cyan|Bright,L"\n");
-        }
+foo fullmatch(wchar_t *wcs1,const wchar_t *wcs2){
+    if(wcs1==NULL&&wcs2==NULL)return true;
+    if(wcs1==NULL||wcs2==NULL)return false;
+    if(wcslen(wcs1)<wcslen(wcs2))return false;
+    if(wcslen(wcs1)>wcslen(wcs2)){
+        if(wcs1[wcslen(wcs2)]!=L' ')return false;
+        for(nat i=wcslen(wcs2);i<wcslen(wcs1)&&i<INT_MAX;i++)
+            wcs1[i]=0;
     }
-    while(true){
-        printc(White|Bright,msg_global_enteryourname);
-        wchar_t readsave_newname[32];
-        scanline(readsave_newname,32);
-        if(wcslen(readsave_newname)<2){
-            printc(White|Bright,msg_global_nametooshort,readsave_newname);
-            continue;
-        }else{
-            printc(White|Bright,msg_global_confirmyourname,readsave_newname);
-        }
-        wchar_t yes[2];
-        scanline(yes,2);
-        if(yes[0]==L'Y'||yes[0]==L'y'){
-            wcscpy(player.name,readsave_newname);
-            printc(Green|Bright,msg_global_welcome_,readsave_newname);
-            break;
-        }
+    if(wcscmp(wcs1,wcs2)==0)return true;
+    else return false;
+}
+foo matchcommands(wchar_t *cmd){
+    if(fullmatch(cmd,L"st")||
+       fullmatch(cmd,L"stats")||
+       fullmatch(cmd,L"statistics")){
+        pshowstats();
+        return true;
     }
+    if(fullmatch(cmd,L"quit")||
+       fullmatch(cmd,L"exitgame")||
+       fullmatch(cmd,L"quitgame")){
+        quit_game=true;
+        return true;
+    }
+    if(fullmatch(cmd,L"cls")||
+       fullmatch(cmd,L"clear")){
+        cbc_clearscreen();
+        return true;
+    }
+    if(fullmatch(cmd,L"east")||
+       fullmatch(cmd,L"e")){
+        pmove(dir_East);
+        return true;
+    }
+    if(fullmatch(cmd,L"west")||
+       fullmatch(cmd,L"w")){
+        pmove(dir_West);
+        return true;
+    }
+    if(fullmatch(cmd,L"north")||
+       fullmatch(cmd,L"n")){
+        pmove(dir_North);
+        return true;
+    }
+    if(fullmatch(cmd,L"south")||
+       fullmatch(cmd,L"s")){
+        pmove(dir_South);
+        return true;
+    }
+    if(fullmatch(cmd,L"up")){
+        pmove(dir_Up);
+        return true;
+    }
+    if(fullmatch(cmd,L"down")){
+        pmove(dir_Down);
+        return true;
+    }
+    if(fullmatch(cmd,L"inventory")||
+       fullmatch(cmd,L"inv")){
+        pshowinventory();
+        return true;
+    }
+    if(fullmatch(cmd,L"expierence")||
+       fullmatch(cmd,L"exp")||
+       fullmatch(cmd,L"xp")){
+        pshowexp();
+        return true;
+    }
+    if(fullmatch(cmd,L"look")||
+       fullmatch(cmd,L"l")){
+        //showroomdescription(player.roomid);
+        return true;
+    }
+    if(fullmatch(cmd,L"train")||
+       fullmatch(cmd,L"tr")){
+        ptrain();
+    }
+    if(fullmatch(cmd,L"editstats")||
+       fullmatch(cmd,L"editst")){
+        peditstats();
+    }
+    return false;
 }
-void savesaves(){
-    FILE *save_file=fopen("save.txt","ab");
-    saveplayerstats(player,save_file);
-    fclose(save_file);
-}
-nat readplayerstats(struct player *p,FILE *fp){
-    struct player plr;
-    if(!readwcs(plr.name,32,fp))return 0;
-    if(!readnat(&plr.rnk,fp))return 0;
-    if(!readnat(&plr.lvl,fp))return 0;
-    if(!readbat(&plr.exp,fp))return 0;
-    if(!readnat(&plr.maxhp,fp))return 0;
-    if(!readnat(&plr.hp,fp))return 0;
-    if(!readnat(&plr.stats.atk,fp))return 0;
-    if(!readnat(&plr.stats.def,fp))return 0;
-    if(!readnat(&plr.stats.acc,fp))return 0;
-    if(!readnat(&plr.stats.dod,fp))return 0;
-    if(!readnat(&plr.stats.stl,fp))return 0;
-    if(!readnat(&plr.stats.act,fp))return 0;
-    if(!readnat(&plr.stats.con,fp))return 0;
-    if(!readnat(&plr.stats.pts,fp))return 0;
-    *p=plr;
-    return 1;
-}
-void saveplayerstats(struct player p,FILE *fp){
-    writewcs(p.name,32,fp);
-    writenat(p.rnk,fp);
-    writenat(p.lvl,fp);
-    writebat(p.exp,fp);
-    writenat(p.maxhp,fp);
-    writenat(p.hp,fp);
-    writenat(p.stats.atk,fp);
-    writenat(p.stats.def,fp);
-    writenat(p.stats.acc,fp);
-    writenat(p.stats.dod,fp);
-    writenat(p.stats.stl,fp);
-    writenat(p.stats.act,fp);
-    writenat(p.stats.con,fp);
-    writenat(p.stats.pts,fp);
+void processinput(){
+    static foo processinput_internal_tmps=false;
+    if(wcslen(inputbuf)==0){
+        size_t row,col;
+        cbc_getcursor(&row,&col);
+        cbc_setcursor(row>0?row-1:0,0);
+        if(!processinput_internal_tmps){
+            printc(Default,L"Time Passes.\n");
+            processinput_internal_tmps=true;
+        }
+        return;
+    }
+    processinput_internal_tmps=false;
+//    wchar_t *inputbufl=mallocpointer_(128*sizeof(wchar_t));
+    wmemset(inputbufl,0,128);
+    wcscpy(inputbufl,inputbuf);
+    wcslower(&inputbufl);
+    if(matchcommands(inputbufl)){
+//        freepointer_(inputbufl);
+        return;
+    }
+    printc(Cyan|Bright,msg_player_say,player.name);
+    printc(Default,L"%ls\n",inputbuf);
+//    freepointer_(inputbufl);
+    return;
 }
 
 #endif
