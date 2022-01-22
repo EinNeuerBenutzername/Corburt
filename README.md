@@ -6,20 +6,20 @@ Corburt is a pretty simple text-based RPG game developed based on the ideas of *
 
 ## Features/Highlights
 
-- written in plain C code (C99).
-- multi-platform support: should work on Windows, Linux, MacOS and several \*nixes.
-- no external dependencies (hopefully).
-- open source.
-- easy to compile: only one .c file, all other files are headers.
+- **written in plain C code** (C99).
+- **multi-platform support**: should work on Windows, Linux, MacOS and several \*nixes.
+- **no external dependencies** (hopefully).
+- **open source**.
+- **easy to compile**: only one .c file, all other files are headers.
 
 ## Drawbacks
 
-- it's in a very early stage of development.
-- might not be finished.
-- might not work properly on non-Windows platforms.
+- it's in a **very early stage of development**.
+- might **not** be finished.
+- might **not** work properly on non-Windows platforms.
   - might not even work properly on Windows platforms other than Windows 10.
-- not yet C++-compatible.
-- I am lazy and might not be available for improvements and bug fixes.
+- **not** yet C++-compatible.
+- I am lazy and might **not** be available for improvements and bug fixes.
 
 ## Requirements
 
