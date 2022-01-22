@@ -38,7 +38,6 @@ Corburt is a pretty simple text-based RPG game developed based on the ideas of *
     - for RNG
   - <wchar.h>
     - for Unicode support
-  - you may also remove the <wchar.h> dependency and complie in ANSI C.
   - it is recommended to use GCC compiler.
     - it's especially recommended to use Code::Blocks to compile.
 
