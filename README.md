@@ -17,21 +17,30 @@ Corburt is a pretty simple text-based RPG game developed based on the ideas of *
 - it's in a very early stage of development.
 - might not be finished.
 - might not work properly on non-Windows platforms.
+  - might not even work properly on Windows platforms other than Windows 10.
 - not yet C++-compatible.
 - I am lazy and might not be available for improvements and bug fixes.
 
 ## Requirements
 
-- your compiler should support C95 for these standard C libraries:
-  - <time.h>
-  - <wchar.h> (C95)
+- your compiler should support C99 with these standard C libraries:
+  - <inttypes.h>
+    - for `uint_fastX_t` types
   - <locale.h>
+    - for Unicode support
   - <stdarg.h>
-  - <stdlib.h>
+    - for I/O
+  - <stdbool.h>for the bool type
+    - <stdio.h>
+  - for I/O
+    - <stdlib.h>for memory management
+  - <time.h>
+    - for RNG
+  - <wchar.h>
+    - for Unicode support
   - you may also remove the <wchar.h> dependency and complie in ANSI C.
   - it is recommended to use GCC compiler.
-- your platform should support the [Crossline](https://github.com/jcwangxp/Crossline) library.
-  - it is said to support Windows, Linux, Unix, and MacOS.
+    - it's especially recommended to use Code::Blocks to compile.
 
 ## Acknowledgements
 
@@ -51,3 +60,13 @@ Corburt is a pretty simple text-based RPG game developed based on the ideas of *
   - messaging system implemented.
   - added tracelogs for info and debugging.
   - several bugs introduced.
+
+- 0.0.2 (Jan 2022)
+  - added <inttypes.h> and <stdbool.h> dependencies for stability and portability.
+  - basic inventory functions implemented.
+  - basic curses library mostly finished.
+  - added tracelog levels for info and debugging: 0 is none, and 2 is force explicit logging.
+  - removed several obsolete functionsi and fixed several functions with overflow risks.
+  - platform endianess detection added, enabling file i/o functions to convert data endianess.
+  - several empty databases created.
+  - several bugs fixed and several new bugs introduced.
