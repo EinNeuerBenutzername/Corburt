@@ -4,6 +4,8 @@
 
 Corburt is a pretty simple text-based RPG game developed based on the ideas of *SimpleMUD*. The original codebase for SimpleMUD was written in C++ by Ron Penton, the author of MUD Game Programming book.
 
+Inspirations come from a game called [93 Realms](http://windows93.net:8083/), which my friends and I had a great time playing in 2021.
+
 ## Features/Highlights
 
 - **written in plain C code** (C99).
