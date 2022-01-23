@@ -23,6 +23,8 @@ Corburt is a pretty simple text-based RPG game developed based on the ideas of *
 
 ## Requirements
 
+- your computer should either be non-prehistorical Windows or POSIX-compliant \*nix.
+  - this is largely because Corburt's curses library rely on platform-specific headers.
 - your compiler should support C99 with these standard C libraries:
   - <inttypes.h>
     - for `uint_fastX_t` types
@@ -30,16 +32,20 @@ Corburt is a pretty simple text-based RPG game developed based on the ideas of *
     - for Unicode support
   - <stdarg.h>
     - for I/O
-  - <stdbool.h>for the bool type
-    - <stdio.h>
-  - for I/O
-    - <stdlib.h>for memory management
+  - <stdbool.h>
+    - for the bool type
+  - <stdio.h>
+    - for I/O
+  - <stdlib.h>
+    - for memory management
   - <time.h>
     - for RNG
   - <wchar.h>
     - for Unicode support
-  - it is recommended to use GCC compiler.
-    - it's especially recommended to use Code::Blocks to compile.
+- on your computer, a byte **must** contain exactly 8 bits.
+  - it is also suggested that the size of wchar_t is exactly 16 bits. it's okay if that's not the case, though.
+- it is recommended to use GCC compiler.
+  - it's especially recommended to use Code::Blocks to compile.
 
 ## Acknowledgements
 
@@ -54,9 +60,8 @@ Corburt is a pretty simple text-based RPG game developed based on the ideas of *
 ### Demo Version
 - 0.0.1 (Dec 2021)
   - the very beginning of Corburt!
-  - basic file IO functions implemented.
+  - basic file I/O functions implemented.
   - basic player information implemented.
-  - messaging system implemented.
   - added tracelogs for info and debugging.
   - several bugs introduced.
 
@@ -65,7 +70,16 @@ Corburt is a pretty simple text-based RPG game developed based on the ideas of *
   - basic inventory functions implemented.
   - basic curses library mostly finished.
   - added tracelog levels for info and debugging: 0 is none, and 2 is force explicit logging.
-  - removed several obsolete functionsi and fixed several functions with overflow risks.
-  - platform endianess detection added, enabling file i/o functions to convert data endianess.
+  - commented several obsolete functions and fixed several functions with overflow risks.
+  - platform endianess detection added, enabling file I/O functions to convert data endianess.
   - several empty databases created.
   - several bugs fixed and several new bugs introduced.
+
+- 0.0.3 (late Jan 2022)
+  - file I/O functions' portability greatly improved.
+  - basic curses library revised and finished.
+  - save/load functions implemented, only player stats are saved/loaded.
+  - added several basic commands.
+  - basic inventory information implemented.
+  - typo fixes.
+  - typedef revised: corburt would now use signed 32- and 64-bit integers to store integer values.
