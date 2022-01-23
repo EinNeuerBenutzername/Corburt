@@ -9,6 +9,7 @@
 int main(){
     cbc_init();
     cbc_setwindowtitle("Corburt");
+    tracelog(Green,msg_trace_savesize,sizeof(struct save));
     initrng();
     checkendianess();
     inputbuf=mallocpointer(128*sizeof(wchar_t));
