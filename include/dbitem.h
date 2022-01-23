@@ -6,7 +6,7 @@ void getitemname(nat id,wchar_t *itemname){
     wchar_t *p;
     switch(id){
     case 0:
-        p=L"undefined behavior";
+        p=L"(none)";
         break;
     case 1:
         p=L"Test Sword";

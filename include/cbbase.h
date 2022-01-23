@@ -7,13 +7,13 @@
 #include <stdarg.h>
 #include <stdlib.h> //malloc() realloc() free() exit()
 #include <stdbool.h>
-#include <limits.h>
 #include <inttypes.h>
 
-enum foo{foo_false,foo_true};
-typedef enum foo foo;//enum bool
-typedef uint_fast32_t nat;//32-bit natural number
-typedef uint_fast64_t bat;//64-bit unsigned integer
+//enum foo{foo_false,foo_true};
+//typedef enum foo foo;//enum bool
+typedef bool foo;
+typedef int_fast32_t nat;//32-bit number
+typedef int_fast64_t bat;//64-bit integer
 //typedef unsigned __int64 bat;
 typedef float real;
 MTRand mtrand;
@@ -50,11 +50,15 @@ struct inventory{
     nat weapon;
     nat armor;
     bat money;
-} inventory={16,{0},1,2,0};
+} inventory={16,{0},0,0,0};
 struct save{
+    nat valid;
     struct player plr;
+    struct inventory inv;
 };
-struct save saves[10];
+const nat savescount=5;
+struct save saves[5]={0};
+int_fast32_t cursaveid=0;
 nat pointerinuse=0;
 
 //basic
@@ -182,7 +186,7 @@ void scanline(wchar_t *scan_str,int scans){
     fflush(stdout);
 }
 void wcslower(wchar_t **target_str_pos){
-    for(nat i=0;i<wcslen(*target_str_pos);i++){
+    for(size_t i=0;i<wcslen(*target_str_pos);i++){
         if((*target_str_pos)[i]<=90&&(*target_str_pos)[i]>=65){
             (*target_str_pos)[i]+=32;
         }

@@ -1,151 +1,89 @@
-#ifndef Corburt_FileIO_h_Include_Guard
-#define Corburt_FileIO_h_Include_Guard
+#ifndef Corburt_FIO_h_Include_Guard
+#define Corburt_FIO_h_Include_Guard
+#include "cbfio_base.h"
 #include "cbbase.h"
-#ifdef __cplusplus
-extern "C"{
-#endif
-//io
-static void makewcsle(wchar_t *wcs);
-static void makewcsbe(wchar_t *wcs);
-nat readwcs(wchar_t *wcs,size_t len,FILE *fp);
-void writewcs(wchar_t *wcs,size_t len,FILE *fp);
-static nat makenatle(nat n);
-static nat makenatbe(nat n);
-nat readnat(nat *n,FILE *fp);
-void writenat(nat n,FILE *fp);
-static nat makebatle(bat b);
-static nat makebatbe(bat b);
-nat readbat(bat *b,FILE *fp);
-void writebat(bat b,FILE *fp);
-static void makewcsle(wchar_t *wcs){
-    if(isle)return;
-    for(nat i=0;i<wcslen(wcs);i++){
-        unsigned char c[sizeof(wchar_t)];
-        wchar_t result;
-        for(nat j=0;j<sizeof(wchar_t);j++){
-            c[j]=(wcs[i]>>(8*i))&255;
-            result+=(wchar_t)c[i]<<((sizeof(nat)-i-1)*8);
-        }
-        wcs[i]=result;
-    }
-}
-static void makewcsbe(wchar_t *wcs){
-    if(!isle)return;
-    for(nat i=0;i<wcslen(wcs);i++){
-        unsigned char c[sizeof(wchar_t)];
-        wchar_t result;
-        for(nat j=0;j<sizeof(wchar_t);j++){
-            c[j]=(wcs[i]>>(8*i))&255;
-            result+=(wchar_t)c[i]<<((sizeof(nat)-i-1)*8);
-        }
-        wcs[i]=result;
-    }
-}
-nat readwcs(wchar_t *wcs,size_t len,FILE *fp){
-    if(fread(wcs,len*sizeof(wchar_t),1,fp)!=1)return 0;
-    if(!isle)makewcsbe(wcs);
-    return 1;
-}
-void writewcs(wchar_t *wcs,size_t len,FILE *fp){
-    makewcsle(wcs);
-    fwrite(wcs,len*sizeof(wchar_t),1,fp);
-}
-static nat makenatle(nat n){
-    unsigned char c[sizeof(nat)];
-    if(isle)return n;
-    nat result;
-    for(nat i=0;i<sizeof(nat);i++){
-        c[i]=(n>>8*i)&255;
-        result+=(nat)c[i]<<((sizeof(nat)-i-1)*8);
-    }
-    return result;
-}
-static nat makenatbe(nat n){
-    unsigned char c[sizeof(nat)];
-    if(!isle)return n;
-    nat result;
-    for(nat i=0;i<sizeof(nat);i++){
-        c[i]=(n>>8*i)&255;
-        result+=(nat)c[i]<<((sizeof(nat)-i-1)*8);
-    }
-    return result;
-}
-nat readnat(nat *n,FILE *fp){
-    nat r;
-    if(fread(&r,sizeof(nat),1,fp)!=1)return 0;
-    if(!isle)r=makenatbe(r);
-    *n=r;
-    return 1;
-}
-void writenat(nat n,FILE *fp){
-    n=makenatle(n);
-    fwrite(&n,sizeof(nat),1,fp);
-}
-static nat makebatle(bat b){
-    unsigned char c[sizeof(bat)];
-    if(isle)return b;
-    bat result;
-    for(nat i=0;i<sizeof(bat);i++){
-        c[i]=(b>>8*i)&255;
-        result+=(bat)c[i]<<((sizeof(bat)-i-1)*8);
-    }
-    return result;
-}
-static nat makebatbe(bat b){
-    unsigned char c[sizeof(bat)];
-    if(!isle)return b;
-    bat result;
-    for(nat i=0;i<sizeof(bat);i++){
-        c[i]=(b>>8*i)&255;
-        result+=(bat)c[i]<<((sizeof(bat)-i-1)*8);
-    }
-    return result;
-}
-nat readbat(bat *b,FILE *fp){
-    bat r;
-    if(fread(&r,sizeof(bat),1,fp)!=1)return 0;
-    if(!isle)r=makebatbe(r);
-    *b=r;
-    return 1;
-}
-void writebat(bat b,FILE *fp){
-    b=makebatle(b);
-    fwrite(&b,sizeof(bat),1,fp);
-}
-
+static void readsave(nat saveid,FILE *fp);
+static void savesave(nat saveid,FILE *fp);
+static void readplayerstats(struct player *p,FILE *fp);
+static void saveplayerstats(struct player plr,FILE *fp);
 void readsaves();
 void savesaves();
-nat readplayerstats(struct player *p,FILE *fp);
-void saveplayerstats(struct player p,FILE *fp);
+
+static void readsave(nat saveid,FILE *fp){
+    int_fast32_t_read(&saves[saveid].valid,fp);
+    //tracelog(Green,L"Valid: %" PRIuFAST32 "\n",saves[saveid].valid);
+    if(!saves[saveid].valid)return;
+    readplayerstats(&saves[saveid].plr,fp);
+}
+static void savesave(nat saveid,FILE *fp){
+    int_fast32_t_write(saves[saveid].valid,fp);
+    if(!saves[saveid].valid)return;
+    saveplayerstats(saves[saveid].plr,fp);
+}
+static void readplayerstats(struct player *p,FILE *fp){
+    struct player plr={0};
+    wcs_read(plr.name,32,fp);
+    int_fast32_t_read(&plr.rnk,fp);
+    int_fast32_t_read(&plr.lvl,fp);
+    int_fast64_t_read(&plr.exp,fp);
+    int_fast32_t_read(&plr.maxhp,fp);
+    int_fast32_t_read(&plr.hp,fp);
+    int_fast32_t_read(&plr.stats.atk,fp);
+    int_fast32_t_read(&plr.stats.def,fp);
+    int_fast32_t_read(&plr.stats.acc,fp);
+    int_fast32_t_read(&plr.stats.dod,fp);
+    int_fast32_t_read(&plr.stats.stl,fp);
+    int_fast32_t_read(&plr.stats.act,fp);
+    int_fast32_t_read(&plr.stats.con,fp);
+    int_fast32_t_read(&plr.stats.pts,fp);
+    int_fast32_t_read(&plr.roomid,fp);
+    *p=plr;
+}
+static void saveplayerstats(struct player plr,FILE *fp){
+    wcs_write(plr.name,32,fp);
+    int_fast32_t_write(plr.rnk,fp);
+    int_fast32_t_write(plr.lvl,fp);
+    int_fast64_t_write(plr.exp,fp);
+    int_fast32_t_write(plr.maxhp,fp);
+    int_fast32_t_write(plr.hp,fp);
+    int_fast32_t_write(plr.stats.atk,fp);
+    int_fast32_t_write(plr.stats.def,fp);
+    int_fast32_t_write(plr.stats.acc,fp);
+    int_fast32_t_write(plr.stats.dod,fp);
+    int_fast32_t_write(plr.stats.stl,fp);
+    int_fast32_t_write(plr.stats.act,fp);
+    int_fast32_t_write(plr.stats.con,fp);
+    int_fast32_t_write(plr.stats.pts,fp);
+    int_fast32_t_write(plr.roomid,fp);
+}
 void readsaves(){
-    FILE *save_file=NULL;
-    save_file=fopen("save.txt","r");
-    if(save_file==NULL){
+    fio.fail=0;
+    FILE *fp_save=NULL;
+    nat foundsaves=0;
+    fp_save=fopen("save.txt","rb");
+    if(fp_save==NULL){
         printc(Cyan,msg_global_nosave);
-        save_file=fopen("save.txt","w");
-        fclose(save_file);
+        fp_save=fopen("save.txt","w");
+        fclose(fp_save);
     }else{
         printc(Cyan,msg_global_scansave);
-        nat readsaves_foundsaves=0;
-
-        //read
-        while(readplayerstats(&saves[readsaves_foundsaves].plr,save_file)){
-            readsaves_foundsaves++;
+        for(int i=0;i<savescount&&!fio.fail;i++){
+            readsave(foundsaves,fp_save);
+            if(saves[foundsaves].valid)foundsaves++;
         }
-        fclose(save_file);
-
-        if(readsaves_foundsaves==0){
-            printc(Cyan|Bright,msg_global_saveempty);
-        }else if(readsaves_foundsaves==1){
-            printc(Cyan|Bright,msg_global_savecount,readsaves_foundsaves);
+        if(foundsaves==0)printc(Cyan|Bright,msg_global_saveempty);
+        else if(foundsaves==1){
+            printc(Cyan|Bright,msg_global_savecount,foundsaves);
             printc(Cyan|Bright,L"%ls\n",saves[0].plr.name);
-        }else{
-            printc(Cyan|Bright,msg_global_savecounts,readsaves_foundsaves);
+        }
+        else{
+            printc(Cyan|Bright,msg_global_savecounts,foundsaves);
             printc(Cyan|Bright,L"%ls",saves[0].plr.name);
-            for(nat i=1;i<readsaves_foundsaves;i++)printc(Cyan|Bright,L", %ls",saves[i].plr.name);
+            for(nat i=1;i<foundsaves;i++)printc(Cyan|Bright,L", %ls",saves[i].plr.name);
             printc(Cyan|Bright,L"\n");
         }
     }
+    fclose(fp_save);
     while(true){
         printc(White|Bright,msg_global_enteryourname);
         wchar_t readsave_newname[32];
@@ -154,60 +92,52 @@ void readsaves(){
             printc(White|Bright,msg_global_nametooshort,readsave_newname);
             continue;
         }else{
-            printc(White|Bright,msg_global_confirmyourname,readsave_newname);
-        }
-        wchar_t yes[2];
-        scanline(yes,2);
-        if(yes[0]==L'Y'||yes[0]==L'y'){
-            wcscpy(player.name,readsave_newname);
-            printc(Green|Bright,msg_global_welcome_,readsave_newname);
-            break;
+            nat saveid=-1;
+            for(nat i=0;i<savescount;i++){
+                if(wcscmp(saves[i].plr.name,readsave_newname)==0){
+                    saveid=i;
+                    break;
+                }
+            }
+            if(saveid==-1){
+                if(foundsaves==savescount){
+                    printc(White|Bright,msg_global_savetoomany);
+                    continue;
+                }
+                printc(White|Bright,msg_global_confirmyourname,readsave_newname);
+                wchar_t yes[2];
+                scanline(yes,2);
+                if(yes[0]==L'Y'||yes[0]==L'y'){
+                    cursaveid=foundsaves;
+                    saves[foundsaves].valid=1;
+                    wcscpy(player.name,readsave_newname);
+                    printc(Green|Bright,msg_global_welcomeplayer,readsave_newname);
+                    break;
+                }
+            }else{
+                printc(White|Bright,msg_global_confirmchoice,saves[saveid].plr.name);
+                wchar_t yes[2];
+                scanline(yes,2);
+                if(yes[0]==L'Y'||yes[0]==L'y'){
+                    cursaveid=saveid;
+                    wcscpy(player.name,readsave_newname);
+                    printc(Green|Bright,msg_global_welcomeplayer2,readsave_newname);
+                    break;
+                }
+
+            }
         }
     }
 }
 void savesaves(){
-    FILE *save_file=fopen("save.txt","ab");
-    saveplayerstats(player,save_file);
-    fclose(save_file);
+    FILE *fp_save=NULL;
+    fp_save=fopen("save.txt","wb");
+    for(nat i=0;i<savescount;i++){
+        if(i==cursaveid){
+            saves[i].plr=player;
+        }
+        savesave(i,fp_save);
+    }
+    fclose(fp_save);
 }
-nat readplayerstats(struct player *p,FILE *fp){
-    struct player plr;
-    if(!readwcs(plr.name,32,fp))return 0;
-    if(!readnat(&plr.rnk,fp))return 0;
-    if(!readnat(&plr.lvl,fp))return 0;
-    if(!readbat(&plr.exp,fp))return 0;
-    if(!readnat(&plr.maxhp,fp))return 0;
-    if(!readnat(&plr.hp,fp))return 0;
-    if(!readnat(&plr.stats.atk,fp))return 0;
-    if(!readnat(&plr.stats.def,fp))return 0;
-    if(!readnat(&plr.stats.acc,fp))return 0;
-    if(!readnat(&plr.stats.dod,fp))return 0;
-    if(!readnat(&plr.stats.stl,fp))return 0;
-    if(!readnat(&plr.stats.act,fp))return 0;
-    if(!readnat(&plr.stats.con,fp))return 0;
-    if(!readnat(&plr.stats.pts,fp))return 0;
-    if(!readnat(&plr.roomid,fp))return 0;
-    *p=plr;
-    return 1;
-}
-void saveplayerstats(struct player p,FILE *fp){
-    writewcs(p.name,32,fp);
-    writenat(p.rnk,fp);
-    writenat(p.lvl,fp);
-    writebat(p.exp,fp);
-    writenat(p.maxhp,fp);
-    writenat(p.hp,fp);
-    writenat(p.stats.atk,fp);
-    writenat(p.stats.def,fp);
-    writenat(p.stats.acc,fp);
-    writenat(p.stats.dod,fp);
-    writenat(p.stats.stl,fp);
-    writenat(p.stats.act,fp);
-    writenat(p.stats.con,fp);
-    writenat(p.stats.pts,fp);
-    writenat(p.roomid,fp);
-}
-#ifdef __cplusplus
-}
-#endif
 #endif

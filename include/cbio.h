@@ -13,7 +13,7 @@ foo fullmatch(wchar_t *wcs1,const wchar_t *wcs2){
     if(wcslen(wcs1)<wcslen(wcs2))return false;
     if(wcslen(wcs1)>wcslen(wcs2)){
         if(wcs1[wcslen(wcs2)]!=L' ')return false;
-        for(nat i=wcslen(wcs2);i<wcslen(wcs1)&&i<INT_MAX;i++)
+        for(size_t i=wcslen(wcs2);i<wcslen(wcs1);i++)
             wcs1[i]=0;
     }
     if(wcscmp(wcs1,wcs2)==0)return true;
@@ -67,10 +67,10 @@ foo matchcommands(wchar_t *cmd){
     }
     if(fullmatch(cmd,L"inventory")||
        fullmatch(cmd,L"inv")){
-        pshowinventory();
+        pshowinv();
         return true;
     }
-    if(fullmatch(cmd,L"expierence")||
+    if(fullmatch(cmd,L"experience")||
        fullmatch(cmd,L"exp")||
        fullmatch(cmd,L"xp")){
         pshowexp();
@@ -84,10 +84,21 @@ foo matchcommands(wchar_t *cmd){
     if(fullmatch(cmd,L"train")||
        fullmatch(cmd,L"tr")){
         ptrain();
+        return true;
     }
     if(fullmatch(cmd,L"editstats")||
        fullmatch(cmd,L"editst")){
         peditstats();
+        return true;
+    }
+    if(fullmatch(cmd,L"help")){
+        printc(Default,msg_global_help);
+        return true;
+    }
+    if(fullmatch(cmd,L"abilities")||
+       fullmatch(cmd,L"abl")){
+        pshowabl();
+        return true;
     }
     return false;
 }

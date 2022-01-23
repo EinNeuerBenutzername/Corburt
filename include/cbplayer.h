@@ -131,16 +131,19 @@ const wchar_t *ranks[]={
     L"Admin",
     L"Dev"
 };
-void pshowstats();
-void pshowinventory();
-void pshowexp();
 enum direction{
     dir_East,dir_West,dir_North,dir_South,dir_Up,dir_Down
 };
+
+void pshowstats();
+void pshowabl();
+void pshowinv();
+void pshowexp();
 void pmove(enum direction dir);
 void pattack();
 void ptrain();
 void peditstats();
+
 void pshowstats(){
     printc(Default,
         msg_player_info,
@@ -154,9 +157,10 @@ void pshowstats(){
         player.stats.con,player.stats.pts
     );
 }
-void pshowinventory(){
-    wchar_t *itemname=mallocpointer(128*sizeof(wchar_t));
-    wchar_t *itemname2=mallocpointer(128*sizeof(wchar_t));
+void pshowabl(){printc(Default,msg_player_abl);}
+void pshowinv(){
+    wchar_t *itemname=mallocpointer_(128*sizeof(wchar_t));
+    wchar_t *itemname2=mallocpointer_(128*sizeof(wchar_t));
     wmemset(itemname,0,128);
     wmemset(itemname2,0,128);
     nat itemscount=0;
@@ -181,13 +185,16 @@ void pshowinventory(){
             itemscount--;
             if(itemscount==0)break;
         }
+        if(i==63)printc(Default,L"        (none)");
     }
     printc(Default,msg_line);
-    freepointer(itemname);
-    freepointer(itemname2);
+    freepointer_(itemname);
+    freepointer_(itemname2);
 }
-void pshowexp(){}
-void pmove(enum direction dir){nat n=dir;n++;if(n<5)return;}
+void pshowexp(){
+    printc(Default,msg_player_exp,player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]));
+}
+void pmove(enum direction dir){if(dir<5)return;}
 void pattack(){}
 void ptrain(){}
 void peditstats(){}
