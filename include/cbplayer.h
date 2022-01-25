@@ -1,6 +1,7 @@
 #ifndef Corburt_Player_h_Include_Guard
 #define Corburt_Player_h_Include_Guard
 #include "dbitem.h"
+#include "dbmap.h"
 const bat exp2next[]={
     [0]=20,
     [1]=64,
@@ -135,6 +136,7 @@ enum direction{
     dir_East,dir_West,dir_North,dir_South,dir_Up,dir_Down
 };
 
+static void plvlup();
 void pshowstats();
 void pshowabl();
 void pshowinv();
@@ -144,6 +146,11 @@ void pattack();
 void ptrain();
 void peditstats();
 
+static void plvlup(){
+    player.lvl++;
+    player.stats.pts+=5;
+    player.maxhp+=player.lvl;
+}
 void pshowstats(){
     printc(Default,
         msg_player_info,
@@ -187,15 +194,79 @@ void pshowinv(){
         }
         if(i==63)printc(Default,L"        (none)");
     }
-    printc(Default,msg_line);
+    printc(Default,L"\n%ls",msg_line);
     freepointer_(itemname);
     freepointer_(itemname2);
 }
 void pshowexp(){
     printc(Default,msg_player_exp,player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]));
 }
-void pmove(enum direction dir){if(dir<5)return;}
+void pmove(enum direction dir){
+    struct room *rm=db_rfindwithid(player.roomid);
+    if(rm==NULL)return;
+    switch(dir){
+    case dir_East:
+        if(!rm->room_exits.east)break;
+        if(db_rfindwithid(rm->room_exits.east)==NULL)break;
+        player.roomid=rm->room_exits.east;
+        printc(Green,msg_player_walkeast);
+        db_rshowdesc(player.roomid);
+        break;
+    case dir_West:
+        if(!rm->room_exits.west)break;
+        if(db_rfindwithid(rm->room_exits.west)==NULL)break;
+        player.roomid=rm->room_exits.west;
+        printc(Green,msg_player_walkwest);
+        db_rshowdesc(player.roomid);
+        break;
+    case dir_North:
+        if(!rm->room_exits.north)break;
+        if(db_rfindwithid(rm->room_exits.north)==NULL)break;
+        player.roomid=rm->room_exits.north;
+        printc(Green,msg_player_walknorth);
+        db_rshowdesc(player.roomid);
+        break;
+    case dir_South:
+        if(!rm->room_exits.south)break;
+        if(db_rfindwithid(rm->room_exits.south)==NULL)break;
+        player.roomid=rm->room_exits.south;
+        printc(Green,msg_player_walksouth);
+        db_rshowdesc(player.roomid);
+        break;
+    case dir_Up:
+        if(!rm->room_exits.up)break;
+        if(db_rfindwithid(rm->room_exits.up)==NULL)break;
+        player.roomid=rm->room_exits.up;
+        printc(Green,msg_player_walkup);
+        db_rshowdesc(player.roomid);
+        break;
+    case dir_Down:
+        if(!rm->room_exits.down)break;
+        if(db_rfindwithid(rm->room_exits.down)==NULL)break;
+        player.roomid=rm->room_exits.down;
+        printc(Green,msg_player_walkdown);
+        db_rshowdesc(player.roomid);
+        break;
+    default:
+        break;
+    }
+}
 void pattack(){}
-void ptrain(){}
+void ptrain(){
+    struct room *rm=db_rfindwithid(player.roomid);
+    if(rm->type!=db_roomtype_train){
+        printc(Default,msg_player_canttrain);
+        return;
+    }
+    if(player.lvl==120){
+        printc(Default,msg_player_canttrain_maxlvl);
+        return;
+    }
+    if(player.exp<exp2next[player.lvl-1]){
+        printc(Default,msg_player_canttrain_noexp);
+    }else{
+        plvlup();
+    }
+}
 void peditstats(){}
 #endif

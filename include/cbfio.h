@@ -120,7 +120,8 @@ void readsaves(){
                 scanline(yes,2);
                 if(yes[0]==L'Y'||yes[0]==L'y'){
                     cursaveid=saveid;
-                    wcscpy(player.name,readsave_newname);
+                    //wcscpy(player.name,readsave_newname);
+                    player=saves[saveid].plr;
                     printc(Green|Bright,msg_global_welcomeplayer2,readsave_newname);
                     break;
                 }

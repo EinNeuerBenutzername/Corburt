@@ -1,7 +1,9 @@
 #ifndef Corburt_IO_h_Include_Guard
 #define Corburt_IO_h_Include_Guard
 #include "cbbase.h"
+#include "cbfio.h"
 #include "cbplayer.h"
+#include "dbmap.h"
 wchar_t *inputbufl=NULL;
 foo fullmatch(wchar_t *wcs1,const wchar_t *wcs2);
 foo matchcommands(wchar_t *cmd);
@@ -78,7 +80,7 @@ foo matchcommands(wchar_t *cmd){
     }
     if(fullmatch(cmd,L"look")||
        fullmatch(cmd,L"l")){
-        //showroomdescription(player.roomid);
+        db_rshowdesc(player.roomid);
         return true;
     }
     if(fullmatch(cmd,L"train")||
@@ -98,6 +100,15 @@ foo matchcommands(wchar_t *cmd){
     if(fullmatch(cmd,L"abilities")||
        fullmatch(cmd,L"abl")){
         pshowabl();
+        return true;
+    }
+    if(fullmatch(cmd,L"save")){
+        savesaves();
+        printc(Cyan|Bright,msg_global_progresssaved);
+        return true;
+    }
+    if(fullmatch(cmd,L"list")){
+        db_rshowtable(player.roomid);
         return true;
     }
     return false;

@@ -43,7 +43,7 @@ struct player{
         nat pts;
     } stats;
     nat roomid;
-} player={L"",1,1,0,10,10,{0,0,0,0,0,0,0,21},0};
+} player={L"",1,1,0,10,10,{0,0,0,0,0,0,0,21},1};
 struct inventory{
     nat unlocked;
     nat items[64];

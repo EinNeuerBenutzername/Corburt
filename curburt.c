@@ -9,7 +9,11 @@
 int main(){
     cbc_init();
     cbc_setwindowtitle("Corburt");
+    cbc_setcolor(Default);
+    cbc_clearscreen();
     tracelog(Green,msg_trace_savesize,sizeof(struct save));
+    tracelog(Green,L"Size of room database: %zu bytes\n",sizeof(rooms));
+    tracelog(Green,L"Size of item database: %zu bytes\n",sizeof(itemdbs));
     initrng();
     checkendianess();
     inputbuf=mallocpointer(128*sizeof(wchar_t));
@@ -20,6 +24,7 @@ int main(){
     printc(Yellow,msg_global_splash2);
     printc(White,L"%50ls\n",msg_global_corburtversion);
     readsaves();
+    db_rshowdesc(player.roomid);
 	while(!quit_game){
         wmemset(inputbuf,0,128);
         scanline(inputbuf,127);

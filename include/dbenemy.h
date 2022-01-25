@@ -1,27 +1,33 @@
 #ifndef Corburt_Database_Enemy_h_Include_Guard
 #define Corburt_Database_Enemy_h_Include_Guard
 #include "cbbase.h"
-/*{
-    "ID": 1,
-    "NAME": "Rabid Monkey",
-    "HITPOINTS": 6,
-    "ACCURACY": 40,
-    "DODGING": -30,
-    "STRIKEDAMAGE": 0,
-    "DAMAGEABSORB": 0,
-    "EXPERIENCE": 4,
-    "WEAPON": 40,
-    "MONEYMIN": 0,
-    "MONEYMAX": 2,
-    "LOOT": [
-      {
-        "itemId": 40,
-        "chance": 3
-      },
-      {
-        "itemId": 35,
-        "chance": 2
-      }
-    ]
-  }*/
+enum db_enemytype {
+    db_enemytype_plain,
+    db_enemytype_regular=db_enemytype_plain,
+    db_enemytype_sentinel,
+    db_enemytype_sentry=db_enemytype_sentinel,
+    db_enemytype_assassin,
+    db_enemytype_boss
+};
+struct enemydb {
+    nat id;
+    enum db_enemytype type;
+    wchar_t *name;
+    wchar_t *desc;
+    nat exp;
+    struct {
+        nat moneymin;
+        nat moneymax;
+    } loot;
+    struct {
+        nat hpmax;
+        nat atk;
+        nat def;
+        nat acc;
+        nat dod;
+        nat stl;
+        nat act;
+        nat con;
+    } stats;
+};
 #endif
