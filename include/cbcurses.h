@@ -50,7 +50,7 @@ typedef enum {
 	Cyan=0x07,
 	White=0x08,
 	Bright=0x80,
-	Mask=0x7F,
+	FG_Mask=0x7F,
 	Underline=0x10000
 } cbc_enum_color;
 void cbc_init();
@@ -149,11 +149,11 @@ void cbc_setcolor(cbc_enum_color color){
 		GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&info);
 		dft_wAttributes=info.wAttributes;
 	}
-	if(Default==(color&Mask)){
+	if(Default==(color&FG_Mask)){
 		wAttributes|=dft_wAttributes&(FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE|FOREGROUND_INTENSITY);
 	}else{
 		wAttributes|=(color&Bright)?FOREGROUND_INTENSITY:0;
-		switch(color&Mask){
+		switch(color&FG_Mask){
 			case Red:wAttributes|=FOREGROUND_RED;break;
 			case Green:wAttributes|=FOREGROUND_GREEN;break;
 			case Blue:wAttributes|=FOREGROUND_BLUE;break;
@@ -168,7 +168,7 @@ void cbc_setcolor(cbc_enum_color color){
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),wAttributes);
 #elif defined(CBCurses_Unix)
     printf("\033[m");
-	if (Default!=(color&Mask)){
+	if (Default!=(color&FG_Mask)){
         printf("\033[%dm",29+(color&Mask)+((color&Bright)?60:0));
     }
 	if(color & Underline){
