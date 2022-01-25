@@ -1,6 +1,5 @@
 #ifndef __MTWISTER_H
 #define __MTWISTER_H
-
 #include <inttypes.h>
 
 #define STATE_VECTOR_LENGTH 624
