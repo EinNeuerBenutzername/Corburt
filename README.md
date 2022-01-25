@@ -51,11 +51,12 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
 
 ## Acknowledgements
 
-- **Ron Penton**, author of *MUD Game Programming*
-- **Jankenpopp** and other developers of *93 Realms*
-- **JC Wang** (@jcwangxp) for [Crossline](https://github.com/jcwangxp/Crossline)
-- **Evan Sultanik** (@ESultanik) for [MTwister](https://github.com/ESultanik/mtwister)
-- My friend **emf** and **Jack Q** for supporting me
+- For libraries:
+  - **Ron Penton**, author of *MUD Game Programming*
+  - **Jankenpopp** and other developers of *93 Realms*
+  - **JC Wang** (@jcwangxp) for [Crossline](https://github.com/jcwangxp/Crossline)
+  - **Evan Sultanik** (@ESultanik) for [MTwister](https://github.com/ESultanik/mtwister)
+- My friend **emf** and **Jack Q** for supporting me and testing Corburt
 - You, probably ;)
 
 ## Version history
@@ -77,7 +78,7 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
   - several empty databases created.
   - several bugs fixed and several new bugs introduced.
 
-- 0.0.3 (late Jan 2022)
+- 0.0.3 (Jan 2022)
   - file I/O functions' portability greatly improved.
   - basic curses library revised and finished.
   - save/load functions implemented, only player stats are saved/loaded.
@@ -85,3 +86,10 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
   - basic inventory information implemented.
   - typo fixes.
   - typedef revised: corburt would now use signed 32- and 64-bit integers to store integer values.
+
+- 0.1.0 (Jan 2022)
+  - visual effect on windows terminal fixed (I guess).
+  - added several basic commands.
+  - typo & grammar fixes.
+  - added the first region: Nameless City (9kb database).
+  - map revised.
