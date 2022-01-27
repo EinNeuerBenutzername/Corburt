@@ -60,6 +60,13 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
 - You, probably ;)
 
 ## Version history
+### Latest (v0.1.1)
+- News
+  - You can now walk around a nameless city and purchase items.
+- Future plans
+  - Add entities support in the next update.
+  - Add enemies and combat.
+
 ### Demo Version
 - 0.0.1 (Dec 2021)
   - the very beginning of Corburt!
