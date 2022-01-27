@@ -93,3 +93,13 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
   - typo & grammar fixes.
   - added the first region: Nameless City (9kb database).
   - map revised.
+
+- 0.1.1 (Jan 2022)
+  - finished shop lists.
+  - made item database for the goods.
+  - added the 'buy' command: the first command with targets.
+  - fixed the function 'match' and tested name-matching.
+  - opened 'dbfio_.h' for database output.
+  - room exits' structure revised to leave space for future updates; typo-fixed.
+  - enemy database opened. enemies might be added in the 0.1.2 update.
+
