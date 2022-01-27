@@ -1,13 +1,14 @@
 # depslib dependency file v1.0
-1643071326 source:g:\-guten\prog\c\proj\corburt\curburt.c
+1643285411 source:g:\-guten\prog\c\proj\corburt\curburt.c
 	<stdio.h>
 	"include/cbcurses.h"
 	"include/cbbase.h"
 	"include/cbplayer.h"
 	"include/cbio.h"
 	"include/cbfio.h"
+	"include/dbfio_.h"
 
-1642990702 g:\-guten\prog\c\proj\corburt\include\cbbase.h
+1643276266 g:\-guten\prog\c\proj\corburt\include\cbbase.h
 	"msg.h"
 	"mtwister.h"
 	<time.h>
@@ -23,7 +24,7 @@
 	<io.h>
 	<unistd.h>
 
-1643071515 g:\-guten\prog\c\proj\corburt\include\msg.h
+1643285215 g:\-guten\prog\c\proj\corburt\include\msg.h
 	<inttypes.h>
 	<wchar.h>
 
@@ -60,11 +61,11 @@
 	<signal.h>
 	<sys/ioctl.h>
 
-1643008862 g:\-guten\prog\c\proj\corburt\include\cbplayer.h
+1643285151 g:\-guten\prog\c\proj\corburt\include\cbplayer.h
 	"dbitem.h"
 	"dbmap.h"
 
-1643005842 g:\-guten\prog\c\proj\corburt\include\cbio.h
+1643259631 g:\-guten\prog\c\proj\corburt\include\cbio.h
 	"cbbase.h"
 	"cbfio.h"
 	"cbplayer.h"
@@ -115,14 +116,18 @@
 	"cbfio_base.h"
 	"cbbase.h"
 
-1643012574 g:\-guten\prog\c\proj\corburt\include\dbitem.h
+1643286132 g:\-guten\prog\c\proj\corburt\include\dbitem.h
 	"cbbase.h"
 
-1642942681 g:\-guten\prog\c\proj\corburt\include\cbfio_base.h
+1643277643 g:\-guten\prog\c\proj\corburt\include\cbfio_base.h
 	<limits.h>
 	<stdio.h>
 	<inttypes.h>
 
-1643075226 g:\-guten\prog\c\proj\corburt\include\dbmap.h
+1643284980 g:\-guten\prog\c\proj\corburt\include\dbmap.h
 	"cbbase.h"
+
+1643285584 g:\-guten\prog\c\proj\corburt\include\dbfio_.h
+	"cbbase.h"
+	"cbfio_base.h"
 

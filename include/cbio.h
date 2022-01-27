@@ -5,21 +5,26 @@
 #include "cbplayer.h"
 #include "dbmap.h"
 wchar_t *inputbufl=NULL;
-foo fullmatch(wchar_t *wcs1,const wchar_t *wcs2);
+foo fullmatch(wchar_t *wcs,const wchar_t *wcs2);
 foo matchcommands(wchar_t *cmd);
 void processinput();
 
-foo fullmatch(wchar_t *wcs1,const wchar_t *wcs2){
-    if(wcs1==NULL&&wcs2==NULL)return true;
-    if(wcs1==NULL||wcs2==NULL)return false;
-    if(wcslen(wcs1)<wcslen(wcs2))return false;
-    if(wcslen(wcs1)>wcslen(wcs2)){
-        if(wcs1[wcslen(wcs2)]!=L' ')return false;
-        for(size_t i=wcslen(wcs2);i<wcslen(wcs1);i++)
-            wcs1[i]=0;
+foo fullmatch(wchar_t *wcs,const wchar_t *wcs2){
+    if(wcs==NULL&&wcs2==NULL)return true;
+    if(wcs==NULL||wcs2==NULL)return false;
+    if(wcslen(wcs)<wcslen(wcs2))return false;
+    if(wcs[0]!=wcs2[0])return false;
+    if(wcslen(wcs)>wcslen(wcs2)){
+        if(wcs[wcslen(wcs2)]!=L' ')return false;
+        for(size_t i=0;i<wcslen(wcs2);i++){
+            if(wcs[i]!=wcs2[i])return false;
+        }
+        return true;
     }
-    if(wcscmp(wcs1,wcs2)==0)return true;
-    else return false;
+    else{
+        if(wcscmp(wcs,wcs2)==0)return true;
+        return false;
+    }
 }
 foo matchcommands(wchar_t *cmd){
     if(fullmatch(cmd,L"st")||
@@ -109,6 +114,67 @@ foo matchcommands(wchar_t *cmd){
     }
     if(fullmatch(cmd,L"list")){
         db_rshowtable(player.roomid);
+        return true;
+    }
+    if(fullmatch(cmd,L"buy")){
+        const struct roomdb *rm=db_rfindwithid(player.roomid);
+        if(rm==NULL){
+            printc(Red,msg_db_ridnullexceptionerror);
+            return true;
+        }
+        if(rm->type!=db_roomtype_shop){
+            printc(Default,msg_db_notinstore);
+            return true;
+        }
+        wchar_t *buytarget=NULL;
+        buytarget=mallocpointer_(128*sizeof(wchar_t));
+        wmemset(buytarget,0,128);
+        foo sth=false;
+        nat j=0;
+        for(size_t i=3;i<wcslen(cmd);i++){
+            if(cmd[i]!=L' ')sth=true;
+            if(sth){
+                buytarget[j]=cmd[i];
+                j++;
+            }
+        }
+        real maxmatch=-1.0f;
+        nat maxmatchid=0;
+        for(nat i=0;rm->table[i]!=0;i++){
+            const struct itemdb *idb=db_ifindwithid(rm->table[i]);
+            if(idb==NULL){
+                printc(Red,msg_db_iidnullexceptionerror);
+                return true;
+            }
+            real curmatch=match(buytarget,idb->name);
+            if(curmatch>maxmatch){
+                maxmatch=curmatch;
+                maxmatchid=idb->id;
+            }
+        }
+        freepointer_(buytarget);
+        if(maxmatch>-0.1f){
+            const struct itemdb *idb=db_ifindwithid(maxmatchid);
+            if(idb==NULL){
+                printc(Red,msg_db_iidnullexceptionerror);
+                return true;
+            }
+            if(inventory.money>idb->price){
+                for(nat i=0;i<inventory.unlocked;i++){
+                    if(inventory.items[i]==0){
+                        inventory.items[i]=idb->id;
+                        printc(Default,msg_db_ibuyitemhint,idb->name);
+                        inventory.money-=idb->price;
+                        return true;
+                    }
+                }
+                printc(Default,msg_db_icantcarry);
+            }else{
+                printc(Default,msg_db_icantafford,idb->price);
+            }
+        }else{
+            printc(Default,msg_db_inosuchitem);
+        }
         return true;
     }
     return false;

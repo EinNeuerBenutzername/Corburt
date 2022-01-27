@@ -6,13 +6,14 @@
 #include "include/cbplayer.h"
 #include "include/cbio.h"
 #include "include/cbfio.h"
+#include "include/dbfio_.h"
 int main(){
     cbc_init();
     cbc_setwindowtitle("Corburt");
     cbc_setcolor(Default);
     cbc_clearscreen();
     tracelog(Green,msg_trace_savesize,sizeof(struct save));
-    tracelog(Green,L"Size of room database: %zu bytes\n",sizeof(rooms));
+    tracelog(Green,L"Size of room database: %zu bytes\n",sizeof(roomdbs));
     tracelog(Green,L"Size of item database: %zu bytes\n",sizeof(itemdbs));
     initrng();
     checkendianess();

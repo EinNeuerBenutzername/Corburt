@@ -1,23 +1,11 @@
 #ifndef Corburt_Database_Item_h_Include_Guard
 #define Corburt_Database_Item_h_Include_Guard
 #include "cbbase.h"
-void getitemname(nat id,wchar_t *itemname);
-void getitemname(nat id,wchar_t *itemname){
-    wchar_t *p;
-    switch(id){
-    case 0:
-        p=L"(none)";
-        break;
-    default:
-        p=L"undefined";
-        break;
-    }
-    wcscpy(itemname,p);
-}
 
 enum db_itemtype{
     db_itemtype_weapon,
     db_itemtype_armor,
+    db_itemtype_accessory=db_itemtype_armor,
     db_itemtype_consume,
     db_itemtype_collect,
     db_itemtype_key,
@@ -27,12 +15,14 @@ struct itemdb{
     nat id;
     enum db_itemtype type;
     nat price;
-    nat cd; // ticks
-    const wchar_t *name;
-    const wchar_t *desc;
+    real cd;
+    real crit;
+    wchar_t *name;
+    wchar_t *desc;
     struct {
         nat min_;
         nat max_;
+        nat regen;
         nat atk;
         nat def;
         nat acc;
@@ -43,23 +33,248 @@ struct itemdb{
         nat pts;
     } stats;
 };
-struct itemdb itemdbs[]={
-    {
-        .id=1,
+const struct itemdb itemdbs[]={
+    {.id=1,.name=L"Wooden Stick",
         .type=db_itemtype_weapon,
         .price=5,
-        .cd=5,
-        .name=L"Wooden Stick",
+        .cd=1.5f,
         .desc=L"\"Now let's do it with a wooden stick!\"",
-        .stats={.min_=2,.max_=3,.acc=10}
+        .stats={.min_=0,.max_=3,.acc=-10}
+    },
+    {.id=2,.name=L"Rusty Knife",
+        .type=db_itemtype_weapon,
+        .price=5,
+        .cd=1.0f,
+        .desc=L"A simple rusty knife. What do you expect?",
+        .stats={.min_=1,.max_=2,.acc=10}
+    },
+    {.id=3,.name=L"Stiletto",
+        .type=db_itemtype_weapon,
+        .price=15,
+        .cd=0.5f,
+        .desc=L"Born for stabbing.",
+        .stats={.min_=1,.max_=4,.acc=15}
+    },
+    {.id=4,.name=L"Iron Shortsword",
+        .type=db_itemtype_weapon,
+        .price=30,
+        .cd=1.5f,
+        .desc=L"Classic newbie weapon.",
+        .stats={.min_=3,.max_=6,.acc=5}
+    },
+    {.id=5,.name=L"Vicious Stiletto",
+        .type=db_itemtype_weapon,
+        .price=50,
+        .cd=0.5f,
+        .crit=0.05f,
+        .desc=L"Specially enhanced for your stabbing pleasure...",
+        .stats={.min_=2,.max_=5,.acc=20}
+    },
+    {.id=6,.name=L"Knife",
+        .type=db_itemtype_weapon,
+        .price=18,
+        .cd=1.0f,
+        .desc=L"Designed to cut things, not people.",
+        .stats={.min_=2,.max_=5,.acc=12}
+    },
+    {.id=7,.name=L"Rusty Sword",
+        .type=db_itemtype_weapon,
+        .price=40,
+        .cd=1.5f,
+        .crit=0.05,
+        .desc=L"Occasionally reveals its power.",
+        .stats={.min_=1,.max_=7}
+    },
+    {.id=8,.name=L"Tiny Green Leaf",
+        .type=db_itemtype_consume,
+        .price=1,
+        .desc=L"Sprout of some exotic plant.",
+        .stats={.min_=1,.max_=2}
+    },
+    {.id=9,.name=L"Small Green Leaf",
+        .type=db_itemtype_consume,
+        .price=3,
+        .desc=L"Young leaves of some exotic plant.",
+        .stats={.min_=2,.max_=4}
+    },
+    {.id=10,.name=L"Immature Green Leaf",
+        .type=db_itemtype_consume,
+        .price=8,
+        .desc=L"Immature leaves of some exotic plant.",
+        .stats={.min_=5,.max_=12}
+    },
+    {.id=11,.name=L"Green Leaf",
+        .type=db_itemtype_consume,
+        .price=13,
+        .desc=L"Leaves of some exotic plant.",
+        .stats={.min_=13,.max_=20}
+    },
+    {.id=12,.name=L"Large Green Leaf",
+        .type=db_itemtype_consume,
+        .price=21,
+        .desc=L"Larger leaves of some exotic plant.",
+        .stats={.min_=15,.max_=35}
+    },
+    {.id=13,.name=L"Huge Green Leaf",
+        .type=db_itemtype_consume,
+        .price=35,
+        .desc=L"Huge leaves of some exotic plant.",
+        .stats={.min_=30,.max_=55}
+    },
+    {.id=14,.name=L"Enormous Green Leaf",
+        .type=db_itemtype_consume,
+        .price=55,
+        .desc=L"Enormous leaves of some exotic plant.",
+        .stats={.min_=65,.max_=115}
+    },
+    {.id=15,.name=L"Tremendous Green Leaf",
+        .type=db_itemtype_consume,
+        .price=93,
+        .desc=L"Tremendous leaves of some exotic plant.",
+        .stats={.min_=175,.max_=255}
+    },
+    {.id=16,.name=L"Thin Cloth Armor",
+        .type=db_itemtype_armor,
+        .price=20,
+        .desc=L"Basically, it's plain clothes.",
+        .stats={.dod=5,.acc=3}
+    },
+    {.id=17,.name=L"Leather Armor",
+        .type=db_itemtype_armor,
+        .price=40,
+        .desc=L"Pig skin, stronger than most people's.",
+        .stats={.def=1,.dod=10,.acc=8}
+    },
+    {.id=18,.name=L"Chain Shirt",
+        .type=db_itemtype_armor,
+        .price=75,
+        .desc=L"Do you feel chained?",
+        .stats={.def=3,.dod=4,.acc=19}
+    },
+    {.id=19,.name=L"Hide",
+        .type=db_itemtype_armor,
+        .price=35,
+        .desc=L"Pig skin, stronger than most pigs'.",
+        .stats={.def=2,.dod=-2,.acc=9}
+    },
+    {.id=20,.name=L"Scalemail Armor",
+        .type=db_itemtype_armor,
+        .price=85,
+        .desc=L"They're like flappy wings!",
+        .stats={.def=3,.dod=-8,.acc=6}
+    },
+    {.id=21,.name=L"Chainmail Armor",
+        .type=db_itemtype_armor,
+        .price=165,
+        .desc=L"\"The more you tank\"",
+        .stats={.def=4,.dod=-12,.acc=4}
+    },
+    {.id=22,.name=L"Breastplate Armor",
+        .type=db_itemtype_armor,
+        .price=260,
+        .desc=L"\"The less you dodge\"",
+        .stats={.def=5,.dod=-16,.acc=1}
+    },
+    {.id=23,.name=L"Platemail Armor",
+        .type=db_itemtype_armor,
+        .price=400,
+        .desc=L"Only the weak dodges.",
+        .stats={.def=6,.dod=-19,.acc=-1}
+    },
+    {.id=24,.name=L"Full Platemail Armor",
+        .type=db_itemtype_armor,
+        .price=650,
+        .desc=L"Dodging? What's that?",
+        .stats={.def=8,.dod=-23,.acc=-3}
+    },
+    {.id=25,.name=L"Necklace of Slight Regeneration",
+        .type=db_itemtype_accessory,
+        .price=15,
+        .desc=L"It's... Blue?",
+        .stats={.regen=2}
+    },
+    {.id=26,.name=L"Minor Healing Potion",
+        .type=db_itemtype_consume,
+        .price=15,
+        .desc=L"The unique precision of chemical reagents.",
+        .stats={.min_=20,.max_=20}
+    },
+    {.id=27,.name=L"Small Healing Potion",
+        .type=db_itemtype_consume,
+        .price=35,
+        .desc=L"The unique precision of chemical reagents.",
+        .stats={.min_=40,.max_=40}
+    },
+    {.id=28,.name=L"Necklace of Mild Regeneration",
+        .type=db_itemtype_accessory,
+        .price=55,
+        .desc=L"Why aren't necklaces of regeneration red?",
+        .stats={.regen=5,.def=1,.dod=3}
+    },
+    {.id=29,.name=L"Paper",
+        .type=db_itemtype_weapon,
+        .price=2,
+        .cd=0.78f,
+        .desc=L"For the long-forgotten glory...",
+        .stats={.min_=2,.max_=8,.def=-34,.atk=57,.acc=68,.dod=-65,.stl=-53}
+    },
+    {.id=30,.name=L"Fan",
+        .type=db_itemtype_weapon,
+        .price=5,
+        .cd=2.5f,
+        .desc=L"Impractical.",
+        .stats={.min_=-1,.max_=0}
+    },
+    {.id=31,.name=L"Toilet Paper",
+        .type=db_itemtype_misc,
+        .price=1,
+        .desc=L"Might be brand new. Might not...",
+    },
+    {.id=32,.name=L"Scissors",
+        .type=db_itemtype_weapon,
+        .price=7,
+        .cd=1.5f,
+        .desc=L"Two pieces of blade, but half the damage.",
+        .stats={.min_=1,.max_=2}
+    },
+    {.id=33,.name=L"Wooden Block",
+        .type=db_itemtype_misc,
+        .price=4,
+        .desc=L"Why would you keep it?"
+    },
+    {.id=34,.name=L"Apple",
+        .type=db_itemtype_consume,
+        .price=2,
+        .desc=L"\"Apfel, Nuss und Mandelkern,\"",
+        .stats={.min_=2,.max_=2}
+    },
+    {.id=35,.name=L"Banana",
+        .type=db_itemtype_consume,
+        .price=2,
+        .desc=L"Have a bana-na.",
+        .stats={.min_=2,.max_=2}
+    },
+    {.id=36,.name=L"Cooked Meat",
+        .type=db_itemtype_consume,
+        .price=10,
+        .desc=L"It's impossible to figure out what kind of meat this is.",
+        .stats={.min_=10,.max_=12}
+    },
+    {.id=37,.name=L"Fried Salmon",
+        .type=db_itemtype_consume,
+        .price=25,
+        .desc=L"Why wouldn't you like to have a fish?",
+        .stats={.min_=3,.max_=9}
     },
     {
         .id=0
+//              -------------------------------------------------------------------\n"
     }
 };
 
-struct itemdb *db_ifindwithid(nat itemid);
-struct itemdb *db_ifindwithid(nat itemid){
+const struct itemdb *db_ifindwithid(nat itemid);
+void getitemname(nat id,wchar_t *itemname);
+const struct itemdb *db_ifindwithid(nat itemid){
     for(nat i=0;;i++){
         if(itemdbs[i].id==itemid){
             return &itemdbs[i];
@@ -68,5 +283,24 @@ struct itemdb *db_ifindwithid(nat itemid){
         if(itemdbs[i].id==0)break;
     }
     return NULL;
+}
+void getitemname(nat id,wchar_t *itemname){
+    const wchar_t *p;
+    switch(id){
+    case 0:
+        p=L"(none)";
+        break;
+    default:;
+        const struct itemdb *idb=db_ifindwithid(id);
+        if(idb==NULL){
+            printf("\n");
+            printc(Red,msg_db_iidnullexceptionerror);
+            p=L"undefined";
+            break;
+        }
+        p=idb->name;
+        break;
+    }
+    wcscpy(itemname,p);
 }
 #endif

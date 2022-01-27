@@ -10,7 +10,7 @@ const wchar_t *msg_global_splash=L"   @@@@                @@\n"
 "  ##     ##  ## ##  ## ## ## ##  ## ##  ## ##\n";
 const wchar_t *msg_global_splash2=L"  $$  $$ $$  $$ $$     $$ $$ $$  $$ $$     $$\n"
 "   $$$$   $$$$  $$     $$$    $$$$  $$      $$$\n\n";
-const wchar_t *msg_global_corburtversion=L"v0.1.0";
+const wchar_t *msg_global_corburtversion=L"v0.1.1";
 const wchar_t *msg_global_nosave=L"No save files found.\n";
 const wchar_t *msg_global_scansave=L"Scanning the save file...\n";
 const wchar_t *msg_global_saveempty=L"Save file is empty.\n";
@@ -67,6 +67,7 @@ const wchar_t *msg_player_walksouth=L"You walk SOUTH.\n";
 const wchar_t *msg_player_walknorth=L"You walk NORTH.\n";
 const wchar_t *msg_player_walkup=L"You go UP.\n";
 const wchar_t *msg_player_walkdown=L"You go DOWN.\n";
+const wchar_t *msg_player_walkno=L"You walk towards an impossible direction and failed.\n";
 const wchar_t *msg_player_canttrain=L"This does not look like a place for training.\n";
 const wchar_t *msg_player_canttrain_noexp=L"You are not experienced enough for your training.\n";
 const wchar_t *msg_player_canttrain_maxlvl=L"You have reached the limit of what you can achieve with training.\n";
@@ -86,11 +87,11 @@ const wchar_t *msg_player_exp=L"Level:         %" PRIdFAST32 "\n"
     "Expierence:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n";
 const wchar_t *msg_player_inv=L"-------------------------------------------------------------------\n"
     "                           Your Inventory\n"
-    "Money:         %-08" PRIdFAST64 "\n"
+    "Money:         $%-08" PRIdFAST64 "\n"
     "Weapon:        %ls\n"
     "Armor:         %ls\n"
     "Capacity:      %" PRIdFAST32 "/%" PRIdFAST32 "\n"
-    "Items: ";
+    "Items:         ";
 const wchar_t *msg_player_abl=L"-------------------------------------------------------------------\n"
     "                           Your Abilities\n"
     "   coming soon\n"
@@ -98,5 +99,11 @@ const wchar_t *msg_player_abl=L"------------------------------------------------
 const wchar_t *msg_player_say=L"%ls says: ";
 
 const wchar_t *msg_db_notinstore=L"You are not in a store.\n";
+const wchar_t *msg_db_inosuchitem=L"There is no such item.\n";
+const wchar_t *msg_db_ibuyitemhint=L"%ls purchased.\n";
+const wchar_t *msg_db_icantafford=L"You cannot afford the item. (missing $%" PRIdFAST32 ")\n";
+const wchar_t *msg_db_icantcarry=L"You can't carry this much.\n";
+const wchar_t *msg_db_ridnullexceptionerror=L"Null exception error: trying to access an invalid room id.\n";
+const wchar_t *msg_db_iidnullexceptionerror=L"Null exception error: trying to access an invalid item id.\n";
 const wchar_t *msg_db_listitem=L"%-50ls  | $%" PRIdFAST32 "\n";
 #endif

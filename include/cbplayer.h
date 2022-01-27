@@ -132,9 +132,6 @@ const wchar_t *ranks[]={
     L"Admin",
     L"Dev"
 };
-enum direction{
-    dir_East,dir_West,dir_North,dir_South,dir_Up,dir_Down
-};
 
 static void plvlup();
 void pshowstats();
@@ -183,16 +180,18 @@ void pshowinv(){
         itemname2,
         itemscount,inventory.unlocked
     );
-    for(nat i=0;i<64;i++){
+    for(nat i=0,j=0;i<64;i++){
         if(inventory.items[i]!=0){
             wmemset(itemname,0,128);
             getitemname(inventory.items[i],itemname);
-            if(itemscount>1)printc(Default,L"%ls, ",itemname);
+            if(j>0)printc(Default,L"\n               ");
+            if(itemscount>1)printc(Default,L"%ls,",itemname);
             else printc(Default,L"%ls",itemname);
             itemscount--;
+            j++;
             if(itemscount==0)break;
         }
-        if(i==63)printc(Default,L"        (none)");
+        if(i==63)printc(Default,L"(none)");
     }
     printc(Default,L"\n%ls",msg_line);
     freepointer_(itemname);
@@ -201,59 +200,56 @@ void pshowinv(){
 void pshowexp(){
     printc(Default,msg_player_exp,player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]));
 }
-void pmove(enum direction dir){
-    struct room *rm=db_rfindwithid(player.roomid);
-    if(rm==NULL)return;
-    switch(dir){
-    case dir_East:
-        if(!rm->room_exits.east)break;
-        if(db_rfindwithid(rm->room_exits.east)==NULL)break;
-        player.roomid=rm->room_exits.east;
-        printc(Green,msg_player_walkeast);
-        db_rshowdesc(player.roomid);
-        break;
-    case dir_West:
-        if(!rm->room_exits.west)break;
-        if(db_rfindwithid(rm->room_exits.west)==NULL)break;
-        player.roomid=rm->room_exits.west;
-        printc(Green,msg_player_walkwest);
-        db_rshowdesc(player.roomid);
-        break;
-    case dir_North:
-        if(!rm->room_exits.north)break;
-        if(db_rfindwithid(rm->room_exits.north)==NULL)break;
-        player.roomid=rm->room_exits.north;
-        printc(Green,msg_player_walknorth);
-        db_rshowdesc(player.roomid);
-        break;
-    case dir_South:
-        if(!rm->room_exits.south)break;
-        if(db_rfindwithid(rm->room_exits.south)==NULL)break;
-        player.roomid=rm->room_exits.south;
-        printc(Green,msg_player_walksouth);
-        db_rshowdesc(player.roomid);
-        break;
-    case dir_Up:
-        if(!rm->room_exits.up)break;
-        if(db_rfindwithid(rm->room_exits.up)==NULL)break;
-        player.roomid=rm->room_exits.up;
-        printc(Green,msg_player_walkup);
-        db_rshowdesc(player.roomid);
-        break;
-    case dir_Down:
-        if(!rm->room_exits.down)break;
-        if(db_rfindwithid(rm->room_exits.down)==NULL)break;
-        player.roomid=rm->room_exits.down;
-        printc(Green,msg_player_walkdown);
-        db_rshowdesc(player.roomid);
-        break;
-    default:
-        break;
+void pmove(enum direction dir){ // ready for special exits
+    const struct roomdb *rm=db_rfindwithid(player.roomid);
+    if(rm==NULL){
+        printc(Red,msg_db_ridnullexceptionerror);
+        return;
+    }
+    if(!rm->exits[dir]){printc(Default,msg_player_walkno);return;}
+    if(db_rfindwithid(rm->exits[dir])==NULL){printc(Default,msg_player_walkno);return;}
+    if(!rm->exitsid[dir]){
+        player.roomid=rm->exits[dir];
+        switch(dir){
+        case dir_East:
+            printc(Green,msg_player_walkeast);
+            db_rshowdesc(player.roomid);
+            return;
+        case dir_West:
+            printc(Green,msg_player_walkwest);
+            db_rshowdesc(player.roomid);
+            return;
+        case dir_North:
+            printc(Green,msg_player_walknorth);
+            db_rshowdesc(player.roomid);
+            return;
+        case dir_South:
+            printc(Green,msg_player_walksouth);
+            db_rshowdesc(player.roomid);
+            return;
+        case dir_Up:
+            printc(Green,msg_player_walkup);
+            db_rshowdesc(player.roomid);
+            return;
+        case dir_Down:
+            printc(Green,msg_player_walkdown);
+            db_rshowdesc(player.roomid);
+            return;
+        default:
+            break;
+        }
+        printc(Default,msg_player_walkno);
+    }else{
+        // special exits
     }
 }
 void pattack(){}
 void ptrain(){
-    struct room *rm=db_rfindwithid(player.roomid);
+    const struct roomdb *rm=db_rfindwithid(player.roomid);
+    if(rm==NULL){
+        printc(Red,msg_db_ridnullexceptionerror);
+        return;
+    }
     if(rm->type!=db_roomtype_train){
         printc(Default,msg_player_canttrain);
         return;

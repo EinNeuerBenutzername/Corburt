@@ -9,8 +9,6 @@
 #include <stdbool.h>
 #include <inttypes.h>
 
-//enum foo{foo_false,foo_true};
-//typedef enum foo foo;//enum bool
 typedef bool foo;
 typedef int_fast32_t nat;//32-bit number
 typedef int_fast64_t bat;//64-bit integer
@@ -32,6 +30,7 @@ struct player{
     bat exp;
     nat maxhp;
     nat hp;
+    nat regen;
     struct stats{
         nat atk;
         nat def;
@@ -43,14 +42,15 @@ struct player{
         nat pts;
     } stats;
     nat roomid;
-} player={L"",1,1,0,10,10,{0,0,0,0,0,0,0,21},1};
+} player={L"",1,1,0,10,10,1,{0,0,0,0,0,0,0,21},1};
 struct inventory{
     nat unlocked;
     nat items[64];
     nat weapon;
     nat armor;
     bat money;
-} inventory={16,{0},0,0,0};
+//} inventory={16,{0},0,0,0};
+} inventory={16,{0},0,0,1000};
 struct save{
     nat valid;
     struct player plr;
@@ -194,35 +194,35 @@ void wcslower(wchar_t **target_str_pos){
 }
 //misc
 void asserttypesize();
-real match(wchar_t *str1,wchar_t *str2);
+real match(const wchar_t *sub_str,const wchar_t *main_str);
 void checkendianess();
 void initrng();
 void asserttypesize(){
     if(CHAR_BIT!=8)fatalerror(error_badcharbit);
 }
-real match(wchar_t *str1,wchar_t *str2){
-    if(wcslen(str1)==0)return 0.0f;
-    wchar_t *str1l=mallocpointer(sizeof(wchar_t)*(wcslen(str1)+1));
-    wchar_t *str2l=mallocpointer(sizeof(wchar_t)*(wcslen(str2)+1));
-    wcscpy(str1l,str1);
-    wcscpy(str2l,str2);
+real match(const wchar_t *sub_str,const wchar_t *main_str){
+    if(wcslen(main_str)==0)return 0.0f;
+    wchar_t *str1l=mallocpointer_(sizeof(wchar_t)*(wcslen(main_str)+1));
+    wchar_t *str2l=mallocpointer_(sizeof(wchar_t)*(wcslen(sub_str)+1));
+    wcscpy(str1l,main_str);
+    wcscpy(str2l,sub_str);
     wcslower(&str1l);
     wcslower(&str2l);
-    str1l[wcslen(str1l)-1]=0;
-    str2l[wcslen(str2l)-1]=0;
-    wchar_t *pos=wcsstr(str2l,str1l);
+    str1l[wcslen(str1l)]=0;
+    str2l[wcslen(str2l)]=0;
+    wchar_t *pos=wcsstr(str1l,str2l);
     if(pos==NULL){
-        freepointer(str1l);
-        freepointer(str2l);
+        freepointer_(str1l);
+        freepointer_(str2l);
         return -1.0f;
     }else{
-        if(pos==str2l||str2l[(pos-str2l)-1]==L' '){
-            freepointer(str1l);
-            freepointer(str2l);
-            return (1.0f*wcslen(str1))/(1.0f*wcslen(str2));
+        if(pos==str1l||str1l[(pos-str1l)-1]==L' '){
+            freepointer_(str1l);
+            freepointer_(str2l);
+            return (1.0f*wcslen(sub_str))/(1.0f*wcslen(main_str));
         }else{
-            freepointer(str1l);
-            freepointer(str2l);
+            freepointer_(str1l);
+            freepointer_(str2l);
             return -1.0f;
         }
     }
