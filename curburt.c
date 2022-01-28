@@ -6,7 +6,7 @@
 #include "include/cbplayer.h"
 #include "include/cbio.h"
 #include "include/cbfio.h"
-#include "include/dbfio_.h"
+#include "include/dbentity.h"
 int main(){
     cbc_init();
     cbc_setwindowtitle("Corburt");
@@ -17,6 +17,8 @@ int main(){
     tracelog(Green,L"Size of item database: %zu bytes\n",sizeof(itemdbs));
     initrng();
     checkendianess();
+    setupentitydata();
+        et_spawnenemies();
     inputbuf=mallocpointer(128*sizeof(wchar_t));
     inputbufl=mallocpointer(128*sizeof(wchar_t));
     wmemset(inputbuf,0,128);

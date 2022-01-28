@@ -13,7 +13,7 @@ typedef bool foo;
 typedef int_fast32_t nat;//32-bit number
 typedef int_fast64_t bat;//64-bit integer
 //typedef unsigned __int64 bat;
-typedef float real;
+typedef double real;
 MTRand mtrand;
 foo quit_game=false;
 foo isle=true; //platform endianess. this is not a flag.
@@ -46,11 +46,11 @@ struct player{
 struct inventory{
     nat unlocked;
     nat items[64];
+    nat accessories[5];
     nat weapon;
     nat armor;
     bat money;
-//} inventory={16,{0},0,0,0};
-} inventory={16,{0},0,0,1000};
+} inventory={16,{0},{0},0,0,1000};
 struct save{
     nat valid;
     struct player plr;
@@ -60,6 +60,7 @@ const nat savescount=5;
 struct save saves[5]={0};
 int_fast32_t cursaveid=0;
 nat pointerinuse=0;
+real tick=0.0f;
 
 //basic
 enum errorenum{
@@ -79,13 +80,13 @@ void freepointer_(void *pointer);
 void scanline(wchar_t *scan_str,int scans);
 void wcslower(wchar_t **target_str_pos);
 void printc(int color,const wchar_t *format,...){
-    cbc_setcolor(color);
+    if(color!=Default)cbc_setcolor(color);
     fflush(stdout);
     va_list args;
     va_start(args,format);
     vwprintf(format,args);
     va_end(args);
-    cbc_setcolor(Default);
+    if(color!=Default)cbc_setcolor(Default);
     fflush(stdout);
 }
 const wchar_t *wsprintfc(const wchar_t *text,...){ //obsolete function
@@ -194,14 +195,14 @@ void wcslower(wchar_t **target_str_pos){
 }
 //misc
 void asserttypesize();
-real match(const wchar_t *sub_str,const wchar_t *main_str);
+nat match(const wchar_t *sub_str,const wchar_t *main_str);
 void checkendianess();
 void initrng();
 void asserttypesize(){
     if(CHAR_BIT!=8)fatalerror(error_badcharbit);
 }
-real match(const wchar_t *sub_str,const wchar_t *main_str){
-    if(wcslen(main_str)==0)return 0.0f;
+nat match(const wchar_t *sub_str,const wchar_t *main_str){
+    if(wcslen(main_str)==0)return 0;
     wchar_t *str1l=mallocpointer_(sizeof(wchar_t)*(wcslen(main_str)+1));
     wchar_t *str2l=mallocpointer_(sizeof(wchar_t)*(wcslen(sub_str)+1));
     wcscpy(str1l,main_str);
@@ -214,16 +215,17 @@ real match(const wchar_t *sub_str,const wchar_t *main_str){
     if(pos==NULL){
         freepointer_(str1l);
         freepointer_(str2l);
-        return -1.0f;
+        return -1;
     }else{
         if(pos==str1l||str1l[(pos-str1l)-1]==L' '){
             freepointer_(str1l);
             freepointer_(str2l);
-            return (1.0f*wcslen(sub_str))/(1.0f*wcslen(main_str));
+            real m=(10000.0f*wcslen(sub_str))/(1.0f*wcslen(main_str));
+            return (nat)m;
         }else{
             freepointer_(str1l);
             freepointer_(str2l);
-            return -1.0f;
+            return -1;
         }
     }
 }

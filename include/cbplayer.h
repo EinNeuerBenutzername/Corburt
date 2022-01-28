@@ -162,40 +162,42 @@ void pshowstats(){
     );
 }
 void pshowabl(){printc(Default,msg_player_abl);}
-void pshowinv(){
-    wchar_t *itemname=mallocpointer_(128*sizeof(wchar_t));
-    wchar_t *itemname2=mallocpointer_(128*sizeof(wchar_t));
-    wmemset(itemname,0,128);
-    wmemset(itemname2,0,128);
-    nat itemscount=0;
+void pshowinv(){ //
+    nat invitemscount=0;
     for(nat i=0;i<64;i++){
-        if(inventory.items[i]!=0)itemscount++;
+        if(inventory.items[i]!=0)invitemscount++;
     }
-    getitemname(inventory.weapon,itemname);
-    getitemname(inventory.armor,itemname2);
     printc(Default,
         msg_player_inv,
         inventory.money,
-        itemname,
-        itemname2,
-        itemscount,inventory.unlocked
+        invitemscount,inventory.unlocked
     );
-    for(nat i=0,j=0;i<64;i++){
-        if(inventory.items[i]!=0){
-            wmemset(itemname,0,128);
-            getitemname(inventory.items[i],itemname);
-            if(j>0)printc(Default,L"\n               ");
-            if(itemscount>1)printc(Default,L"%ls,",itemname);
-            else printc(Default,L"%ls",itemname);
-            itemscount--;
-            j++;
-            if(itemscount==0)break;
+    if(invitemscount==0)printc(Default,L"(none)");
+    else{ //
+        for(nat i=0,j=0;i<64;i++){
+            if(inventory.items[i]!=0){
+                struct et_item *eti=&et_items[inventory.items[i]-1];
+                const struct itemdb *idb=db_ifindwithid(eti->itemid);
+                if(j>0)printc(Default,L"\n               ");
+                if(inventory.weapon==i+1){
+                    printc(Default,msg_player_inv_wielding);
+                }
+                if(inventory.armor==i+1){
+                    printc(Default,msg_player_inv_wearing);
+                }
+                for(nat k=0;k<5;k++)if(inventory.accessories[k]==i+1){
+                    printc(Default,msg_player_inv_equipping);
+                    break;
+                }
+                if(invitemscount>1)printc(Default,L"%ls,",idb->name);
+                else printc(Default,L"%ls",idb->name);
+                invitemscount--;
+                j++;
+                if(invitemscount==0)break;
+            }
         }
-        if(i==63)printc(Default,L"(none)");
     }
     printc(Default,L"\n%ls",msg_line);
-    freepointer_(itemname);
-    freepointer_(itemname2);
 }
 void pshowexp(){
     printc(Default,msg_player_exp,player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]));

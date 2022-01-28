@@ -1,15 +1,17 @@
 #ifndef Corburt_Database_Item_h_Include_Guard
 #define Corburt_Database_Item_h_Include_Guard
+#define ITEM_MAXSTACK 999
 #include "cbbase.h"
 
 enum db_itemtype{
-    db_itemtype_weapon,
-    db_itemtype_armor,
-    db_itemtype_accessory=db_itemtype_armor,
-    db_itemtype_consume,
-    db_itemtype_collect,
-    db_itemtype_key,
-    db_itemtype_misc
+    db_itemtype_stackable_mask=16,
+    db_itemtype_weapon=0,
+    db_itemtype_armor=2,
+    db_itemtype_accessory=3,
+    db_itemtype_key=4,
+    db_itemtype_consume=0|db_itemtype_stackable_mask, // stackable
+    db_itemtype_collect=1|db_itemtype_stackable_mask, // stackable
+    db_itemtype_misc=2|db_itemtype_stackable_mask, // stackable
 };
 struct itemdb{
     nat id;
@@ -189,7 +191,7 @@ const struct itemdb itemdbs[]={
     },
     {.id=25,.name=L"Necklace of Slight Regeneration",
         .type=db_itemtype_accessory,
-        .price=15,
+        .price=75,
         .desc=L"It's... Blue?",
         .stats={.regen=2}
     },
@@ -207,7 +209,7 @@ const struct itemdb itemdbs[]={
     },
     {.id=28,.name=L"Necklace of Mild Regeneration",
         .type=db_itemtype_accessory,
-        .price=55,
+        .price=405,
         .desc=L"Why aren't necklaces of regeneration red?",
         .stats={.regen=5,.def=1,.dod=3}
     },

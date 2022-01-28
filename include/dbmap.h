@@ -452,6 +452,8 @@ const struct roomdb roomdbs[]={
     }
 };
 
+#include "dbentity.h"
+
 const struct roomdb *db_rfindwithid(nat roomid);
 void db_rshowdesc(nat roomid);
 void db_rshowtable(nat roomid);
@@ -478,7 +480,27 @@ void db_rshowdesc(nat roomid){
     if(rm->exits[dir_East])printc(Green|Bright,L"EAST  ");
     if(rm->exits[dir_South])printc(Green|Bright,L"SOUTH  ");
     if(rm->exits[dir_West])printc(Green|Bright,L"WEST  ");
-    printc(Default,L"\n\n");
+    printc(Default,L"\n");
+    struct et_room *etr=et_findroomwithid(roomid);
+    if(etr==NULL){
+        printc(Red,msg_db_retidnullexceptionerror);
+    }else{
+        for(nat i=0,first=1;i<DBE_ENEMYCAP;i++){
+            if(etr->etenemy[i]!=0){
+                const struct enemydb *edb=et_getenemydb(etr->etenemy[i]);
+                if(first)printc(Red|Bright,L"enemies: %ls",edb->name,etr->etenemy[i]);
+                else{
+                    size_t row,col;
+                    cbc_getcursor(&row,&col);
+                    if(wcslen(edb->name)+col>=67)printc(Red|Bright,L",\n%ls",edb->name,etr->etenemy[i]);
+                    else printc(Red|Bright,L", %ls",edb->name,etr->etenemy[i]);
+                }
+                first=0;
+            }
+            if(i==DBE_ENEMYCAP-1&&first==0)printf("\n");
+        }
+    }
+    printc(Default,L"\n");
 }
 void db_rshowtable(nat roomid){
     const struct roomdb *rm=db_rfindwithid(roomid);

@@ -40,6 +40,7 @@ const wchar_t *msg_global_help=L"-----------------------------------------------
     "save                       - Save current progress\n"
     "stats                      - Show player's statistics\n"
     "train                      - Train at the training grounds\n"
+    "use                        - Use item\n"
     " * Some commands have abbreviated forms, e.g. 'st' for 'stats'.\n"
     "-------------------------------------------------------------------\n";
 
@@ -88,10 +89,15 @@ const wchar_t *msg_player_exp=L"Level:         %" PRIdFAST32 "\n"
 const wchar_t *msg_player_inv=L"-------------------------------------------------------------------\n"
     "                           Your Inventory\n"
     "Money:         $%-08" PRIdFAST64 "\n"
-    "Weapon:        %ls\n"
-    "Armor:         %ls\n"
     "Capacity:      %" PRIdFAST32 "/%" PRIdFAST32 "\n"
     "Items:         ";
+const wchar_t *msg_player_inv_wielding=L"[WIELDING] ";
+const wchar_t *msg_player_inv_equipping=L"[EQUIPPING] ";
+const wchar_t *msg_player_inv_wearing=L"[WEARING] ";
+const wchar_t *msg_player_inv_wear=L"You put on the %ls.\n";
+const wchar_t *msg_player_inv_wield=L"You wield the %ls.\n";
+const wchar_t *msg_player_inv_equip=L"You equip the %ls.\n";
+const wchar_t *msg_player_inv_alreadyequipped=L"%ls already equipped!\n";
 const wchar_t *msg_player_abl=L"-------------------------------------------------------------------\n"
     "                           Your Abilities\n"
     "   coming soon\n"
@@ -100,10 +106,14 @@ const wchar_t *msg_player_say=L"%ls says: ";
 
 const wchar_t *msg_db_notinstore=L"You are not in a store.\n";
 const wchar_t *msg_db_inosuchitem=L"There is no such item.\n";
-const wchar_t *msg_db_ibuyitemhint=L"%ls purchased.\n";
+const wchar_t *msg_db_iobtainitemhint=L"%ls obtained.\n";
 const wchar_t *msg_db_icantafford=L"You cannot afford the item. (missing $%" PRIdFAST32 ")\n";
 const wchar_t *msg_db_icantcarry=L"You can't carry this much.\n";
-const wchar_t *msg_db_ridnullexceptionerror=L"Null exception error: trying to access an invalid room id.\n";
-const wchar_t *msg_db_iidnullexceptionerror=L"Null exception error: trying to access an invalid item id.\n";
+const wchar_t *msg_db_ridnullexceptionerror=L"Null exception error: invalid room id.\n";
+const wchar_t *msg_db_iidnullexceptionerror=L"Null exception error: invalid item id.\n";
+const wchar_t *msg_db_eidnullexceptionerror=L"Null exception error: invalid enemy id.\n";
+const wchar_t *msg_db_retidnullexceptionerror=L"Null exception error: invalid room entity id.\n";
+const wchar_t *msg_db_ietidnullexceptionerror=L"Null exception error: invalid item entity id.\n";
+const wchar_t *msg_db_eetidnullexceptionerror=L"Null exception error: invalid enemy entity id.\n";
 const wchar_t *msg_db_listitem=L"%-50ls  | $%" PRIdFAST32 "\n";
 #endif

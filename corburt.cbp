@@ -36,15 +36,14 @@
 		</Unit>
 		<Unit filename="include/cbbase.h" />
 		<Unit filename="include/cbcurses.h" />
-		<Unit filename="include/cbdirect.h" />
 		<Unit filename="include/cbfio.h" />
 		<Unit filename="include/cbfio_base.h" />
 		<Unit filename="include/cbio.h" />
 		<Unit filename="include/cbplayer.h" />
-		<Unit filename="include/cr.h" />
 		<Unit filename="include/dbbuff.h" />
 		<Unit filename="include/dbenemy.h" />
 		<Unit filename="include/dbentity.h" />
+		<Unit filename="include/dbfio_.h" />
 		<Unit filename="include/dbitem.h" />
 		<Unit filename="include/dbmap.h" />
 		<Unit filename="include/msg.h" />
