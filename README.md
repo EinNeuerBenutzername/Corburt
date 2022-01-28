@@ -60,14 +60,6 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
 - You, probably ;)
 
 ## Version history
-### Latest (v0.1.2, WiP)
-- News
-  - You can now walk around a nameless city, take a look at the enemies, and purchase items.
-- Future plans
-  - Implement item entities.
-  - Purchasing command updates.
-  - Add combat in future update.
-
 ### Demo Version
 - 0.0.1 (Dec 2021)
   - the very beginning of Corburt!
@@ -105,9 +97,17 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
 - 0.1.1 (Jan 2022)
   - finished shop lists.
   - made item database for the goods.
-  - added the 'buy' command: the first command with targets.
+  - the 'buy' command added: the first command with targets.
   - fixed the function 'match' and tested name-matching.
   - opened 'dbfio_.h' for database output.
   - room exits' structure revised to leave space for future updates; typo-fixed.
   - enemy database opened. enemies might be added in the 0.1.2 update.
 
+- 0.1.2 (Jan 2022)
+  - stackable items are temporarily unavailable for purchase.
+    - this is because the merging feature of stackable items has not yet been implemented.
+  - implemented item entities and enemy entities.
+  - updated the function 'match' for stability and security.
+  - inventory layout remade.
+  - the 'use' command added.
+  - enemies are now shown in room descriptions with brutal line breaks.
