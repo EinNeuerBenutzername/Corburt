@@ -60,12 +60,13 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
 - You, probably ;)
 
 ## Version history
-### Latest (v0.1.1)
+### Latest (v0.1.2, WiP)
 - News
-  - You can now walk around a nameless city and purchase items.
+  - You can now walk around a nameless city, take a look at the enemies, and purchase items.
 - Future plans
-  - Add entities support in the next update.
-  - Add enemies and combat.
+  - Implement item entities.
+  - Purchasing command updates.
+  - Add combat in future update.
 
 ### Demo Version
 - 0.0.1 (Dec 2021)
