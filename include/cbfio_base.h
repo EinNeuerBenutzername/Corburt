@@ -49,7 +49,7 @@ static int_fast32_t int_fast32_t_makebe (int_fast32_t n){
     }
     return result;
 }
-void                 int_fast32_t_read   (int_fast32_t *n,FILE *fp){
+void                int_fast32_t_read   (int_fast32_t *n,FILE *fp){
     if(fio.fail)return;
     int_fast32_t r;
     if(fread(&r,fio.int_fast32_t_size,1,fp)!=1){
