@@ -1,5 +1,6 @@
 #ifndef Corburt_Base_h_Include_Guard
 #define Corburt_Base_h_Include_Guard
+#define DISPLAY_WIDTH 68
 #if __STDC_VERSION__<199901L
     #error Please use a C99 compiler.
 #endif
@@ -31,9 +32,8 @@ struct player{
     nat rnk;
     nat lvl;
     bat exp;
-    nat maxhp;
-    nat hp;
-    nat regen;
+    bat maxhp;
+    bat hp;
     struct stats{
         nat atk;
         nat def;
@@ -45,7 +45,7 @@ struct player{
         nat pts;
     } stats;
     nat roomid;
-} player={L"",1,1,0,10,10,1,{0,0,0,0,0,0,0,21},1};
+} player={L"",1,1,0,10,10,{0,0,0,0,0,0,0,0},1};
 struct inventory{
     nat unlocked;
     nat items[64];
@@ -62,6 +62,7 @@ struct save{
 const nat savescount=5;
 struct save saves[5]={0};
 int_fast32_t cursaveid=0;
+void *pointers[128]={NULL};
 nat pointerinuse=0;
 real tick=0.0f;
 
@@ -71,13 +72,15 @@ enum errorenum{
     error_cannotrealloc,
     error_badcharbit
 };
-void printc(int color,const wchar_t *format,...);
+void printc(int color,const wchar_t *format,...); // obsolete, please use printr()
+size_t wcwidth(const wchar_t wc);
+size_t wcswidth(const wchar_t *wcs);
 void printr(int color,const wchar_t *format,...);
-void printword(size_t pos,size_t width,wchar_t *word);
+void printword(size_t *pos,size_t width,wchar_t *word);
 void tracelog(int color,const wchar_t *format,...);
 void fatalerror(enum errorenum error_id);
 void *mallocpointer(size_t bytes);
-void *mallocpointer_(size_t bytes); // visible when Corburt_Pointer_Trace_Level is bigger than 2
+void *mallocpointer_(size_t bytes); // visible when Corburt_Pointer_Trace_Level is bigger than 1
 void *reallocpointer(void *pointer,size_t bytes);
 void freepointer(void *pointer);
 void freepointer_(void *pointer);
@@ -93,71 +96,86 @@ void printc(int color,const wchar_t *format,...){
     if(color!=Default)cbc_setcolor(Default);
     fflush(stdout);
 }
+size_t wcwidth(const wchar_t wc){
+    if((wc>=11904&&wc<=55215)||(wc>=63744&&wc<=64255)||(wc>=65281&&wc<=65374)){ // ambiguous E.Asian wide characters
+        return 2;
+    }
+    return 1;
+}
+size_t wcswidth(const wchar_t *wcs){
+    size_t len=0;
+    for(size_t i=0;i<wcslen(wcs);i++){
+        len+=wcwidth(wcs[i]);
+    }
+    return len;
+}
+wchar_t *printr_dest=NULL;
+wchar_t *printr_token=NULL;
 void printr(int color,const wchar_t *format,...){
+    static size_t pos=0;
     if(color!=Default)cbc_setcolor(color);
-    wchar_t *dest=mallocpointer_(1024*sizeof(wchar_t));
-    wchar_t *token;
-    wmemset(dest,0,1024);
     fflush(stdout);
+    wmemset(printr_dest,0,1024);
+    wmemset(printr_token,0,DISPLAY_WIDTH);
     va_list args;
     va_start(args,format);
-    vswprintf(dest,1024,format,args);
+    vswprintf(printr_dest,1024,format,args);
     va_end(args);
 
-    if(dest[0]==L' ')putc(' ',stdout);
-    size_t row,col;
-    foo endwithspace=false;
-    cbc_getcursor(&row,&col);
-    if(dest[wcslen(dest)-1]==L' ')endwithspace=true;
-    token=wcstok(dest,L" ");
-    printword(col,67,token);
-    if(token!=NULL)token=wcstok(NULL,L" ");
-    while(token!=NULL){
-        putc(' ',stdout);
-        cbc_getcursor(&row,&col);
-        printword(col,68,token);
-        token=wcstok(NULL,L" ");
+    size_t wcsl=0,wcsw=0,wcsld=wcslen(printr_dest);
+    for(size_t i=0;i<wcsld;i++){
+        if(printr_dest[i]==L'\n'){
+            if(wcsl>0)wprintf(L"%ls\n",printr_token);
+            else putc('\n',stdout);
+            pos=0;wmemset(printr_token,0,wcsl);
+            wcsl=0;wcsw=0;
+        }
+        else if(printr_dest[i]==L' '){
+            if(wcsl>0)wprintf(L"%ls ",printr_token);
+            else putc(' ',stdout);
+            pos+=wcsl+1;wmemset(printr_token,0,wcsl);
+            wcsl=0;wcsw=0;
+        }
+        else{
+            if(wcsw+pos>=DISPLAY_WIDTH-1){
+                size_t j;
+                for(j=i;j<wcslen(printr_dest);j++){
+                    if(printr_dest[j]==L'\n'||printr_dest[j]==L' ')break;
+                }
+                if(j-i+1<DISPLAY_WIDTH){
+                    wprintf(L"\n%ls",printr_token);
+                    pos=wcsw;wmemset(printr_token,0,wcsl);
+                    wcsl=0;wcsw=0;
+                }else{
+                    wprintf(L"%ls\n",printr_token);
+                    pos=0;wmemset(printr_token,0,wcsl);
+                    wcsl=0;wcsw=0;
+                }
+            }
+            printr_token[wcsl]=printr_dest[i];
+            wcsl++;
+            wcsw+=wcwidth(printr_dest[i]);
+            if(i+1==wcsld){
+                wprintf(L"%ls",printr_token);
+                pos=wcsw;wmemset(printr_token,0,wcsl);
+                wcsl=0;wcsw=0;
+            }
+        }
     }
-    if(endwithspace)putc(' ',stdout);
 
     if(color!=Default)cbc_setcolor(Default);
     fflush(stdout);
-    freepointer_(dest);
-}
-void printword(size_t pos,size_t width,wchar_t *word){
-    if(wcslen(word)+pos<width){
-        wprintf(L"%ls",word);
-    }
-    else if(wcslen(word)>=width){
-        size_t start=0,wcsl=wcslen(word);
-        wchar_t *line=mallocpointer_((width+1)*sizeof(wchar_t));
-        wmemset(line,0,width+1);
-        wmemcpy(line,word,width-pos);
-        wprintf(L"%ls\n",line);
-        start+=width-pos;
-        while(wcsl-start>width+1){
-            wmemset(line,0,width+1);
-            wmemcpy(line,word+start,width);
-            wprintf(L"%ls\n",line);
-            start+=width;
-        }
-        wmemset(line,0,width+1);
-        wmemcpy(line,word+start,wcsl-start);
-        wprintf(L"%ls",line);
-        freepointer_(line);
-    }
-    else{
-        wprintf(L"\n%ls",word);
-    }
 }
 void tracelog(int color,const wchar_t *format,...){
 #ifdef Corburt_Debug
-    cbc_setcolor(color);
+    if(color!=Default)cbc_setcolor(color);
+    fflush(stdout);
     va_list args;
     va_start(args,format);
     vwprintf(format,args);
     va_end(args);
-    cbc_setcolor(Default);
+    if(color!=Default)cbc_setcolor(Default);
+    fflush(stdout);
 #else
     return;
 #endif
@@ -174,15 +192,15 @@ void fatalerror(enum errorenum error_id){
     default:
         msg=msg_error_unknown;break;
     }
-    printc(Red,msg);
+    printr(Red,msg);
     exit(-1);
 }
 void *mallocpointer(size_t bytes){
     void *pointer=NULL;
     pointer=malloc(bytes);
     if(pointer==NULL)fatalerror(error_cannotmalloc);
+    pointerinuse++;
     if(Corburt_Pointer_Trace_Level>0){
-        pointerinuse++;
         tracelog(Green,msg_trace_malloced,bytes);
         tracelog(Green,msg_trace_pointerinuse,pointerinuse);
     }
@@ -192,8 +210,8 @@ void *mallocpointer_(size_t bytes){
     void *pointer=NULL;
     pointer=malloc(bytes);
     if(pointer==NULL)fatalerror(error_cannotmalloc);
+    pointerinuse++;
     if(Corburt_Pointer_Trace_Level>1){
-        pointerinuse++;
         tracelog(Green,msg_trace_malloced,bytes);
         tracelog(Green,msg_trace_pointerinuse,pointerinuse);
     }
@@ -210,8 +228,8 @@ void *reallocpointer(void *pointer,size_t bytes){
 void freepointer(void *pointer){
     if(pointer==NULL)return;
     free(pointer);
+    pointerinuse--;
     if(Corburt_Pointer_Trace_Level>0){
-        pointerinuse--;
         tracelog(Green,msg_trace_freed);
         tracelog(Green,msg_trace_pointerinuse,pointerinuse);
     }
@@ -220,8 +238,8 @@ void freepointer(void *pointer){
 void freepointer_(void *pointer){
     if(pointer==NULL)return;
     free(pointer);
+    pointerinuse--;
     if(Corburt_Pointer_Trace_Level>1){
-        pointerinuse--;
         tracelog(Green,msg_trace_freed);
         tracelog(Green,msg_trace_pointerinuse,pointerinuse);
     }

@@ -10,7 +10,7 @@ const wchar_t *msg_global_splash=L"   @@@@                @@\n"
 "  ##     ##  ## ##  ## ## ## ##  ## ##  ## ##\n";
 const wchar_t *msg_global_splash2=L"  $$  $$ $$  $$ $$     $$ $$ $$  $$ $$     $$\n"
 "   $$$$   $$$$  $$     $$$    $$$$  $$      $$$\n\n";
-const wchar_t *msg_global_corburtversion=L"v0.1.1";
+const wchar_t *msg_global_corburtversion=L"v0.1.4";
 const wchar_t *msg_global_nosave=L"No save files found.\n";
 const wchar_t *msg_global_scansave=L"Scanning the save file...\n";
 const wchar_t *msg_global_saveempty=L"Save file is empty.\n";
@@ -73,11 +73,12 @@ const wchar_t *msg_player_walkno=L"You walk towards an impossible direction and 
 const wchar_t *msg_player_canttrain=L"This does not look like a place for training.\n";
 const wchar_t *msg_player_canttrain_noexp=L"You are not experienced enough for your training.\n";
 const wchar_t *msg_player_canttrain_maxlvl=L"You have reached the limit of what you can achieve with training.\n";
+const wchar_t *msg_player_trainsuccess=L"You are now level %" PRIdFAST32 "\n";
 const wchar_t *msg_player_info=L"-------------------------------------------------------------------\n"
     "                           Your Statistics\n"
     "Name:          %ls\n"
     "Rank:          %ls\n"
-    "Hit Points:    %" PRIdFAST32 "/%" PRIdFAST32 " (%.2f%%)\n"
+    "Hit Points:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n"
     "Level:         %" PRIdFAST32 "\n"
     "Expierence:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n\n"
     "Attack Damage: %-08" PRIdFAST32 "            Damage Absorb: %-08" PRIdFAST32 "\n"
@@ -101,7 +102,6 @@ const wchar_t *msg_player_inv_equip=L"You equip the %ls.\n";
 const wchar_t *msg_player_inv_alreadyequipped=L"%ls already equipped!\n";
 const wchar_t *msg_player_abl=L"-------------------------------------------------------------------\n"
     "                           Your Abilities\n"
-    "   coming soon\n"
     "-------------------------------------------------------------------\n";
 const wchar_t *msg_player_say=L"%ls says: ";
 

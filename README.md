@@ -9,10 +9,10 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
 ## Features/Highlights
 
 - **written in plain C code** (C99).
-- **multi-platform support**: should work on Windows, Linux, MacOS and several \*nixes.
+- **multi-platform support**: should work on Windows, Linux, MacOS and several other \*nixes.
 - **no external dependencies** (hopefully).
 - **open source**.
-- **easy to compile**: only one .c file, all other files are headers.
+- **easy to compile**: only one .c file, all other files are headers. friendly for C amateurs.
 
 ## Drawbacks
 
@@ -26,10 +26,10 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
 
 ## Requirements
 
-- your computer should either be non-prehistorical Windows or POSIX-compliant \*nix.
+- your computer should either be **non-prehistorical Windows** or **POSIX-compliant \*nix**.
   - this is largely because Corburt's curses library rely on platform-specific headers.
-  - Corburt uses **no** platform-specific headers except for those in `cbcurses.h`. Basically, the only thing limiting Corburt's cross-platform capabilities is the curses support.
-- your compiler should support C99 with these standard C libraries:
+  - Corburt uses **no** platform-specific headers **except for** those in `cbcurses.h`. Basically, the only thing limiting Corburt's cross-platform capabilities is the curses support.
+- your compiler should support **C99** with these standard C libraries:
   - `<inttypes.h>`
     - for `uint_fastX_t` types
   - `<locale.h>`
@@ -48,18 +48,21 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
     - for Unicode support
 - on your computer, a byte **must** contain exactly 8 bits.
   - it is also suggested that the size of wchar_t is exactly 16 bits. it's okay if that's not the case, though.
+  - **bit-wise endianness**, **non-ASCII interchange codes** (e.g. EBCDIC), et cetera, which are less common in my opinion, are **not** allowed, too.
 - it is recommended to use GCC compiler.
-  - it's especially recommended to use Code::Blocks to compile.
-  - I hate MSVC, thus I'll ignore any MSVC-exclusive issues.
+  - it's especially recommended to use Code::Blocks to compile. I am using Code::Blocks to develop Corburt and would upload my C::B project files along with the source.
+  - I might ignore any MSVC-exclusive issues. MSVC just has too many of them.
 
 ## Acknowledgements
 
-- For libraries:
+- for inspiration:
   - **Ron Penton**, author of *MUD Game Programming*
   - **Jankenpopp** and other developers of *93 Realms*
+- for libraries:
   - **JC Wang** (@jcwangxp) for [Crossline](https://github.com/jcwangxp/Crossline)
   - **Evan Sultanik** (@ESultanik) for [MTwister](https://github.com/ESultanik/mtwister)
-- My friend **emf** and **Jack Q** for supporting me and testing Corburt
+- for dev:
+  - My friend **emf** and **Jack Q** for supporting me, giving valuable advice, contributing to Corburt and testing it.
 - You, probably ;)
 
 ## Bug report
@@ -68,42 +71,60 @@ When reporting bugs (if you came across any), please clarify:
 
 - what's the version of Corburt?
   - if it is not the latest version, test on the latest version.
+- if you compiled Corburt yourself, what compiler are you using?
+  - if you're using compilers that don't support C99, I might just ignore you.
+  - btw, GCC doesn't actually **totally** support C99.
 - what had you done before the bug occurred?
 - were there any error messages?
 - did the game crash?
 
 ## Version history
 ### Demo Version
-- 0.0.1 (Dec 2021)
+- **0.0.1** (Dec 2021)
+  
+  - **What's new**: interface
   - the very beginning of Corburt!
   - basic file I/O functions implemented.
   - basic player information implemented.
   - added tracelogs for info and debugging.
   - several bugs introduced.
-- 0.0.2 (Jan 2022)
+  
+- **0.0.2** (Jan 2022)
+  
+  - **What's new**: basic game structure implementation
+  
   - added <inttypes.h> and <stdbool.h> dependencies for stability and portability.
   - basic inventory functions implemented.
   - basic curses library mostly finished.
   - added tracelog levels for info and debugging: 0 is none, and 2 is force explicit logging.
   - commented several obsolete functions and fixed several functions with overflow risks.
-  - platform endianess detection added, enabling file I/O functions to convert data endianess.
+  - platform endianness detection added, enabling file I/O functions to convert data endianness.
   - several empty databases created.
   - several bugs fixed and several new bugs introduced.
-- 0.0.3 (Jan 2022)
+  
+- **0.0.3** (Jan 2022)
+  
+  - **What's new**: basic commands
   - file I/O functions' portability greatly improved.
   - basic curses library revised and finished.
   - save/load functions implemented, only player stats are saved/loaded.
   - added several basic commands.
   - basic inventory information implemented.
   - typo fixes.
-  - typedef revised: corburt would now use signed 32- and 64-bit integers to store integer values.
-- 0.1.0 (Jan 2022)
+  - typedef revised: Corburt would now use signed 32- and 64-bit integers to store integer values.
+  
+- **0.1.0** (Jan 2022)
+  
+  - **What's new**: region - Nameless City
   - visual effect on windows terminal fixed (I guess).
   - added several basic commands.
   - typo & grammar fixes.
   - added the first region: Nameless City (9kb database).
   - map revised.
-- 0.1.1 (Jan 2022)
+  
+- **0.1.1** (Jan 2022)
+  
+  - **What's new**: shops
   - finished shop lists.
   - made item database for the goods.
   - the 'buy' command added: the first command with targets.
@@ -111,7 +132,10 @@ When reporting bugs (if you came across any), please clarify:
   - opened 'dbfio_.h' for database output.
   - room exits' structure revised to leave space for future updates; typo-fixed.
   - enemy database opened. enemies might be added in the 0.1.2 update.
-- 0.1.2 (Jan 2022)
+  
+- **0.1.2** (Jan 2022)
+  
+  - **What's new**: entities
   - stackable items are temporarily unavailable for purchase.
     - this is because the merging feature of stackable items has not yet been implemented.
   - implemented item entities and enemy entities.
@@ -119,18 +143,20 @@ When reporting bugs (if you came across any), please clarify:
   - inventory layout remade.
   - the 'use' command added.
   - enemies are now shown in room descriptions with brutal line breaks.
-- 0.1.2 (Jan 2022)
-  - stackable items are temporarily unavailable for purchase.
-    - this is because the merging feature of stackable items has not yet been implemented.
-  - implemented item entities and enemy entities.
-  - updated the function 'match' for stability and security.
-  - inventory layout remade.
-  - the 'use' command added.
-  - enemies are now shown in room descriptions with brutal line breaks.
-- 0.1.3 (Jan 2022)
-  - line breaks improved (but not yet ready for ambiguous E. Asian literally-wide characters, beware).
+  
+- **0.1.3** (Jan 2022)
+  
+  - **What's new**: purchasing stackable items is now possible
+  - word wrap improved.
   - map fixed.
   - stackable items can now be correctly pushed into inventory, thus now purchasable.
-  - directly pressing return without any input is now a way of repeating your last command.
+  - directly pressing return without any input repeats your last command.
   - items and enemies in a room are shown.
-  - error checks for null exceptions.
+  - added several checks for null exceptions.
+  
+- **0.1.4** (Jan 2022)
+  
+  - **What's new**: improved word wrap
+  - word wrap now detects CJK full-width characters. Yay!
+  - minor improvements on visual effects.
+  - weapon/armor bonus are added onto your stats.

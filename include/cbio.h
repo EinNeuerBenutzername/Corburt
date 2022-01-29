@@ -99,7 +99,7 @@ foo matchcommands(wchar_t *cmd){
         return true;
     }
     if(fullmatch(cmd,L"help")){
-        printc(Default,msg_global_help);
+        printr(Default,msg_global_help);
         return true;
     }
     if(fullmatch(cmd,L"abilities")||
@@ -109,7 +109,7 @@ foo matchcommands(wchar_t *cmd){
     }
     if(fullmatch(cmd,L"save")){
         savesaves();
-        printc(Cyan|Bright,msg_global_progresssaved);
+        printr(Cyan|Bright,msg_global_progresssaved);
         return true;
     }
     if(fullmatch(cmd,L"list")){
@@ -119,11 +119,11 @@ foo matchcommands(wchar_t *cmd){
     if(fullmatch(cmd,L"buy")){ //
         const struct roomdb *rm=db_rfindwithid(player.roomid);
         if(rm==NULL){
-            printc(Red,msg_db_ridnullexceptionerror);
+            printr(Red,msg_db_ridnullexceptionerror);
             return true;
         }
         if(rm->type!=db_roomtype_shop){
-            printc(Default,msg_db_notinstore);
+            printr(Default,msg_db_notinstore);
             return true;
         }
         wchar_t *buytarget=NULL;
@@ -143,7 +143,7 @@ foo matchcommands(wchar_t *cmd){
         for(nat i=0;rm->table[i]!=0;i++){
             const struct itemdb *idb=db_ifindwithid(rm->table[i]);
             if(idb==NULL){
-                printc(Red,msg_db_iidnullexceptionerror);
+                printr(Red,msg_db_iidnullexceptionerror);
                 return true;
             }
             nat curmatch=match(buytarget,idb->name);
@@ -156,7 +156,7 @@ foo matchcommands(wchar_t *cmd){
         if(maxmatch>=0){
             const struct itemdb *idb=db_ifindwithid(maxmatchid);
             if(idb==NULL){
-                printc(Red,msg_db_iidnullexceptionerror);
+                printr(Red,msg_db_iidnullexceptionerror);
                 return true;
             }
             if(idb->type&db_itemtype_stackable_mask){
@@ -164,7 +164,7 @@ foo matchcommands(wchar_t *cmd){
                     etitem_push(idb->id,1,0,1);
                     return true;
                 }else{
-                    printc(Default,msg_db_icantafford,idb->price);
+                    printr(Default,msg_db_icantafford,idb->price);
                 }
             }
             else{
@@ -172,11 +172,11 @@ foo matchcommands(wchar_t *cmd){
                     etitem_push(idb->id,1,0,1);
                     return true;
                 }else{
-                    printc(Default,msg_db_icantafford,idb->price);
+                    printr(Default,msg_db_icantafford,idb->price);
                 }
             }
         }else{
-            printc(Default,msg_db_inosuchitem);
+            printr(Default,msg_db_inosuchitem);
         }
         return true;
     }
@@ -200,7 +200,7 @@ foo matchcommands(wchar_t *cmd){
         for(nat i=0;inventory.items[i]!=0;i++){
             const struct itemdb *idb=db_ifindwithid(et_items[inventory.items[i]-1].itemid);
             if(idb==NULL){
-                printc(Red,msg_db_iidnullexceptionerror);
+                printr(Red,msg_db_iidnullexceptionerror);
                 return true;
             }
             nat curmatch=match(usetarget,idb->name);
@@ -231,22 +231,22 @@ foo matchcommands(wchar_t *cmd){
         if(maxmatch>=0){
             const struct itemdb *idb=db_ifindwithid(maxmatchid);
             if(idb==NULL){
-                printc(Red,msg_db_iidnullexceptionerror);
+                printr(Red,msg_db_iidnullexceptionerror);
                 return true;
             }
             if(idb->type==db_itemtype_weapon){
                 inventory.weapon=ininvindex+1;
-                printc(Default,msg_player_inv_wield,idb->name);
+                printr(Default,msg_player_inv_wield,idb->name);
             }
             if(idb->type==db_itemtype_armor){
                 inventory.armor=ininvindex+1;
-                printc(Default,msg_player_inv_wear,idb->name);
+                printr(Default,msg_player_inv_wear,idb->name);
             }
             if(idb->type==db_itemtype_accessory){
                 foo canequip=true;
                 for(nat k=0;k<5;k++){
                     if(inventory.accessories[k]==ininvindex+1){
-                        printc(Default,msg_player_inv_alreadyequipped,idb->name);
+                        printr(Default,msg_player_inv_alreadyequipped,idb->name);
                         canequip=false;
                         break;
                     }
@@ -255,7 +255,7 @@ foo matchcommands(wchar_t *cmd){
                     for(nat k=0;k<5;k++){
                         if(inventory.accessories[k]==0){
                             inventory.accessories[k]=ininvindex+1;
-                            printc(Default,msg_player_inv_equip,idb->name);
+                            printr(Default,msg_player_inv_equip,idb->name);
                             break;
                         }
                     }
@@ -263,7 +263,7 @@ foo matchcommands(wchar_t *cmd){
             }
             // consume
         }else{
-            printc(Default,msg_db_inosuchitem);
+            printr(Default,msg_db_inosuchitem);
         }
         return true;
     }
@@ -275,7 +275,7 @@ void processinput(){
         cbc_getcursor(&row,&col);
         if(row>0)cbc_setcursor(row-1,0);
         if(wcslen(inputbufl)==0)return;
-        printc(Yellow,L"%ls\n",inputbufl);
+        printr(Yellow,L"%ls\n",inputbufl);
         matchcommands(inputbufl);
         return;
     }
@@ -289,7 +289,7 @@ void processinput(){
     }else{
         memset(inputbufl,0,128);
     }
-    printc(Cyan|Bright,msg_player_say,player.name);
+    printr(Cyan|Bright,msg_player_say,player.name);
     printr(Default,L"%ls\n",inputbuf);
 //    freepointer_(inputbufl);
     return;

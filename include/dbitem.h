@@ -41,28 +41,28 @@ const struct itemdb itemdbs[]={
         .price=5,
         .cd=1.5f,
         .desc=L"\"Now let's do it with a wooden stick!\"",
-        .stats={.min_=0,.max_=3,.acc=-10}
+        .stats={.min_=0,.max_=3,.acc=-5}
     },
     {.id=2,.name=L"Rusty Knife",
         .type=db_itemtype_weapon,
         .price=5,
         .cd=1.0f,
         .desc=L"A simple rusty knife. What do you expect?",
-        .stats={.min_=1,.max_=2,.acc=10}
+        .stats={.min_=1,.max_=2,.acc=3}
     },
     {.id=3,.name=L"Stiletto",
         .type=db_itemtype_weapon,
         .price=15,
         .cd=0.5f,
         .desc=L"Born for stabbing.",
-        .stats={.min_=1,.max_=4,.acc=15}
+        .stats={.min_=1,.max_=4,.acc=5}
     },
     {.id=4,.name=L"Iron Shortsword",
         .type=db_itemtype_weapon,
         .price=30,
         .cd=1.5f,
         .desc=L"Classic newbie weapon.",
-        .stats={.min_=3,.max_=6,.acc=5}
+        .stats={.min_=3,.max_=6,.acc=3}
     },
     {.id=5,.name=L"Vicious Stiletto",
         .type=db_itemtype_weapon,
@@ -70,14 +70,14 @@ const struct itemdb itemdbs[]={
         .cd=0.5f,
         .crit=0.05f,
         .desc=L"Specially enhanced for your stabbing pleasure...",
-        .stats={.min_=2,.max_=5,.acc=20}
+        .stats={.min_=2,.max_=5,.acc=13}
     },
     {.id=6,.name=L"Knife",
         .type=db_itemtype_weapon,
         .price=18,
         .cd=1.0f,
         .desc=L"Designed to cut things, not people.",
-        .stats={.min_=2,.max_=5,.acc=12}
+        .stats={.min_=2,.max_=5,.acc=4}
     },
     {.id=7,.name=L"Rusty Sword",
         .type=db_itemtype_weapon,
@@ -145,49 +145,49 @@ const struct itemdb itemdbs[]={
         .type=db_itemtype_armor,
         .price=40,
         .desc=L"Pig skin, stronger than most people's.",
-        .stats={.def=1,.dod=10,.acc=8}
+        .stats={.def=1,.dod=4,.acc=5}
     },
     {.id=18,.name=L"Chain Shirt",
         .type=db_itemtype_armor,
         .price=75,
         .desc=L"Do you feel chained?",
-        .stats={.def=3,.dod=4,.acc=19}
+        .stats={.def=3,.dod=2,.acc=9}
     },
     {.id=19,.name=L"Hide",
         .type=db_itemtype_armor,
         .price=35,
         .desc=L"Pig skin, stronger than most pigs'.",
-        .stats={.def=2,.dod=-2,.acc=9}
+        .stats={.def=2,.dod=-2,.acc=2}
     },
     {.id=20,.name=L"Scalemail Armor",
         .type=db_itemtype_armor,
         .price=85,
         .desc=L"They're like flappy wings!",
-        .stats={.def=3,.dod=-8,.acc=6}
+        .stats={.def=3,.dod=-3,.act=-3,.acc=5}
     },
     {.id=21,.name=L"Chainmail Armor",
         .type=db_itemtype_armor,
         .price=165,
         .desc=L"\"The more you tank\"",
-        .stats={.def=4,.dod=-12,.acc=4}
+        .stats={.def=4,.dod=-5,.acc=4}
     },
     {.id=22,.name=L"Breastplate Armor",
         .type=db_itemtype_armor,
         .price=260,
         .desc=L"\"The less you dodge\"",
-        .stats={.def=5,.dod=-16,.acc=1}
+        .stats={.def=5,.dod=-8,.acc=1}
     },
     {.id=23,.name=L"Platemail Armor",
         .type=db_itemtype_armor,
         .price=400,
         .desc=L"Only the weak dodges.",
-        .stats={.def=6,.dod=-19,.acc=-1}
+        .stats={.def=6,.dod=-13,.acc=-1}
     },
     {.id=24,.name=L"Full Platemail Armor",
         .type=db_itemtype_armor,
         .price=650,
         .desc=L"Dodging? What's that?",
-        .stats={.def=8,.dod=-23,.acc=-3}
+        .stats={.def=8,.dod=-16,.acc=-3}
     },
     {.id=25,.name=L"Necklace of Slight Regeneration",
         .type=db_itemtype_accessory,
@@ -297,7 +297,7 @@ void getitemname(nat id,wchar_t *itemname){
         const struct itemdb *idb=db_ifindwithid(id);
         if(idb==NULL){
             printf("\n");
-            printc(Red,msg_db_iidnullexceptionerror);
+            printr(Red,msg_db_iidnullexceptionerror);
             p=L"undefined";
             break;
         }

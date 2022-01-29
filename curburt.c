@@ -8,9 +8,12 @@
 #include "include/cbfio.h"
 #include "include/dbentity.h"
 void launchcb(){
+    printr_dest=mallocpointer_(1024*sizeof(wchar_t));
+    printr_token=mallocpointer_(DISPLAY_WIDTH*sizeof(wchar_t));
     assertcheck();
     cbc_init();
     cbc_setwindowtitle("Corburt");
+    atexit(cleanup);
     cbc_setcolor(Default);
     cbc_clearscreen();
     tracelog(Green,msg_trace_savesize,sizeof(struct save));
@@ -24,13 +27,14 @@ void launchcb(){
     inputbufl=mallocpointer(128*sizeof(wchar_t));
     wmemset(inputbuf,0,128);
     wmemset(inputbufl,0,128);
+    printr(Default,msg_line);
 }
 int main(){
     launchcb();
-    printc(Green|Bright,L"%ls",msg_global_welcome);
-    printc(White,msg_global_splash);
-    printc(Yellow,msg_global_splash2);
-    printc(White,L"%50ls\n",msg_global_corburtversion);
+    printr(Green|Bright,L"%ls",msg_global_welcome);
+    printr(White,msg_global_splash);
+    printr(Yellow,msg_global_splash2);
+    printr(White,L"%50ls\n",msg_global_corburtversion);
     readsaves();
     db_rshowdesc(player.roomid);
 	while(!quit_game){

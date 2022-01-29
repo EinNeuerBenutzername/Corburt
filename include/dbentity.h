@@ -98,7 +98,7 @@ void etenemy_push(nat enemyid,nat roomid){
         }
     }
     if(etr==NULL){ // no such room
-        printc(Red,msg_db_ridnullexceptionerror);
+        printr(Red,msg_db_ridnullexceptionerror);
         return;
     }
     for(nat i=0;enemydbs[i].id!=0;i++){
@@ -108,7 +108,7 @@ void etenemy_push(nat enemyid,nat roomid){
         }
     }
     if(edb==NULL){ // no such enemy
-        printc(Red,msg_db_eidnullexceptionerror);
+        printr(Red,msg_db_eidnullexceptionerror);
         return;
     }
     for(nat i=0;i<DBE_ENEMYCAP;i++){
@@ -147,7 +147,7 @@ void etenemy_push(nat enemyid,nat roomid){
 }
 const struct enemydb *et_getenemydb(nat enemyentityid){
     if(et_enemies[enemyentityid-1].available==false){
-        printc(Red,msg_db_eetidnullexceptionerror);
+        printr(Red,msg_db_eetidnullexceptionerror);
         return NULL;
     }
     const struct enemydb *edb=db_efindwithid(et_enemies[enemyentityid-1].enemyid);
@@ -176,7 +176,7 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
             }
         }
         if(etr==NULL){ // no such room
-            printc(Red,msg_db_ridnullexceptionerror);
+            printr(Red,msg_db_ridnullexceptionerror);
             return;
         }
     }
@@ -187,7 +187,7 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
         }
     }
     if(idb==NULL){
-        printc(Red,msg_db_iidnullexceptionerror);
+        printr(Red,msg_db_iidnullexceptionerror);
         return;
     }
     nat stackable=idb->type&db_itemtype_stackable_mask;
@@ -265,7 +265,7 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
                 }
             }
             else if((!success)&&(!hasslot)){
-                printc(Default,msg_db_ietfull);
+                printr(Default,msg_db_ietfull);
             }
         }
     }
@@ -285,14 +285,14 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
                     itemscount++;
                     if(purchase){
                         inventory.money-=idb->price;
-                        printc(Default,msg_db_ipurchaseitemhint,idb->name);
+                        printr(Default,msg_db_ipurchaseitemhint,idb->name);
                     }
                     success=true;
                     break;
                 }
             }
             if(!success){ // drops to the ground
-                printc(Default,msg_db_icantcarry);
+                printr(Default,msg_db_icantcarry);
                 if(!purchase)etitem_push(itemid,qnty,player.roomid,0);
             }
         }
@@ -337,20 +337,21 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
                 }
             }
             else if((!success)&&(!hasslot)){ // drops to the ground
-                printc(Default,msg_db_icantcarry);
+                printr(Default,msg_db_icantcarry);
                 if(!purchase)etitem_push(itemid,qnty,player.roomid,0);
             }
             if(purchase){
                 inventory.money-=idb->price*qnty2;
-                printc(Default,msg_db_ipurchasemultitemhint,idb->name,qnty2);
+                printr(Default,msg_db_ipurchasemultitemhint,idb->name,qnty2);
             }
+            qnty=qnty2;
         }
     }
-    tracelog(Cyan,L"Created item entity: entityid=%d (qnty=%d, itemid=%d, roomid=%d)\n",(int)qnty, (int)itementityindex+1,(int)itemid,(int)roomid);
+    tracelog(Cyan,L"Created item entity: entityid=%d (qnty=%d, itemid=%d, roomid=%d)\n",(int)itementityindex+1,(int)qnty,(int)itemid,(int)roomid);
 }
 const struct itemdb *et_getitemdb(nat itementityid){
     if(et_items[itementityid-1].available==false){
-        printc(Red,msg_db_ietidnullexceptionerror);
+        printr(Red,msg_db_ietidnullexceptionerror);
         return NULL;
     }
     const struct itemdb *idb=db_ifindwithid(et_items[itementityid-1].itemid);

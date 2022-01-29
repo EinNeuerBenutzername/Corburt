@@ -1,5 +1,7 @@
 #ifndef Corburt_Player_h_Include_Guard
 #define Corburt_Player_h_Include_Guard
+//#define LVL_CAP 120
+#define LVL_CAP 20
 #include "dbitem.h"
 #include "dbmap.h"
 const bat exp2next[]={
@@ -121,7 +123,8 @@ const bat exp2next[]={
     [115]=136425521748,
     [116]=163710601714,
     [117]=196452697229,
-    [118]=235743211399
+    [118]=235743211399,
+    [119]=235743211399
 };
 const wchar_t *ranks[]={
     L"The Condemned",
@@ -133,16 +136,6 @@ const wchar_t *ranks[]={
     L"Dev"
 };
 struct {
-    struct basestats{
-        nat atk;
-        nat def;
-        nat acc;
-        nat dod;
-        nat stl;
-        nat act;
-        nat con;
-        nat pts;
-    } basestats;
     struct calcstats{
         nat atk;
         nat def;
@@ -156,6 +149,9 @@ struct {
 } cbp;
 
 static void plvlup();
+static void paddgearstats();
+void paddexp(nat add);
+void pcalcstats();
 void pshowstats();
 void pshowabl();
 void pshowinv();
@@ -166,41 +162,95 @@ void ptrain();
 void peditstats();
 
 static void plvlup(){
+    if(player.lvl>=LVL_CAP)return;
     player.lvl++;
-    player.stats.pts+=5;
-    player.maxhp+=player.lvl;
+    player.stats.pts+=4;
+    player.stats.pts+=player.lvl/9.257f;
+    player.maxhp=10;
+    player.maxhp+=player.lvl*player.lvl/1.942f;
+    player.maxhp+=player.stats.con*player.lvl/2.85f;
+    player.maxhp+=player.stats.con*player.lvl*player.lvl/32.52f;
+    player.maxhp+=player.stats.con*player.stats.con*player.lvl/25972.142f;
+    printr(Green|Bright,msg_player_trainsuccess,player.lvl);
+}
+static void paddgearstats(){
+    if(inventory.weapon!=0){
+        struct et_item *eti=&et_items[inventory.items[inventory.weapon-1]-1];
+        const struct itemdb *idb=db_ifindwithid(eti->itemid);
+        cbp.calcstats.atk+=idb->stats.atk;
+        cbp.calcstats.def+=idb->stats.def;
+        cbp.calcstats.acc+=idb->stats.acc;
+        cbp.calcstats.dod+=idb->stats.dod;
+        cbp.calcstats.stl+=idb->stats.stl;
+        cbp.calcstats.act+=idb->stats.act;
+        cbp.calcstats.con+=idb->stats.con;
+    }
+    if(inventory.armor!=0){
+        struct et_item *eti=&et_items[inventory.items[inventory.armor-1]-1];
+        const struct itemdb *idb=db_ifindwithid(eti->itemid);
+        cbp.calcstats.atk+=idb->stats.atk;
+        cbp.calcstats.def+=idb->stats.def;
+        cbp.calcstats.acc+=idb->stats.acc;
+        cbp.calcstats.dod+=idb->stats.dod;
+        cbp.calcstats.stl+=idb->stats.stl;
+        cbp.calcstats.act+=idb->stats.act;
+        cbp.calcstats.con+=idb->stats.con;
+    }
+}
+void paddexp(nat add){
+    if(add>0)player.exp+=add;
+    else if(add<0&&player.exp+add>0)player.exp+=add;
+    if(player.exp>exp2next[LVL_CAP-1])player.exp=exp2next[LVL_CAP-1];
+}
+void pcalcstats(){
+    if(player.stats.atk>99999)player.stats.atk=99999;
+    if(player.stats.def>99999)player.stats.def=99999;
+    if(player.stats.acc>99999)player.stats.acc=99999;
+    if(player.stats.dod>99999)player.stats.dod=99999;
+    if(player.stats.stl>99999)player.stats.stl=99999;
+    if(player.stats.act>99999)player.stats.act=99999;
+    if(player.stats.con>99999)player.stats.con=99999;
+    cbp.calcstats.atk=player.stats.atk;
+    cbp.calcstats.def=player.stats.def;
+    cbp.calcstats.acc=player.stats.acc;
+    cbp.calcstats.dod=player.stats.dod;
+    cbp.calcstats.stl=player.stats.stl;
+    cbp.calcstats.act=player.stats.act;
+    cbp.calcstats.con=player.stats.con;
+    paddgearstats();
 }
 void pshowstats(){
-    printc(Default,
+    pcalcstats();
+    printr(Default,
         msg_player_info,
         player.name,
         ranks[player.rnk],
         player.hp,player.maxhp,(player.hp*100.0f/player.maxhp),
         player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]),
-        player.stats.atk,player.stats.def,
-        player.stats.acc,player.stats.dod,
-        player.stats.stl,player.stats.act,
-        player.stats.con,player.stats.pts
+        cbp.calcstats.atk,cbp.calcstats.def,
+        cbp.calcstats.acc,cbp.calcstats.dod,
+        cbp.calcstats.stl,cbp.calcstats.act,
+        cbp.calcstats.con,player.stats.pts
     );
 }
-void pshowabl(){printc(Default,msg_player_abl);}
+void pshowabl(){printr(Default,msg_player_abl);}
 void pshowinv(){ //
     nat invitemscount=0;
     for(nat i=0;i<64;i++){
         if(inventory.items[i]!=0)invitemscount++;
     }
-    printc(Default,
+    printr(Default,
         msg_player_inv,
         inventory.money,
         invitemscount,inventory.unlocked
     );
-    if(invitemscount==0)printc(Default,L"(none)");
+    if(invitemscount==0)printr(Default,L"(none)");
     else{ //
         for(nat i=0,j=0;i<64;i++){
             if(inventory.items[i]!=0){
                 struct et_item *eti=&et_items[inventory.items[i]-1];
                 const struct itemdb *idb=db_ifindwithid(eti->itemid);
-                if(j>0)printc(Default,L"\n               ");
+                if(j>0)printr(Default,L"\n               ");
                 if(inventory.weapon==i+1){
                     printr(Magenta|Bright,msg_player_inv_wielding);
                 }
@@ -221,50 +271,50 @@ void pshowinv(){ //
             }
         }
     }
-    printc(Default,L"\n%ls",msg_line);
+    printr(Default,L"\n%ls",msg_line);
 }
 void pshowexp(){
-    printc(Default,msg_player_exp,player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]));
+    printr(Default,msg_player_exp,player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]));
 }
 void pmove(enum direction dir){ // ready for special exits
     const struct roomdb *rm=db_rfindwithid(player.roomid);
     if(rm==NULL){
-        printc(Red,msg_db_ridnullexceptionerror);
+        printr(Red,msg_db_ridnullexceptionerror);
         return;
     }
-    if(!rm->exits[dir]){printc(Default,msg_player_walkno);return;}
-    if(db_rfindwithid(rm->exits[dir])==NULL){printc(Default,msg_player_walkno);return;}
+    if(!rm->exits[dir]){printr(Default,msg_player_walkno);return;}
+    if(db_rfindwithid(rm->exits[dir])==NULL){printr(Default,msg_player_walkno);return;}
     if(!rm->exitsid[dir]){
         player.roomid=rm->exits[dir];
         switch(dir){
         case dir_East:
-            printc(Green,msg_player_walkeast);
+            printr(Green,msg_player_walkeast);
             db_rshowdesc(player.roomid);
             return;
         case dir_West:
-            printc(Green,msg_player_walkwest);
+            printr(Green,msg_player_walkwest);
             db_rshowdesc(player.roomid);
             return;
         case dir_North:
-            printc(Green,msg_player_walknorth);
+            printr(Green,msg_player_walknorth);
             db_rshowdesc(player.roomid);
             return;
         case dir_South:
-            printc(Green,msg_player_walksouth);
+            printr(Green,msg_player_walksouth);
             db_rshowdesc(player.roomid);
             return;
         case dir_Up:
-            printc(Green,msg_player_walkup);
+            printr(Green,msg_player_walkup);
             db_rshowdesc(player.roomid);
             return;
         case dir_Down:
-            printc(Green,msg_player_walkdown);
+            printr(Green,msg_player_walkdown);
             db_rshowdesc(player.roomid);
             return;
         default:
             break;
         }
-        printc(Default,msg_player_walkno);
+        printr(Default,msg_player_walkno);
     }else{
         // special exits
     }
@@ -273,19 +323,19 @@ void pattack(){}
 void ptrain(){
     const struct roomdb *rm=db_rfindwithid(player.roomid);
     if(rm==NULL){
-        printc(Red,msg_db_ridnullexceptionerror);
+        printr(Red,msg_db_ridnullexceptionerror);
         return;
     }
     if(rm->type!=db_roomtype_train){
-        printc(Default,msg_player_canttrain);
+        printr(Default,msg_player_canttrain);
         return;
     }
-    if(player.lvl==120){
-        printc(Default,msg_player_canttrain_maxlvl);
+    if(player.lvl==LVL_CAP){
+        printr(Default,msg_player_canttrain_maxlvl);
         return;
     }
     if(player.exp<exp2next[player.lvl-1]){
-        printc(Default,msg_player_canttrain_noexp);
+        printr(Default,msg_player_canttrain_noexp);
     }else{
         plvlup();
     }
