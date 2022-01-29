@@ -62,7 +62,7 @@ struct save{
 const nat savescount=5;
 struct save saves[5]={0};
 int_fast32_t cursaveid=0;
-void *pointers[128]={NULL};
+void *pointerpool[128]={NULL};
 nat pointerinuse=0;
 real tick=0.0f;
 
@@ -70,7 +70,8 @@ real tick=0.0f;
 enum errorenum{
     error_cannotmalloc,
     error_cannotrealloc,
-    error_badcharbit
+    error_badcharbit,
+    error_bufferpooloverflow
 };
 void printc(int color,const wchar_t *format,...); // obsolete, please use printr()
 size_t wcwidth(const wchar_t wc);
@@ -79,11 +80,12 @@ void printr(int color,const wchar_t *format,...);
 void printword(size_t *pos,size_t width,wchar_t *word);
 void tracelog(int color,const wchar_t *format,...);
 void fatalerror(enum errorenum error_id);
+void *mallocpointer_(size_t bytes); // for testing
 void *mallocpointer(size_t bytes);
-void *mallocpointer_(size_t bytes); // visible when Corburt_Pointer_Trace_Level is bigger than 1
 void *reallocpointer(void *pointer,size_t bytes);
+void freepointer_(void *pointer); // for testing
 void freepointer(void *pointer);
-void freepointer_(void *pointer);
+void freeall();
 void scanline(wchar_t *scan_str,int scans);
 void wcslower(wchar_t **target_str_pos);
 void printc(int color,const wchar_t *format,...){
@@ -189,13 +191,21 @@ void fatalerror(enum errorenum error_id){
         msg=msg_error_cannotrealloc;break;
     case error_badcharbit:
         msg=msg_error_badcharbit;break;
+    case error_bufferpooloverflow:
+        msg=msg_error_bufferpooloverflow;break;
     default:
         msg=msg_error_unknown;break;
     }
     printr(Red,msg);
+    FILE *errorlog=fopen("err.log","w");
+    fprintf(errorlog,"%ls",msg);
+    fclose(errorlog);
     exit(-1);
 }
-void *mallocpointer(size_t bytes){
+void *mallocpointer_(size_t bytes){
+    if(pointerinuse>128){
+        fatalerror(error_bufferpooloverflow);
+    }
     void *pointer=NULL;
     pointer=malloc(bytes);
     if(pointer==NULL)fatalerror(error_cannotmalloc);
@@ -204,9 +214,18 @@ void *mallocpointer(size_t bytes){
         tracelog(Green,msg_trace_malloced,bytes);
         tracelog(Green,msg_trace_pointerinuse,pointerinuse);
     }
+    for(nat i=0;i<128;i++){
+        if(pointerpool[i]==NULL){
+            pointerpool[i]=pointer;
+            break;
+        }
+    }
     return pointer;
 }
-void *mallocpointer_(size_t bytes){
+void *mallocpointer(size_t bytes){
+    if(pointerinuse>128){
+        fatalerror(error_bufferpooloverflow);
+    }
     void *pointer=NULL;
     pointer=malloc(bytes);
     if(pointer==NULL)fatalerror(error_cannotmalloc);
@@ -215,18 +234,44 @@ void *mallocpointer_(size_t bytes){
         tracelog(Green,msg_trace_malloced,bytes);
         tracelog(Green,msg_trace_pointerinuse,pointerinuse);
     }
+    for(nat i=0;i<128;i++){
+        if(pointerpool[i]==NULL){
+            pointerpool[i]=pointer;
+            break;
+        }
+    }
     return pointer;
 }
 void *reallocpointer(void *pointer,size_t bytes){
-    return realloc(pointer,bytes);
+    for(nat i=0,found=0;i<128;i++){
+        if(pointerpool[i]==pointer){
+            found=1;
+            break;
+        }
+        if(i==127&&found==0){
+            printc(Red,msg_trace_illegalrealloc);
+            return NULL;
+        }
+    }
+    pointer=realloc(pointer,bytes);
     if(pointer==NULL)fatalerror(error_cannotmalloc);
     if(Corburt_Pointer_Trace_Level>0){
         tracelog(Green,msg_trace_realloced,bytes);
     }
     return pointer;
 }
-void freepointer(void *pointer){
+void freepointer_(void *pointer){
     if(pointer==NULL)return;
+    for(nat i=0;i<128;i++){
+        if(pointerpool[i]==pointer){
+            pointerpool[i]=NULL;
+            break;
+        }
+        if(i==127){
+            printc(Red,msg_trace_illegalfree);
+            return;
+        }
+    }
     free(pointer);
     pointerinuse--;
     if(Corburt_Pointer_Trace_Level>0){
@@ -235,8 +280,18 @@ void freepointer(void *pointer){
     }
     pointer=NULL;
 }
-void freepointer_(void *pointer){
+void freepointer(void *pointer){
     if(pointer==NULL)return;
+    for(nat i=0;i<128;i++){
+        if(pointerpool[i]==pointer){
+            pointerpool[i]=NULL;
+            break;
+        }
+        if(i==127){
+            printc(Red,msg_trace_illegalfree);
+            return;
+        }
+    }
     free(pointer);
     pointerinuse--;
     if(Corburt_Pointer_Trace_Level>1){
@@ -244,6 +299,16 @@ void freepointer_(void *pointer){
         tracelog(Green,msg_trace_pointerinuse,pointerinuse);
     }
     pointer=NULL;
+}
+void freeall(){
+    tracelog(Green,msg_trace_pointerinuse,pointerinuse);
+    for(nat i=0;i<128&&pointerinuse>0;i++){
+        if(pointerpool[i]!=NULL){
+            free(pointerpool[i]);
+            pointerinuse--;
+        }
+    }
+    tracelog(Green,msg_trace_freealled);
 }
 void scanline(wchar_t *scan_str,int scans){
     cbc_setcolor(Yellow);
@@ -266,6 +331,7 @@ void wcslower(wchar_t **target_str_pos){
 }
 //misc
 void launchcb();
+void endcb();
 void assertcheck();
 nat match(const wchar_t *sub_str,const wchar_t *main_str);
 void checkendianess();
@@ -275,8 +341,8 @@ void assertcheck(){
 }
 nat match(const wchar_t *sub_str,const wchar_t *main_str){
     if(wcslen(main_str)==0)return 0;
-    wchar_t *str1l=mallocpointer_(sizeof(wchar_t)*(wcslen(main_str)+1));
-    wchar_t *str2l=mallocpointer_(sizeof(wchar_t)*(wcslen(sub_str)+1));
+    wchar_t *str1l=mallocpointer(sizeof(wchar_t)*(wcslen(main_str)+1));
+    wchar_t *str2l=mallocpointer(sizeof(wchar_t)*(wcslen(sub_str)+1));
     wcscpy(str1l,main_str);
     wcscpy(str2l,sub_str);
     wcslower(&str1l);
@@ -285,18 +351,18 @@ nat match(const wchar_t *sub_str,const wchar_t *main_str){
     str2l[wcslen(str2l)]=0;
     wchar_t *pos=wcsstr(str1l,str2l);
     if(pos==NULL){
-        freepointer_(str1l);
-        freepointer_(str2l);
+        freepointer(str1l);
+        freepointer(str2l);
         return -1;
     }else{
         if(pos==str1l||str1l[(pos-str1l)-1]==L' '){
-            freepointer_(str1l);
-            freepointer_(str2l);
+            freepointer(str1l);
+            freepointer(str2l);
             real m=(10000.0f*wcslen(sub_str))/(1.0f*wcslen(main_str));
             return (nat)m;
         }else{
-            freepointer_(str1l);
-            freepointer_(str2l);
+            freepointer(str1l);
+            freepointer(str2l);
             return -1;
         }
     }

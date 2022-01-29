@@ -176,7 +176,7 @@ static void plvlup(){
 static void paddgearstats(){
     if(inventory.weapon!=0){
         struct et_item *eti=&et_items[inventory.items[inventory.weapon-1]-1];
-        const struct itemdb *idb=db_ifindwithid(eti->itemid);
+        itemdb *idb=db_ifindwithid(eti->itemid);
         cbp.calcstats.atk+=idb->stats.atk;
         cbp.calcstats.def+=idb->stats.def;
         cbp.calcstats.acc+=idb->stats.acc;
@@ -187,7 +187,7 @@ static void paddgearstats(){
     }
     if(inventory.armor!=0){
         struct et_item *eti=&et_items[inventory.items[inventory.armor-1]-1];
-        const struct itemdb *idb=db_ifindwithid(eti->itemid);
+        itemdb *idb=db_ifindwithid(eti->itemid);
         cbp.calcstats.atk+=idb->stats.atk;
         cbp.calcstats.def+=idb->stats.def;
         cbp.calcstats.acc+=idb->stats.acc;
@@ -195,6 +195,19 @@ static void paddgearstats(){
         cbp.calcstats.stl+=idb->stats.stl;
         cbp.calcstats.act+=idb->stats.act;
         cbp.calcstats.con+=idb->stats.con;
+    }
+    for(nat i=0;i<5;i++){
+        if(inventory.accessories[i]!=0){
+            struct et_item *eti=&et_items[inventory.items[inventory.accessories[i]-1]-1];
+            itemdb *idb=db_ifindwithid(eti->itemid);
+            cbp.calcstats.atk+=idb->stats.atk;
+            cbp.calcstats.def+=idb->stats.def;
+            cbp.calcstats.acc+=idb->stats.acc;
+            cbp.calcstats.dod+=idb->stats.dod;
+            cbp.calcstats.stl+=idb->stats.stl;
+            cbp.calcstats.act+=idb->stats.act;
+            cbp.calcstats.con+=idb->stats.con;
+        }
     }
 }
 void paddexp(nat add){
@@ -249,7 +262,7 @@ void pshowinv(){ //
         for(nat i=0,j=0;i<64;i++){
             if(inventory.items[i]!=0){
                 struct et_item *eti=&et_items[inventory.items[i]-1];
-                const struct itemdb *idb=db_ifindwithid(eti->itemid);
+                itemdb *idb=db_ifindwithid(eti->itemid);
                 if(j>0)printr(Default,L"\n               ");
                 if(inventory.weapon==i+1){
                     printr(Magenta|Bright,msg_player_inv_wielding);
@@ -277,7 +290,7 @@ void pshowexp(){
     printr(Default,msg_player_exp,player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]));
 }
 void pmove(enum direction dir){ // ready for special exits
-    const struct roomdb *rm=db_rfindwithid(player.roomid);
+    roomdb *rm=db_rfindwithid(player.roomid);
     if(rm==NULL){
         printr(Red,msg_db_ridnullexceptionerror);
         return;
@@ -321,7 +334,7 @@ void pmove(enum direction dir){ // ready for special exits
 }
 void pattack(){}
 void ptrain(){
-    const struct roomdb *rm=db_rfindwithid(player.roomid);
+    roomdb *rm=db_rfindwithid(player.roomid);
     if(rm==NULL){
         printr(Red,msg_db_ridnullexceptionerror);
         return;

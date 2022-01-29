@@ -156,7 +156,10 @@ When reporting bugs (if you came across any), please clarify:
   
 - **0.1.4** (Jan 2022)
   
-  - **What's new**: improved word wrap
+  - **What's new**: visual & security improvements
   - word wrap now detects CJK full-width characters. Yay!
   - minor improvements on visual effects.
   - weapon/armor bonus are added onto your stats.
+  - implemented brutal leak check for memory management. Corburt will now free all pointers at exit.
+  - free() and realloc() check whether the pointer is a malloc()'ed pointer.
+  - message "you can't afford it" fixed.

@@ -3,6 +3,7 @@
 #include <inttypes.h>
 #include <wchar.h>
 // prepared for future translations. :)
+const wchar_t *msg_global_corburtversion=L"v0.1.4";
 const wchar_t *msg_global_welcome=L"Welcome to Corburt.\n\n";
 const wchar_t *msg_global_splash=L"   @@@@                @@\n"
 "  @@  @@               @@                  @@\n"
@@ -10,7 +11,6 @@ const wchar_t *msg_global_splash=L"   @@@@                @@\n"
 "  ##     ##  ## ##  ## ## ## ##  ## ##  ## ##\n";
 const wchar_t *msg_global_splash2=L"  $$  $$ $$  $$ $$     $$ $$ $$  $$ $$     $$\n"
 "   $$$$   $$$$  $$     $$$    $$$$  $$      $$$\n\n";
-const wchar_t *msg_global_corburtversion=L"v0.1.4";
 const wchar_t *msg_global_nosave=L"No save files found.\n";
 const wchar_t *msg_global_scansave=L"Scanning the save file...\n";
 const wchar_t *msg_global_saveempty=L"Save file is empty.\n";
@@ -55,11 +55,15 @@ const wchar_t *msg_trace_malloced=L"%" PRIdFAST32 " bytes of memory is allocated
 const wchar_t *msg_trace_realloced=L"%" PRIdFAST32 " bytes of memory is reallocated.\n";
 const wchar_t *msg_trace_freed=L"Pointer freed.\n";
 const wchar_t *msg_trace_pointerinuse=L"Number of pointers in use: %" PRIdFAST32 "\n";
+const wchar_t *msg_trace_illegalrealloc=L"Error: Illegal realloc() target\n";
+const wchar_t *msg_trace_illegalfree=L"Error: Illegal free() target\n";
+const wchar_t *msg_trace_freealled=L"All pointers freed.\n";
 
 const wchar_t *msg_error_cannotmalloc=L"Fatal error: Cannot allocate memory.";
 const wchar_t *msg_error_cannotrealloc=L"Fatal error: Cannot reallocate memory.";
 const wchar_t *msg_error_unknown=L"Fatal error: An unknown fatal error occured.";
 const wchar_t *msg_error_badcharbit=L"Fatal error: Macro CHAR_BIT is not 8.";
+const wchar_t *msg_error_bufferpooloverflow=L"Fatal error: Buffer pool overflow. Possible reason: memory leak.";
 
 const wchar_t *msg_line=L"-------------------------------------------------------------------\n";
 

@@ -13,7 +13,7 @@ enum db_itemtype{
     db_itemtype_collect=1|db_itemtype_stackable_mask, // stackable
     db_itemtype_misc=2|db_itemtype_stackable_mask, // stackable
 };
-struct itemdb{
+typedef const struct{
     nat id;
     enum db_itemtype type;
     nat price;
@@ -34,8 +34,8 @@ struct itemdb{
         nat con;
         nat pts;
     } stats;
-};
-const struct itemdb itemdbs[]={
+} itemdb;
+itemdb itemdbs[]={
     {.id=1,.name=L"Wooden Stick",
         .type=db_itemtype_weapon,
         .price=5,
@@ -275,9 +275,9 @@ const struct itemdb itemdbs[]={
     }
 };
 
-const struct itemdb *db_ifindwithid(nat itemid);
+itemdb *db_ifindwithid(nat itemid);
 void getitemname(nat id,wchar_t *itemname);
-const struct itemdb *db_ifindwithid(nat itemid){
+itemdb *db_ifindwithid(nat itemid){
     for(nat i=0;;i++){
         if(itemdbs[i].id==itemid){
             return &itemdbs[i];
@@ -294,7 +294,7 @@ void getitemname(nat id,wchar_t *itemname){
         p=L"(none)";
         break;
     default:;
-        const struct itemdb *idb=db_ifindwithid(id);
+        itemdb *idb=db_ifindwithid(id);
         if(idb==NULL){
             printf("\n");
             printr(Red,msg_db_iidnullexceptionerror);

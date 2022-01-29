@@ -7,7 +7,7 @@ enum db_enemytype {
     db_enemytype_assassin,
     db_enemytype_boss
 };
-struct enemydb {
+typedef const struct {
     nat id;
     enum db_enemytype type;
     wchar_t *name;
@@ -28,8 +28,8 @@ struct enemydb {
         nat act;
         nat con;
     } stats;
-};
-const struct enemydb enemydbs[]={
+} enemydb;
+enemydb enemydbs[]={
     {.id=1,.name=L"Vagrant",
         .type=db_enemytype_plain,
         .desc=L"They have no homes. Just like you...",
@@ -76,8 +76,8 @@ const struct enemydb enemydbs[]={
     {.id=0}
 };
 
-const struct enemydb *db_efindwithid(nat enemyid);
-const struct enemydb *db_efindwithid(nat enemyid){
+enemydb *db_efindwithid(nat enemyid);
+enemydb *db_efindwithid(nat enemyid){
     for(nat i=0;;i++){
         if(enemydbs[i].id==enemyid){
             return &enemydbs[i];

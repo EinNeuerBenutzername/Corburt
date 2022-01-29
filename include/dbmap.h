@@ -16,7 +16,7 @@ enum db_roomregion{
     db_roomregion_nlcity, // nameless city
     db_roomregion_forest, // forests of wrath
 };
-struct roomdb{
+typedef const struct {
     nat id;
     enum db_roomregion region;
     wchar_t *name;
@@ -26,9 +26,9 @@ struct roomdb{
     nat exitsid[6];
     nat table[32];
     nat buff[4];
-};
+} roomdb;
 
-const struct roomdb roomdbs[]={
+roomdb roomdbs[]={
     {.id=1,
         .region=db_roomregion_nlcity,
         .name=L"Town Square of the Nameless City",
@@ -454,10 +454,10 @@ const struct roomdb roomdbs[]={
 
 #include "dbentity.h"
 
-const struct roomdb *db_rfindwithid(nat roomid);
+roomdb *db_rfindwithid(nat roomid);
 void db_rshowdesc(nat roomid);
 void db_rshowtable(nat roomid);
-const struct roomdb *db_rfindwithid(nat roomid){
+roomdb *db_rfindwithid(nat roomid){
     for(nat i=0;;i++){
         if(roomdbs[i].id==roomid){
             return &roomdbs[i];
@@ -468,7 +468,7 @@ const struct roomdb *db_rfindwithid(nat roomid){
     return NULL;
 }
 void db_rshowdesc(nat roomid){
-    const struct roomdb *rm=db_rfindwithid(roomid);
+    roomdb *rm=db_rfindwithid(roomid);
     if(rm==NULL){
         printr(Red,msg_db_ridnullexceptionerror);
         return;
@@ -487,7 +487,7 @@ void db_rshowdesc(nat roomid){
     else{
         for(nat i=0,first=1;i<DBE_ENEMYCAP;i++){
             if(etr->etenemy[i]!=0){
-                const struct enemydb *edb=et_getenemydb(etr->etenemy[i]);
+                enemydb *edb=et_getenemydb(etr->etenemy[i]);
                 if(first){
                     printr(Red|Bright,L"\nenemies: %ls",edb->name);
                 }else{
@@ -503,7 +503,7 @@ void db_rshowdesc(nat roomid){
                     printr(Red,msg_db_ietidnullexceptionerror);
                     continue;
                 }
-                const struct itemdb *idb=db_ifindwithid(eti->itemid);
+                itemdb *idb=db_ifindwithid(eti->itemid);
                 if(idb==NULL){
                     printr(Red,msg_db_iidnullexceptionerror);
                     continue;
@@ -529,7 +529,7 @@ void db_rshowdesc(nat roomid){
     printr(Default,L"\n\n");
 }
 void db_rshowtable(nat roomid){
-    const struct roomdb *rm=db_rfindwithid(roomid);
+    roomdb *rm=db_rfindwithid(roomid);
     if(rm==NULL){
         printr(Red,msg_db_ridnullexceptionerror);
         return;
@@ -541,7 +541,7 @@ void db_rshowtable(nat roomid){
     printr(Default,msg_line);
     for(nat i=0;i<32;i++){
         if(rm->table[i]!=0){
-            const struct itemdb *idb=db_ifindwithid(rm->table[i]);
+            itemdb *idb=db_ifindwithid(rm->table[i]);
             if(idb==NULL){
                 printr(Red,msg_db_iidnullexceptionerror);
                 return;

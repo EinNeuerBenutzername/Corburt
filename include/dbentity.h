@@ -14,7 +14,7 @@ struct et_room{
     nat etinteract[DBE_INTCAP];
 };
 struct et_room *et_rooms=NULL;
-const nat roomsmax=sizeof(roomdbs)/sizeof(struct roomdb)-1;
+const nat roomsmax=sizeof(roomdbs)/sizeof(roomdb)-1;
 struct et_enemy{
     foo available;
     nat roomid;
@@ -41,10 +41,10 @@ void setupentitydata();
 struct et_room *et_findroomwithid(nat roomid);
 void etenemy_expand();
 void etenemy_push(nat enemyid,nat roomid);
-const struct enemydb *et_getenemydb(nat enemyentityid);
+enemydb *et_getenemydb(nat enemyentityid);
 void etitem_expand();
 void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase);
-const struct itemdb *et_getitemdb(nat itementityid);
+itemdb *et_getitemdb(nat itementityid);
 void et_spawnenemies();
 void setupentitydata(){
     tracelog(Green,L"Setting up entity data...\n");
@@ -88,7 +88,7 @@ void etenemy_expand(){
 }
 void etenemy_push(nat enemyid,nat roomid){
     struct et_room *etr=NULL;
-    const struct enemydb *edb=NULL;
+    enemydb *edb=NULL;
     nat enemyreferenceindex=-1, // spawn in etr->etenemy[index]
         enemyentityindex=-1; // spawn in et_enemies[index]
     for(nat i=0;i<roomsmax;i++){
@@ -145,12 +145,12 @@ void etenemy_push(nat enemyid,nat roomid){
     enemiescount++;
     tracelog(Cyan,L"Created enemy entity: entityid=%d (enemyid=%d, roomid=%d)\n",(int)enemyentityindex+1,(int)enemyid,(int)roomid);
 }
-const struct enemydb *et_getenemydb(nat enemyentityid){
+enemydb *et_getenemydb(nat enemyentityid){
     if(et_enemies[enemyentityid-1].available==false){
         printr(Red,msg_db_eetidnullexceptionerror);
         return NULL;
     }
-    const struct enemydb *edb=db_efindwithid(et_enemies[enemyentityid-1].enemyid);
+    enemydb *edb=db_efindwithid(et_enemies[enemyentityid-1].enemyid);
     return edb;
 }
 void etitem_expand(){
@@ -165,7 +165,7 @@ void etitem_expand(){
 void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
     if(qnty<0)return; //
     struct et_room *etr=NULL;
-    const struct itemdb *idb=NULL;
+    itemdb *idb=NULL;
     nat itemreferenceindex=-1, // spawn in etr->etitem[index]
         itementityindex=-1; // spawn in et_items[index]
     if(roomid!=0){
@@ -349,12 +349,12 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
     }
     tracelog(Cyan,L"Created item entity: entityid=%d (qnty=%d, itemid=%d, roomid=%d)\n",(int)itementityindex+1,(int)qnty,(int)itemid,(int)roomid);
 }
-const struct itemdb *et_getitemdb(nat itementityid){
+itemdb *et_getitemdb(nat itementityid){
     if(et_items[itementityid-1].available==false){
         printr(Red,msg_db_ietidnullexceptionerror);
         return NULL;
     }
-    const struct itemdb *idb=db_ifindwithid(et_items[itementityid-1].itemid);
+    itemdb *idb=db_ifindwithid(et_items[itementityid-1].itemid);
     return idb;
 }
 void et_spawnenemies(){

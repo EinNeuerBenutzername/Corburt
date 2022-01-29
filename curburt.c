@@ -7,28 +7,6 @@
 #include "include/cbio.h"
 #include "include/cbfio.h"
 #include "include/dbentity.h"
-void launchcb(){
-    printr_dest=mallocpointer_(1024*sizeof(wchar_t));
-    printr_token=mallocpointer_(DISPLAY_WIDTH*sizeof(wchar_t));
-    assertcheck();
-    cbc_init();
-    cbc_setwindowtitle("Corburt");
-    atexit(cleanup);
-    cbc_setcolor(Default);
-    cbc_clearscreen();
-    tracelog(Green,msg_trace_savesize,sizeof(struct save));
-    tracelog(Green,L"Size of room database: %.2f KB\n",sizeof(roomdbs)/1024.0f);
-    tracelog(Green,L"Size of item database: %.2f KB\n",sizeof(itemdbs)/1024.0f);
-    initrng();
-    checkendianess();
-    setupentitydata();
-        et_spawnenemies();
-    inputbuf=mallocpointer(128*sizeof(wchar_t));
-    inputbufl=mallocpointer(128*sizeof(wchar_t));
-    wmemset(inputbuf,0,128);
-    wmemset(inputbufl,0,128);
-    printr(Default,msg_line);
-}
 int main(){
     launchcb();
     printr(Green|Bright,L"%ls",msg_global_welcome);
@@ -44,4 +22,29 @@ int main(){
 	}
 	savesaves();
     return 0;
+}
+void launchcb(){
+    atexit(endcb);
+    printr_dest=mallocpointer(1024*sizeof(wchar_t));
+    printr_token=mallocpointer(DISPLAY_WIDTH*sizeof(wchar_t));
+    assertcheck();
+    cbc_init();
+    cbc_setwindowtitle("Corburt");
+    cbc_setcolor(Default);
+    cbc_clearscreen();
+    tracelog(Green,msg_trace_savesize,sizeof(struct save));
+    tracelog(Green,L"Size of room database: %.2f KB\n",sizeof(roomdbs)/1024.0f);
+    tracelog(Green,L"Size of item database: %.2f KB\n",sizeof(itemdbs)/1024.0f);
+    initrng();
+    checkendianess();
+    setupentitydata();
+        et_spawnenemies();
+    inputbuf=mallocpointer(128*sizeof(wchar_t));
+    inputbufl=mallocpointer(128*sizeof(wchar_t));
+    wmemset(inputbuf,0,128);
+    wmemset(inputbufl,0,128);
+    printr(Default,msg_line);
+}
+void endcb(){
+    freeall();
 }

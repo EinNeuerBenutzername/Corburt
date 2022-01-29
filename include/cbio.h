@@ -117,7 +117,7 @@ foo matchcommands(wchar_t *cmd){
         return true;
     }
     if(fullmatch(cmd,L"buy")){ //
-        const struct roomdb *rm=db_rfindwithid(player.roomid);
+        roomdb *rm=db_rfindwithid(player.roomid);
         if(rm==NULL){
             printr(Red,msg_db_ridnullexceptionerror);
             return true;
@@ -127,7 +127,7 @@ foo matchcommands(wchar_t *cmd){
             return true;
         }
         wchar_t *buytarget=NULL;
-        buytarget=mallocpointer_(128*sizeof(wchar_t));
+        buytarget=mallocpointer(128*sizeof(wchar_t));
         wmemset(buytarget,0,128);
         foo sth=false;
         nat j=0;
@@ -141,7 +141,7 @@ foo matchcommands(wchar_t *cmd){
         nat maxmatch=-1;
         nat maxmatchid=0;
         for(nat i=0;rm->table[i]!=0;i++){
-            const struct itemdb *idb=db_ifindwithid(rm->table[i]);
+            itemdb *idb=db_ifindwithid(rm->table[i]);
             if(idb==NULL){
                 printr(Red,msg_db_iidnullexceptionerror);
                 return true;
@@ -152,9 +152,9 @@ foo matchcommands(wchar_t *cmd){
                 maxmatchid=idb->id;
             }
         }
-        freepointer_(buytarget);
+        freepointer(buytarget);
         if(maxmatch>=0){
-            const struct itemdb *idb=db_ifindwithid(maxmatchid);
+            itemdb *idb=db_ifindwithid(maxmatchid);
             if(idb==NULL){
                 printr(Red,msg_db_iidnullexceptionerror);
                 return true;
@@ -164,7 +164,7 @@ foo matchcommands(wchar_t *cmd){
                     etitem_push(idb->id,1,0,1);
                     return true;
                 }else{
-                    printr(Default,msg_db_icantafford,idb->price);
+                    printr(Default,msg_db_icantafford,idb->price-inventory.money);
                 }
             }
             else{
@@ -172,7 +172,7 @@ foo matchcommands(wchar_t *cmd){
                     etitem_push(idb->id,1,0,1);
                     return true;
                 }else{
-                    printr(Default,msg_db_icantafford,idb->price);
+                    printr(Default,msg_db_icantafford,idb->price-inventory.money);
                 }
             }
         }else{
@@ -182,7 +182,7 @@ foo matchcommands(wchar_t *cmd){
     }
     if(fullmatch(cmd,L"use")){
         wchar_t *usetarget=NULL;
-        usetarget=mallocpointer_(128*sizeof(wchar_t));
+        usetarget=mallocpointer(128*sizeof(wchar_t));
         wmemset(usetarget,0,128);
         foo sth=false;
         nat j=0;
@@ -198,7 +198,7 @@ foo matchcommands(wchar_t *cmd){
         nat ininvindex=0;
         foo noprev=true;
         for(nat i=0;inventory.items[i]!=0;i++){
-            const struct itemdb *idb=db_ifindwithid(et_items[inventory.items[i]-1].itemid);
+            itemdb *idb=db_ifindwithid(et_items[inventory.items[i]-1].itemid);
             if(idb==NULL){
                 printr(Red,msg_db_iidnullexceptionerror);
                 return true;
@@ -227,9 +227,9 @@ foo matchcommands(wchar_t *cmd){
                 }
             }
         }
-        freepointer_(usetarget);
+        freepointer(usetarget);
         if(maxmatch>=0){
-            const struct itemdb *idb=db_ifindwithid(maxmatchid);
+            itemdb *idb=db_ifindwithid(maxmatchid);
             if(idb==NULL){
                 printr(Red,msg_db_iidnullexceptionerror);
                 return true;
@@ -279,19 +279,16 @@ void processinput(){
         matchcommands(inputbufl);
         return;
     }
-//    wchar_t *inputbufl=mallocpointer_(128*sizeof(wchar_t));
     wmemset(inputbufl,0,128);
     wcscpy(inputbufl,inputbuf);
     wcslower(&inputbufl);
     if(matchcommands(inputbufl)){
-//        freepointer_(inputbufl);
         return;
     }else{
         memset(inputbufl,0,128);
     }
     printr(Cyan|Bright,msg_player_say,player.name);
     printr(Default,L"%ls\n",inputbuf);
-//    freepointer_(inputbufl);
     return;
 }
 
