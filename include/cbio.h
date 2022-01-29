@@ -159,17 +159,21 @@ foo matchcommands(wchar_t *cmd){
                 printc(Red,msg_db_iidnullexceptionerror);
                 return true;
             }
-            // --------------------------
             if(idb->type&db_itemtype_stackable_mask){
-                printc(Red,L"Stackable items aren't yet purchasable!\n");
-                return true;
+                if(inventory.money>idb->price){
+                    etitem_push(idb->id,1,0,1);
+                    return true;
+                }else{
+                    printc(Default,msg_db_icantafford,idb->price);
+                }
             }
-            // --------------------------
-            if(inventory.money>idb->price){
-                etitem_push(idb->id,1,0,1);
-                return true;
-            }else{
-                printc(Default,msg_db_icantafford,idb->price);
+            else{
+                if(inventory.money>idb->price){
+                    etitem_push(idb->id,1,0,1);
+                    return true;
+                }else{
+                    printc(Default,msg_db_icantafford,idb->price);
+                }
             }
         }else{
             printc(Default,msg_db_inosuchitem);
@@ -266,18 +270,15 @@ foo matchcommands(wchar_t *cmd){
     return false;
 }
 void processinput(){
-    static foo processinput_internal_tmps=false;
     if(wcslen(inputbuf)==0){
         size_t row,col;
         cbc_getcursor(&row,&col);
-        cbc_setcursor(row>0?row-1:0,0);
-        if(!processinput_internal_tmps){
-            printc(Default,L"Time Passes.\n");
-            processinput_internal_tmps=true;
-        }
+        if(row>0)cbc_setcursor(row-1,0);
+        if(wcslen(inputbufl)==0)return;
+        printc(Yellow,L"%ls\n",inputbufl);
+        matchcommands(inputbufl);
         return;
     }
-    processinput_internal_tmps=false;
 //    wchar_t *inputbufl=mallocpointer_(128*sizeof(wchar_t));
     wmemset(inputbufl,0,128);
     wcscpy(inputbufl,inputbuf);
@@ -285,9 +286,11 @@ void processinput(){
     if(matchcommands(inputbufl)){
 //        freepointer_(inputbufl);
         return;
+    }else{
+        memset(inputbufl,0,128);
     }
     printc(Cyan|Bright,msg_player_say,player.name);
-    printc(Default,L"%ls\n",inputbuf);
+    printr(Default,L"%ls\n",inputbuf);
 //    freepointer_(inputbufl);
     return;
 }

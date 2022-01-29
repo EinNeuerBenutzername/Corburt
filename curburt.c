@@ -7,14 +7,15 @@
 #include "include/cbio.h"
 #include "include/cbfio.h"
 #include "include/dbentity.h"
-int main(){
+void launchcb(){
+    assertcheck();
     cbc_init();
     cbc_setwindowtitle("Corburt");
     cbc_setcolor(Default);
     cbc_clearscreen();
     tracelog(Green,msg_trace_savesize,sizeof(struct save));
-    tracelog(Green,L"Size of room database: %zu bytes\n",sizeof(roomdbs));
-    tracelog(Green,L"Size of item database: %zu bytes\n",sizeof(itemdbs));
+    tracelog(Green,L"Size of room database: %.2f KB\n",sizeof(roomdbs)/1024.0f);
+    tracelog(Green,L"Size of item database: %.2f KB\n",sizeof(itemdbs)/1024.0f);
     initrng();
     checkendianess();
     setupentitydata();
@@ -22,6 +23,10 @@ int main(){
     inputbuf=mallocpointer(128*sizeof(wchar_t));
     inputbufl=mallocpointer(128*sizeof(wchar_t));
     wmemset(inputbuf,0,128);
+    wmemset(inputbufl,0,128);
+}
+int main(){
+    launchcb();
     printc(Green|Bright,L"%ls",msg_global_welcome);
     printc(White,msg_global_splash);
     printc(Yellow,msg_global_splash2);

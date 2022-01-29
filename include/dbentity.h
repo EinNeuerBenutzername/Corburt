@@ -6,6 +6,7 @@
 #define DBE_ENEMYCAP 64
 #define DBE_ITEMCAP 32
 #define DBE_INTCAP 16
+#define DBE_EXPANDSTEP 32
 struct et_room{
     nat id;
     nat etenemy[DBE_ENEMYCAP];
@@ -54,14 +55,14 @@ void setupentitydata(){
         et_rooms[i]=etr;
         et_rooms[i].id=roomdbs[i].id;
     }
-    enemiesmax+=1024;
+    enemiesmax+=DBE_EXPANDSTEP;
     et_enemies=mallocpointer(enemiesmax*sizeof(struct et_enemy));
     struct et_enemy ete={0};
     for(nat i=0;i<enemiesmax;i++){
         et_enemies[i]=ete;
         et_enemies[i].available=false;
     }
-    itemsmax+=1024;
+    itemsmax+=DBE_EXPANDSTEP;
     et_items=mallocpointer(itemsmax*sizeof(struct et_item));
     struct et_item eti={0};
     for(nat i=0;i<itemsmax;i++){
@@ -78,10 +79,10 @@ struct et_room *et_findroomwithid(nat roomid){
 }
 void etenemy_expand(){
     tracelog(Green,L"Expanding enemy entity list...\n");
-    enemiescount+=1024;
-    et_enemies=reallocpointer(et_enemies,enemiescount*sizeof(struct et_enemy));
+    enemiesmax+=DBE_EXPANDSTEP;
+    et_enemies=reallocpointer(et_enemies,enemiesmax*sizeof(struct et_enemy));
     struct et_enemy ete={0};
-    for(nat i=enemiesmax-1024;i<enemiesmax;i++){
+    for(nat i=enemiesmax-DBE_EXPANDSTEP;i<enemiesmax;i++){
         et_enemies[i]=ete;
     }
 }
@@ -128,6 +129,7 @@ void etenemy_push(nat enemyid,nat roomid){
     }
     if(enemyentityindex==-1){ // et_enemies[] is full
         enemyentityindex=enemiesmax;
+        enemypointer=enemiesmax;
         etenemy_expand();
     }
 
@@ -141,7 +143,7 @@ void etenemy_push(nat enemyid,nat roomid){
     et_enemies[enemyentityindex]=ete;
     etr->etenemy[enemyreferenceindex]=enemyentityindex+1;
     enemiescount++;
-    tracelog(Cyan,L"Pushing enemy entity: entityid=%d (enemyid=%d, roomid=%d)\n",(int)enemyentityindex+1,(int)enemyid,(int)roomid);
+    tracelog(Cyan,L"Created enemy entity: entityid=%d (enemyid=%d, roomid=%d)\n",(int)enemyentityindex+1,(int)enemyid,(int)roomid);
 }
 const struct enemydb *et_getenemydb(nat enemyentityid){
     if(et_enemies[enemyentityid-1].available==false){
@@ -153,14 +155,15 @@ const struct enemydb *et_getenemydb(nat enemyentityid){
 }
 void etitem_expand(){
     tracelog(Green,L"Expanding item entity list...\n");
-    itemscount+=1024;
-    et_items=reallocpointer(et_items,itemscount*sizeof(struct et_item));
+    itemsmax+=DBE_EXPANDSTEP;
+    et_items=reallocpointer(et_items,itemsmax*sizeof(struct et_item));
     struct et_item eti={0};
-    for(nat i=itemsmax-1024;i<itemsmax;i++){
+    for(nat i=itemsmax-DBE_EXPANDSTEP;i<itemsmax;i++){
         et_items[i]=eti;
     }
 }
 void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
+    if(qnty<0)return; //
     struct et_room *etr=NULL;
     const struct itemdb *idb=NULL;
     nat itemreferenceindex=-1, // spawn in etr->etitem[index]
@@ -191,12 +194,13 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
     for(nat i=itempointer;i<itemsmax;i++){
         if(et_items[i].available==false){
             itementityindex=i;
-            itempointer=i+1;
+            if(!(idb->type&db_itemtype_stackable_mask))itempointer=i+1;
             break;
         }
     }
     if(itementityindex==-1){
         itementityindex=itemsmax;
+        if(!(idb->type&db_itemtype_stackable_mask))itempointer=itemsmax;
         etitem_expand();
     }
     if(roomid!=0){ // add into room
@@ -208,6 +212,7 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
                 }
             }
             if(itemreferenceindex==-1){ // etr->etitem[] is full
+                printr(Default,msg_db_ietfull,db_ifindwithid(itemid)->name);
                 return;
             }
             struct et_item eti={
@@ -220,7 +225,49 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
             if(roomid!=0)etr->etitem[itemreferenceindex]=itementityindex+1;
             itemscount++;
         }
-        else{}
+        else{
+            foo success=false;
+            foo hasslot=false;
+            if(qnty>ITEM_MAXSTACK)qnty=ITEM_MAXSTACK;
+            for(nat i=0;i<DBE_ITEMCAP;i++){
+                if(etr->etitem[i]==0){hasslot=true;continue;}
+                struct et_item *eti=&et_items[etr->etitem[i]-1];
+                if(eti->itemid!=itemid)continue;
+                if(eti->qnty==ITEM_MAXSTACK)continue;
+                if(eti->qnty>ITEM_MAXSTACK){eti->qnty=ITEM_MAXSTACK;continue;}
+                if(eti->qnty+qnty<=ITEM_MAXSTACK){
+                    eti->qnty+=qnty;
+                    qnty=0;
+                    success=true;
+                    break;
+                }
+                else{
+                    qnty-=ITEM_MAXSTACK-eti->qnty;
+                    eti->qnty=ITEM_MAXSTACK;
+                }
+            }
+            if((!success)&&hasslot){
+                itempointer++;
+                for(nat i=0;i<DBE_ITEMCAP;i++){
+                    if(etr->etitem[i]==0){
+                        struct et_item eti={
+                            .available=true,
+                            .roomid=roomid,
+                            .itemid=itemid,
+                            .qnty=qnty
+                        };
+                        et_items[itementityindex]=eti;
+                        etr->etitem[i]=itementityindex+1;
+                        itemscount++;
+                        success=true;
+                        break;
+                    }
+                }
+            }
+            else if((!success)&&(!hasslot)){
+                printc(Default,msg_db_ietfull);
+            }
+        }
     }
     else{ // add item into inventory
         if(!stackable){
@@ -238,17 +285,68 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
                     itemscount++;
                     if(purchase){
                         inventory.money-=idb->price;
-                        printc(Default,msg_db_iobtainitemhint,idb->name);
+                        printc(Default,msg_db_ipurchaseitemhint,idb->name);
                     }
                     success=true;
                     break;
                 }
             }
-            if(!success)printc(Default,msg_db_icantcarry);
+            if(!success){ // drops to the ground
+                printc(Default,msg_db_icantcarry);
+                if(!purchase)etitem_push(itemid,qnty,player.roomid,0);
+            }
         }
-        else{}
+        else{
+            nat qnty2=qnty;
+            foo success=false;
+            foo hasslot=false;
+            if(qnty>ITEM_MAXSTACK)qnty=ITEM_MAXSTACK;
+            for(nat i=0;i<inventory.unlocked&&qnty>0;i++){
+                if(inventory.items[i]==0){hasslot=true;continue;}
+                struct et_item *eti=&et_items[inventory.items[i]-1];
+                if(eti->itemid!=itemid)continue;
+                if(eti->qnty==ITEM_MAXSTACK)continue;
+                if(eti->qnty>ITEM_MAXSTACK){eti->qnty=ITEM_MAXSTACK;continue;}
+                if(eti->qnty+qnty<=ITEM_MAXSTACK){
+                    eti->qnty+=qnty;
+                    qnty=0;
+                    success=true;
+                    break;
+                }
+                else{
+                    qnty-=ITEM_MAXSTACK-eti->qnty;
+                    eti->qnty=ITEM_MAXSTACK;
+                }
+            }
+            if((!success)&&hasslot){
+                itempointer++;
+                for(nat i=0;i<inventory.unlocked;i++){
+                    if(inventory.items[i]==0){
+                        struct et_item eti={
+                            .available=true,
+                            .roomid=0,
+                            .itemid=itemid,
+                            .qnty=qnty
+                        };
+                        et_items[itementityindex]=eti;
+                        inventory.items[i]=itementityindex+1;
+                        itemscount++;
+                        success=true;
+                        break;
+                    }
+                }
+            }
+            else if((!success)&&(!hasslot)){ // drops to the ground
+                printc(Default,msg_db_icantcarry);
+                if(!purchase)etitem_push(itemid,qnty,player.roomid,0);
+            }
+            if(purchase){
+                inventory.money-=idb->price*qnty2;
+                printc(Default,msg_db_ipurchasemultitemhint,idb->name,qnty2);
+            }
+        }
     }
-    tracelog(Cyan,L"Pushing item entity: entityid=%d (itemid=%d, roomid=%d)\n",(int)itementityindex+1,(int)itemid,(int)roomid);
+    tracelog(Cyan,L"Created item entity: entityid=%d (qnty=%d, itemid=%d, roomid=%d)\n",(int)qnty, (int)itementityindex+1,(int)itemid,(int)roomid);
 }
 const struct itemdb *et_getitemdb(nat itementityid){
     if(et_items[itementityid-1].available==false){

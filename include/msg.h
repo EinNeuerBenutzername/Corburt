@@ -27,6 +27,7 @@ const wchar_t *msg_global_welcomeplayer=L"Welcome, %ls.\n";
 const wchar_t *msg_global_welcomeplayer2=L"Welcome back, %ls.\n";
 const wchar_t *msg_global_help=L"-------------------------------------------------------------------\n"
     "                           Commands\n"
+    "(none)                     - Repeat your last command\n"
     "abilities                  - Show player's abilities\n"
     "cls                        - Clear screen\n"
     "east (west, south, north)  - Move towards certain directions\n"
@@ -106,7 +107,8 @@ const wchar_t *msg_player_say=L"%ls says: ";
 
 const wchar_t *msg_db_notinstore=L"You are not in a store.\n";
 const wchar_t *msg_db_inosuchitem=L"There is no such item.\n";
-const wchar_t *msg_db_iobtainitemhint=L"%ls obtained.\n";
+const wchar_t *msg_db_ipurchaseitemhint=L"%ls purchased.\n";
+const wchar_t *msg_db_ipurchasemultitemhint=L"%ls (x%" PRIdFAST32 ") purchased.\n";
 const wchar_t *msg_db_icantafford=L"You cannot afford the item. (missing $%" PRIdFAST32 ")\n";
 const wchar_t *msg_db_icantcarry=L"You can't carry this much.\n";
 const wchar_t *msg_db_ridnullexceptionerror=L"Null exception error: invalid room id.\n";
@@ -115,5 +117,6 @@ const wchar_t *msg_db_eidnullexceptionerror=L"Null exception error: invalid enem
 const wchar_t *msg_db_retidnullexceptionerror=L"Null exception error: invalid room entity id.\n";
 const wchar_t *msg_db_ietidnullexceptionerror=L"Null exception error: invalid item entity id.\n";
 const wchar_t *msg_db_eetidnullexceptionerror=L"Null exception error: invalid enemy entity id.\n";
+const wchar_t *msg_db_ietfull=L"%ls disappeared into the pile of objects on the ground..\n";
 const wchar_t *msg_db_listitem=L"%-50ls  | $%" PRIdFAST32 "\n";
 #endif

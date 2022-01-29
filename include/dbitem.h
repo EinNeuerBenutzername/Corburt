@@ -265,7 +265,8 @@ const struct itemdb itemdbs[]={
     {.id=37,.name=L"Fried Salmon",
         .type=db_itemtype_consume,
         .price=25,
-        .desc=L"Why wouldn't you like to have a fish?",
+        .desc=L"\"Why wouldn't you like to have a fish?\"\n"
+                "    -- fishstore",
         .stats={.min_=3,.max_=9}
     },
     {

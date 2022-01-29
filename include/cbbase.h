@@ -1,5 +1,8 @@
 #ifndef Corburt_Base_h_Include_Guard
 #define Corburt_Base_h_Include_Guard
+#if __STDC_VERSION__<199901L
+    #error Please use a C99 compiler.
+#endif
 #include "msg.h"
 #include "mtwister.h"
 #include <time.h>
@@ -69,7 +72,8 @@ enum errorenum{
     error_badcharbit
 };
 void printc(int color,const wchar_t *format,...);
-const wchar_t *wsprintfc(const wchar_t *text,...);
+void printr(int color,const wchar_t *format,...);
+void printword(size_t pos,size_t width,wchar_t *word);
 void tracelog(int color,const wchar_t *format,...);
 void fatalerror(enum errorenum error_id);
 void *mallocpointer(size_t bytes);
@@ -89,13 +93,62 @@ void printc(int color,const wchar_t *format,...){
     if(color!=Default)cbc_setcolor(Default);
     fflush(stdout);
 }
-const wchar_t *wsprintfc(const wchar_t *text,...){ //obsolete function
-    wmemset(buffer,0,1024);
+void printr(int color,const wchar_t *format,...){
+    if(color!=Default)cbc_setcolor(color);
+    wchar_t *dest=mallocpointer_(1024*sizeof(wchar_t));
+    wchar_t *token;
+    wmemset(dest,0,1024);
+    fflush(stdout);
     va_list args;
-    va_start(args,text);
-    vswprintf_s(buffer,1024,text,args);
+    va_start(args,format);
+    vswprintf(dest,1024,format,args);
     va_end(args);
-    return buffer;
+
+    if(dest[0]==L' ')putc(' ',stdout);
+    size_t row,col;
+    foo endwithspace=false;
+    cbc_getcursor(&row,&col);
+    if(dest[wcslen(dest)-1]==L' ')endwithspace=true;
+    token=wcstok(dest,L" ");
+    printword(col,67,token);
+    if(token!=NULL)token=wcstok(NULL,L" ");
+    while(token!=NULL){
+        putc(' ',stdout);
+        cbc_getcursor(&row,&col);
+        printword(col,68,token);
+        token=wcstok(NULL,L" ");
+    }
+    if(endwithspace)putc(' ',stdout);
+
+    if(color!=Default)cbc_setcolor(Default);
+    fflush(stdout);
+    freepointer_(dest);
+}
+void printword(size_t pos,size_t width,wchar_t *word){
+    if(wcslen(word)+pos<width){
+        wprintf(L"%ls",word);
+    }
+    else if(wcslen(word)>=width){
+        size_t start=0,wcsl=wcslen(word);
+        wchar_t *line=mallocpointer_((width+1)*sizeof(wchar_t));
+        wmemset(line,0,width+1);
+        wmemcpy(line,word,width-pos);
+        wprintf(L"%ls\n",line);
+        start+=width-pos;
+        while(wcsl-start>width+1){
+            wmemset(line,0,width+1);
+            wmemcpy(line,word+start,width);
+            wprintf(L"%ls\n",line);
+            start+=width;
+        }
+        wmemset(line,0,width+1);
+        wmemcpy(line,word+start,wcsl-start);
+        wprintf(L"%ls",line);
+        freepointer_(line);
+    }
+    else{
+        wprintf(L"\n%ls",word);
+    }
 }
 void tracelog(int color,const wchar_t *format,...){
 #ifdef Corburt_Debug
@@ -194,11 +247,12 @@ void wcslower(wchar_t **target_str_pos){
     }
 }
 //misc
-void asserttypesize();
+void launchcb();
+void assertcheck();
 nat match(const wchar_t *sub_str,const wchar_t *main_str);
 void checkendianess();
 void initrng();
-void asserttypesize(){
+void assertcheck(){
     if(CHAR_BIT!=8)fatalerror(error_badcharbit);
 }
 nat match(const wchar_t *sub_str,const wchar_t *main_str){

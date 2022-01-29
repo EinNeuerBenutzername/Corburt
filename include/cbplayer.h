@@ -132,6 +132,28 @@ const wchar_t *ranks[]={
     L"Admin",
     L"Dev"
 };
+struct {
+    struct basestats{
+        nat atk;
+        nat def;
+        nat acc;
+        nat dod;
+        nat stl;
+        nat act;
+        nat con;
+        nat pts;
+    } basestats;
+    struct calcstats{
+        nat atk;
+        nat def;
+        nat acc;
+        nat dod;
+        nat stl;
+        nat act;
+        nat con;
+        nat pts;
+    } calcstats;
+} cbp;
 
 static void plvlup();
 void pshowstats();
@@ -180,17 +202,19 @@ void pshowinv(){ //
                 const struct itemdb *idb=db_ifindwithid(eti->itemid);
                 if(j>0)printc(Default,L"\n               ");
                 if(inventory.weapon==i+1){
-                    printc(Default,msg_player_inv_wielding);
+                    printr(Magenta|Bright,msg_player_inv_wielding);
                 }
                 if(inventory.armor==i+1){
-                    printc(Default,msg_player_inv_wearing);
+                    printr(Magenta|Bright,msg_player_inv_wearing);
                 }
                 for(nat k=0;k<5;k++)if(inventory.accessories[k]==i+1){
-                    printc(Default,msg_player_inv_equipping);
+                    printr(Magenta|Bright,msg_player_inv_equipping);
                     break;
                 }
-                if(invitemscount>1)printc(Default,L"%ls,",idb->name);
-                else printc(Default,L"%ls",idb->name);
+                printr(Default,L"%ls ",idb->name);
+                if(idb->type&db_itemtype_stackable_mask&&eti->qnty>1){
+                    printr(Default,L"(x%" PRIdFAST32 ")",eti->qnty);
+                }
                 invitemscount--;
                 j++;
                 if(invitemscount==0)break;

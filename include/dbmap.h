@@ -32,15 +32,15 @@ const struct roomdb roomdbs[]={
     {.id=1,
         .region=db_roomregion_nlcity,
         .name=L"Town Square of the Nameless City",
-        .desc=L"You have come to the town square of a nameless city. It lies in the\n"
+        .desc=L"You have come to the town square of a nameless city. It lies in the "
                 "center of the city.",
         .type=db_roomtype_birth,
-        .exits={[dir_North]=2,[dir_West]=5,[dir_South]=3,[dir_East]=19}
+        .exits={[dir_North]=2,[dir_West]=5,[dir_South]=13,[dir_East]=19}
     },
     {.id=2,
         .region=db_roomregion_nlcity,
         .name=L"Street",
-        .desc=L"This ordinary street runs south and north, passing through the\n"
+        .desc=L"This ordinary street runs south and north, passing through the "
                 "center of the city. There are few pedestrians on the street.",
         .type=db_roomtype_plain,
         .exits={[dir_North]=10,[dir_West]=3,[dir_South]=1,[dir_East]=23}
@@ -48,7 +48,7 @@ const struct roomdb roomdbs[]={
     {.id=3,
         .region=db_roomregion_nlcity,
         .name=L"Alley",
-        .desc=L"The Alley leads to the park in the city. The reason the park was\n"
+        .desc=L"The Alley leads to the park in the city. The reason the park was "
                 "built had disappeared along with the city's name.",
         .type=db_roomtype_plain,
         .exits={[dir_West]=4,[dir_East]=2}
@@ -56,7 +56,7 @@ const struct roomdb roomdbs[]={
     {.id=4,
         .region=db_roomregion_nlcity,
         .name=L"Park Entrance",
-        .desc=L"You stand at the entrance of the park. Stone statues of two guards\n"
+        .desc=L"You stand at the entrance of the park. Stone statues of two guards "
                 "stand on either side of the entrance.",
         .type=db_roomtype_plain,
         .exits={[dir_East]=3,[dir_South]=6,[dir_North]=7,[dir_West]=9}
@@ -78,8 +78,8 @@ const struct roomdb roomdbs[]={
     {.id=7,
         .region=db_roomregion_nlcity,
         .name=L"Park",
-        .desc=L"The weeds are growing tall and apparently not managed well, among\n"
-                "which exotic plants are sparsely visible. The roads are lined with\n"
+        .desc=L"The weeds are growing tall and apparently not managed well, among "
+                "which exotic plants are sparsely visible. The roads are lined with "
                 "wooden guardrails, apparently made of precious wood.",
         .type=db_roomtype_plain,
         .exits={[dir_South]=4,[dir_North]=51,[dir_West]=8}
@@ -87,8 +87,8 @@ const struct roomdb roomdbs[]={
     {.id=8,
         .region=db_roomregion_nlcity,
         .name=L"Park",
-        .desc=L"You see woods with transparent amber leaves, trees with leaves that\n"
-                "look like pure gold, shrub with crimson vines that bleed, herbs\n"
+        .desc=L"You see woods with transparent amber leaves, trees with leaves that "
+                "look like pure gold, shrub with crimson vines that bleed, herbs "
                 "with blooming fantastic flowers that flickers, et cetera.",
         .type=db_roomtype_plain,
         .exits={[dir_East]=7,[dir_South]=9}
@@ -104,7 +104,7 @@ const struct roomdb roomdbs[]={
     {.id=10,
         .region=db_roomregion_nlcity,
         .name=L"Street",
-        .desc=L"There are two stores on the sides of this part of the street, great\n"
+        .desc=L"There are two stores on the sides of this part of the street, great "
                 "for novice adventurers.",
         .type=db_roomtype_plain,
         .exits={[dir_East]=22,[dir_South]=2,[dir_North]=11,[dir_West]=21}
@@ -119,10 +119,10 @@ const struct roomdb roomdbs[]={
     {.id=12, // gate // wip
         .region=db_roomregion_nlcity,
         .name=L"City Entrance",
-        .desc=L"You have arrived at the entrance of this small city. The city does\n"
-                "not have a name, but it can also be said that its name is exactly\n"
+        .desc=L"You have arrived at the entrance of this small city. The city does "
+                "not have a name, but it can also be said that its name is exactly "
                 "\"the Nameless City\".\n"
-                "No one guards this entrance. A row of stone statues of soldiers\n"
+                "No one guards this entrance. A row of stone statues of soldiers "
                 "stand here, and they look as if they were still alive.",
         .type=db_roomtype_gate,
         .exits={[dir_South]=11}
@@ -130,7 +130,7 @@ const struct roomdb roomdbs[]={
     {.id=13,
         .region=db_roomregion_nlcity,
         .name=L"Street",
-        .desc=L"There is a not-so-thick layer of dust on the floor of the street.\n"
+        .desc=L"There is a not-so-thick layer of dust on the floor of the street. "
                 "The wind picks up dust when it blows.",
         .type=db_roomtype_plain,
         .exits={[dir_East]=36,[dir_South]=14,[dir_North]=1,[dir_West]=20}
@@ -138,7 +138,7 @@ const struct roomdb roomdbs[]={
     {.id=14,
         .region=db_roomregion_nlcity,
         .name=L"Street Intersection",
-        .desc=L"This is a small intersection. The road to the west seems to lead to\n"
+        .desc=L"This is a small intersection. The road to the west seems to lead to "
                 "a dark path.",
         .type=db_roomtype_plain,
         .exits={[dir_East]=37,[dir_South]=15,[dir_North]=13,[dir_West]=18}
@@ -146,7 +146,7 @@ const struct roomdb roomdbs[]={
     {.id=15, // gate // wip
         .region=db_roomregion_nlcity,
         .name=L"City Gate",
-        .desc=L"You are at the southern gate of the city. A group of stone soldiers\n"
+        .desc=L"You are at the southern gate of the city. A group of stone soldiers "
                 "salute to the south.",
         .type=db_roomtype_gate,
         .exits={[dir_North]=14}
@@ -169,7 +169,7 @@ const struct roomdb roomdbs[]={
     {.id=18,
         .region=db_roomregion_nlcity,
         .name=L"Dark Path",
-        .desc=L"The path is dark. The low eaves of the houses block light that\n"
+        .desc=L"The path is dark. The low eaves of the houses block light that "
                 "comes in.",
         .type=db_roomtype_plain,
         .exits={[dir_West]=17,[dir_East]=14,[dir_North]=20,[dir_South]=45},
@@ -178,7 +178,7 @@ const struct roomdb roomdbs[]={
     {.id=19,
         .region=db_roomregion_nlcity,
         .name=L"Training Grounds",
-        .desc=L"An elderly swordsman stood in the room practicing his myriad arts\n"
+        .desc=L"An elderly swordsman stood in the room practicing his myriad arts "
                 "techniques. He looks more like a machine or a golem than a human.",
         .type=db_roomtype_train,
         .exits={[dir_West]=1}
@@ -186,7 +186,7 @@ const struct roomdb roomdbs[]={
     {.id=20,
         .region=db_roomregion_nlcity,
         .name=L"Residential Area",
-        .desc=L"You walk through the residential area in the city. There are not\n"
+        .desc=L"You walk through the residential area in the city. There are not "
                 "many residents here, and two thirds of the houses are empty.",
         .type=db_roomtype_plain,
         .exits={[dir_East]=13,[dir_South]=18,[dir_North]=5,[dir_West]=16}
@@ -202,7 +202,7 @@ const struct roomdb roomdbs[]={
     {.id=22, // shop
         .region=db_roomregion_nlcity,
         .name=L"Mad Alchemist's Shop",
-        .desc=L"The mad alchemist stares at you. In his hand he holds a bottle of\n"
+        .desc=L"The mad alchemist stares at you. In his hand he holds a bottle of "
                 "potion that kept changing colors. Looks toxic.",
         .type=db_roomtype_shop,
         .exits={[dir_West]=10,[dir_South]=23,[dir_East]=24},
@@ -226,7 +226,7 @@ const struct roomdb roomdbs[]={
     {.id=25,
         .region=db_roomregion_nlcity,
         .name=L"Side Street",
-        .desc=L"The side street runs parallel to main street, which connects the\n"
+        .desc=L"The side street runs parallel to main street, which connects the "
                 "entrance and the southern gate of the city.",
         .type=db_roomtype_plain,
         .exits={[dir_North]=24,[dir_South]=32,[dir_West]=23}
@@ -241,9 +241,9 @@ const struct roomdb roomdbs[]={
     {.id=27,
         .region=db_roomregion_nlcity,
         .name=L"Cemetary Path",
-        .desc=L"You stand at the end of the narrow path that leads to the cemetary.\n"
-                "The cemetery is on low ground and you can see most of the cemetery\n"
-                "from this location. Yet the eastern part of the cemetery is\n"
+        .desc=L"You stand at the end of the narrow path that leads to the cemetary. "
+                "The cemetery is on low ground and you can see most of the cemetery "
+                "from this location. Yet the eastern part of the cemetery is "
                 "shrouded in darkness.",
         .type=db_roomtype_plain,
         .exits={[dir_West]=26,[dir_East]=28}
@@ -251,8 +251,8 @@ const struct roomdb roomdbs[]={
     {.id=28,
         .region=db_roomregion_nlcity,
         .name=L"Cemetary",
-        .desc=L"There are tombstones all around. Apparently, the number of\n"
-                "tombstones is far greater than the number of inhabitants of the\n"
+        .desc=L"There are tombstones all around. Apparently, the number of "
+                "tombstones is far greater than the number of inhabitants of the "
                 "town.",
         .type=db_roomtype_plain,
         .exits={[dir_West]=27,[dir_East]=31,[dir_South]=29}
@@ -275,8 +275,8 @@ const struct roomdb roomdbs[]={
     {.id=31,
         .region=db_roomregion_nlcity,
         .name=L"Cemetary",
-        .desc=L"Is it because the city was once too prosperous, or because it is\n"
-                "too decadent now? Or is it neither, just because the history here\n"
+        .desc=L"Is it because the city was once too prosperous, or because it is "
+                "too decadent now? Or is it neither, just because the history here "
                 "is too old?",
         .type=db_roomtype_plain,
         .exits={[dir_West]=28,[dir_South]=30},
@@ -315,7 +315,7 @@ const struct roomdb roomdbs[]={
     {.id=36,
         .region=db_roomregion_nlcity,
         .name=L"Side Street Curve",
-        .desc=L"How is the law and order maintained here? No one is patrolling the\n"
+        .desc=L"How is the law and order maintained here? No one is patrolling the "
                 "streets at all.",
         .type=db_roomtype_plain,
         .exits={[dir_West]=13,[dir_East]=35,[dir_South]=37}
@@ -323,7 +323,7 @@ const struct roomdb roomdbs[]={
     {.id=37,
         .region=db_roomregion_nlcity,
         .name=L"Side Street",
-        .desc=L"Here the side street merges with the main road, leading to the gate\n"
+        .desc=L"Here the side street merges with the main road, leading to the gate "
                 "to the south.",
         .type=db_roomtype_plain,
         .exits={[dir_West]=14,[dir_North]=36,[dir_South]=38}
@@ -338,7 +338,7 @@ const struct roomdb roomdbs[]={
     {.id=39,
         .region=db_roomregion_nlcity,
         .name=L"Artificial lake",
-        .desc=L"There are many fish in the lake. Obviously,  each of them is very\n"
+        .desc=L"There are many fish in the lake. Obviously, each of them is very "
                 "valuable.",
         .type=db_roomtype_plain,
         .exits={[dir_West]=38,[dir_South]=40}
@@ -346,8 +346,8 @@ const struct roomdb roomdbs[]={
     {.id=40,
         .region=db_roomregion_nlcity,
         .name=L"Artificial lake",
-        .desc=L"The water is relatively clear and you can see the deep bottom of\n"
-                "the lake. Apart from precious fish and aquatic plants, there is\n"
+        .desc=L"The water is relatively clear and you can see the deep bottom of "
+                "the lake. Apart from precious fish and aquatic plants, there is "
                 "not much to see. What have kept the water clear here?",
         .type=db_roomtype_plain,
         .exits={[dir_West]=41,[dir_North]=39}
@@ -355,7 +355,7 @@ const struct roomdb roomdbs[]={
     {.id=41,
         .region=db_roomregion_nlcity,
         .name=L"Artificial lake",
-        .desc=L"Some wooden boats are moored here. They are badly decayed and\n"
+        .desc=L"Some wooden boats are moored here. They are badly decayed and "
                 "overgrown with shellfish and algae.",
         .type=db_roomtype_plain,
         .exits={[dir_North]=38,[dir_East]=40}
@@ -363,7 +363,7 @@ const struct roomdb roomdbs[]={
     {.id=42,
         .region=db_roomregion_nlcity,
         .name=L"Road",
-        .desc=L"It feels strange that there are not many pedestrians on such a\n"
+        .desc=L"It feels strange that there are not many pedestrians on such a "
                 "wide road.",
         .type=db_roomtype_plain,
         .exits={[dir_West]=11,[dir_East]=43}
@@ -371,7 +371,7 @@ const struct roomdb roomdbs[]={
     {.id=43,
         .region=db_roomregion_nlcity,
         .name=L"Road",
-        .desc=L"Such a wide road might have been prepared for a huge carriage\n"
+        .desc=L"Such a wide road might have been prepared for a huge carriage "
                 "parade.",
         .type=db_roomtype_plain,
         .exits={[dir_West]=42,[dir_East]=44}
@@ -402,8 +402,8 @@ const struct roomdb roomdbs[]={
     {.id=47,
         .region=db_roomregion_nlcity,
         .name=L"Yet Darker Path",
-        .desc=L"It is still dark here. This is probably the darkest spot on the\n"
-                "path. No one came at all, maybe the darkness scared the gangs\n"
+        .desc=L"It is still dark here. This is probably the darkest spot on the "
+                "path. No one came at all, maybe the darkness scared the gangs "
                 "away.",
         .type=db_roomtype_plain,
         .exits={[dir_East]=17,[dir_North]=48}
@@ -440,8 +440,8 @@ const struct roomdb roomdbs[]={
     {.id=52, // gate // wip
         .region=db_roomregion_nlcity,
         .name=L"City Gate",
-        .desc=L"There are many more stone statues here than at the northern gate.\n"
-                "Their armor and weapons also seem to be more refined than the\n"
+        .desc=L"There are many more stone statues here than at the northern gate. "
+                "Their armor and weapons also seem to be more refined than the "
                 "stone soldiers in front of the other two gates.",
         .type=db_roomtype_gate,
         .exits={[dir_East]=51}
@@ -474,7 +474,7 @@ void db_rshowdesc(nat roomid){
         return;
     }
     printc(White|Bright,L"\n%ls\n",rm->name);
-    printc(Cyan|Bright,L"%ls\n",rm->desc);
+    printr(Cyan|Bright,L"%ls\n",rm->desc);
     printc(Green|Bright,L"exits: ");
     if(rm->exits[dir_North])printc(Green|Bright,L"NORTH  ");
     if(rm->exits[dir_East])printc(Green|Bright,L"EAST  ");
@@ -484,20 +484,47 @@ void db_rshowdesc(nat roomid){
     struct et_room *etr=et_findroomwithid(roomid);
     if(etr==NULL){
         printc(Red,msg_db_retidnullexceptionerror);
-    }else{
+    }
+    else{
         for(nat i=0,first=1;i<DBE_ENEMYCAP;i++){
             if(etr->etenemy[i]!=0){
                 const struct enemydb *edb=et_getenemydb(etr->etenemy[i]);
-                if(first)printc(Red|Bright,L"enemies: %ls",edb->name,etr->etenemy[i]);
+                if(first)printr(Red|Bright,L"enemies: %ls",edb->name,etr->etenemy[i]);
                 else{
-                    size_t row,col;
-                    cbc_getcursor(&row,&col);
-                    if(wcslen(edb->name)+col>=67)printc(Red|Bright,L",\n%ls",edb->name,etr->etenemy[i]);
-                    else printc(Red|Bright,L", %ls",edb->name,etr->etenemy[i]);
+                    printr(Red|Bright,L", %ls",edb->name,etr->etenemy[i]);
                 }
                 first=0;
             }
             if(i==DBE_ENEMYCAP-1&&first==0)printf("\n");
+        }
+        for(nat i=0,first=1;i<DBE_ITEMCAP;i++){
+            if(etr->etitem[i]!=0){
+                struct et_item *eti=&et_items[etr->etitem[i]-1];
+                if(eti->available==false){
+                    printc(Red,msg_db_ietidnullexceptionerror);
+                    continue;
+                }
+                const struct itemdb *idb=db_ifindwithid(eti->itemid);
+                if(idb==NULL){
+                    printc(Red,msg_db_iidnullexceptionerror);
+                    continue;
+                }
+                if(first){
+                    if(!(idb->type&db_itemtype_stackable_mask))printr(Yellow|Bright,L"items: %ls",idb->name,etr->etitem[i]);
+                    else{
+                        if(eti->qnty==1)printr(Yellow|Bright,L"items: %ls",idb->name);
+                        else printr(Yellow|Bright,L"items: %ls (x%" PRIdFAST32 ")",idb->name,eti->qnty);
+                    }
+                }else{
+                    if(!(idb->type&db_itemtype_stackable_mask))printr(Yellow|Bright,L", %ls",idb->name,etr->etitem[i]);
+                    else{
+                        if(eti->qnty==1)printr(Yellow|Bright,L", %ls",idb->name);
+                        else printr(Yellow|Bright,L", %ls (x%" PRIdFAST32 ")",idb->name,eti->qnty);
+                    }
+                }
+                first=0;
+            }
+            if(i==DBE_ITEMCAP-1&&first==0)printf("\n");
         }
     }
     printc(Default,L"\n");

@@ -20,6 +20,7 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
 - might **not** be finished.
 - might **not** work properly on non-Windows platforms.
   - might not even work properly on Windows platforms other than Windows 10.
+  - for this reason, please report if you encounter any problem.
 - **not** yet C++-compatible.
 - I am lazy and might **not** be available for improvements and bug fixes.
 
@@ -27,27 +28,29 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
 
 - your computer should either be non-prehistorical Windows or POSIX-compliant \*nix.
   - this is largely because Corburt's curses library rely on platform-specific headers.
+  - Corburt uses **no** platform-specific headers except for those in `cbcurses.h`. Basically, the only thing limiting Corburt's cross-platform capabilities is the curses support.
 - your compiler should support C99 with these standard C libraries:
-  - <inttypes.h>
+  - `<inttypes.h>`
     - for `uint_fastX_t` types
-  - <locale.h>
+  - `<locale.h>`
     - for Unicode support
-  - <stdarg.h>
+  - `<stdarg.h>`
     - for I/O
-  - <stdbool.h>
+  - `<stdbool.h>`
     - for the bool type
-  - <stdio.h>
+  - `<stdio.h>`
     - for I/O
-  - <stdlib.h>
+  - `<stdlib.h>`
     - for memory management
-  - <time.h>
+  - `<time.h>`
     - for RNG
-  - <wchar.h>
+  - `<wchar.h>`
     - for Unicode support
 - on your computer, a byte **must** contain exactly 8 bits.
   - it is also suggested that the size of wchar_t is exactly 16 bits. it's okay if that's not the case, though.
 - it is recommended to use GCC compiler.
   - it's especially recommended to use Code::Blocks to compile.
+  - I hate MSVC, thus I'll ignore any MSVC-exclusive issues.
 
 ## Acknowledgements
 
@@ -59,6 +62,16 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
 - My friend **emf** and **Jack Q** for supporting me and testing Corburt
 - You, probably ;)
 
+## Bug report
+
+When reporting bugs (if you came across any), please clarify:
+
+- what's the version of Corburt?
+  - if it is not the latest version, test on the latest version.
+- what had you done before the bug occurred?
+- were there any error messages?
+- did the game crash?
+
 ## Version history
 ### Demo Version
 - 0.0.1 (Dec 2021)
@@ -67,7 +80,6 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
   - basic player information implemented.
   - added tracelogs for info and debugging.
   - several bugs introduced.
-
 - 0.0.2 (Jan 2022)
   - added <inttypes.h> and <stdbool.h> dependencies for stability and portability.
   - basic inventory functions implemented.
@@ -77,7 +89,6 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
   - platform endianess detection added, enabling file I/O functions to convert data endianess.
   - several empty databases created.
   - several bugs fixed and several new bugs introduced.
-
 - 0.0.3 (Jan 2022)
   - file I/O functions' portability greatly improved.
   - basic curses library revised and finished.
@@ -86,14 +97,12 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
   - basic inventory information implemented.
   - typo fixes.
   - typedef revised: corburt would now use signed 32- and 64-bit integers to store integer values.
-
 - 0.1.0 (Jan 2022)
   - visual effect on windows terminal fixed (I guess).
   - added several basic commands.
   - typo & grammar fixes.
   - added the first region: Nameless City (9kb database).
   - map revised.
-
 - 0.1.1 (Jan 2022)
   - finished shop lists.
   - made item database for the goods.
@@ -102,7 +111,6 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
   - opened 'dbfio_.h' for database output.
   - room exits' structure revised to leave space for future updates; typo-fixed.
   - enemy database opened. enemies might be added in the 0.1.2 update.
-
 - 0.1.2 (Jan 2022)
   - stackable items are temporarily unavailable for purchase.
     - this is because the merging feature of stackable items has not yet been implemented.
@@ -111,3 +119,18 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
   - inventory layout remade.
   - the 'use' command added.
   - enemies are now shown in room descriptions with brutal line breaks.
+- 0.1.2 (Jan 2022)
+  - stackable items are temporarily unavailable for purchase.
+    - this is because the merging feature of stackable items has not yet been implemented.
+  - implemented item entities and enemy entities.
+  - updated the function 'match' for stability and security.
+  - inventory layout remade.
+  - the 'use' command added.
+  - enemies are now shown in room descriptions with brutal line breaks.
+- 0.1.3 (Jan 2022)
+  - line breaks improved (but not yet ready for ambiguous E. Asian literally-wide characters, beware).
+  - map fixed.
+  - stackable items can now be correctly pushed into inventory, thus now purchasable.
+  - directly pressing return without any input is now a way of repeating your last command.
+  - items and enemies in a room are shown.
+  - error checks for null exceptions.
