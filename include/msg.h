@@ -3,7 +3,7 @@
 #include <inttypes.h>
 #include <wchar.h>
 // prepared for future translations. :)
-const wchar_t *msg_global_corburtversion=L"v0.1.5";
+const wchar_t *msg_global_corburtversion=L"v0.1.6";
 const wchar_t *msg_global_welcome=L"Welcome to Corburt.\n\n";
 const wchar_t *msg_global_splash=L"   @@@@                @@\n"
 "  @@  @@               @@                  @@\n"
@@ -26,26 +26,33 @@ const wchar_t *msg_global_confirmchoice=L"Are you sure to play as the character 
 const wchar_t *msg_global_welcomeplayer=L"Welcome, %ls.\n";
 const wchar_t *msg_global_welcomeplayer2=L"Welcome back, %ls.\n";
 const wchar_t *msg_global_help=L"-------------------------------------------------------------------\n"
-    "                           Commands\n\n"
-    "<label>                    - command target\n"
-    "[label]                    - optional modifier\n\n"
-    "(none)                     - Repeat your last command\n"
-    "abilities                  - Show player's abilities\n"
-    "buy [quantity] <item>      - Buy item\n"
-    "cls                        - Clear screen\n"
-    "east (west, south, north)  - Move towards certain directions\n"
-    "experience                 - Show player's expierence\n"
-    "help                       - Show this list\n"
-    "inventory                  - Show player's inventory\n"
-    "list                       - Show the list of items at a shop\n"
-    "look                       - Show room information\n"
-    "quit                       - Save and quit game\n"
-    " * If you directly close the game, your progress will be lost.\n"
-    "save                       - Save current progress\n"
-    "stats                      - Show player's statistics\n"
-    "train                      - Train at the training grounds\n"
-    "use <item>                 - Use item\n"
-    " * Some commands have abbreviated forms, e.g. 'st' for 'stats'.\n"
+    "                           Commands\n"
+    "  <label>                  - command target\n"
+    "  [label]                  - optional modifier\n"
+    "Game\n"
+    "  (none)                   - Repeat your last command\n"
+    "  cls                      - Clear screen\n"
+    "  help                     - Show this list\n"
+    "  quit                     - Save and quit game\n"
+    "  * If you directly close the game, your progress will be lost.\n"
+    "  save                     - Save current progress\n"
+    "Player Stats\n"
+    "  abilities                - Show player's abilities\n"
+    "  experience               - Show player's expierence\n"
+    "  inventory                - Show player's inventory\n"
+    "  stats                    - Show player's statistics\n"
+    "  train                    - Train at the training grounds\n"
+    "Room\n"
+    "  east (west, south, north)- Move towards certain directions\n"
+    "  look                     - Show room information\n"
+    "Items\n"
+    "  buy [quantity] <item>    - Buy items\n"
+    "  drop [quantity] <item>   - Drop items to the ground\n"
+    "  get [quantity] <item>   - Pick up items in the room\n"
+    "  take [quantity] <item>  - Pick up items in the room\n"
+    "  list                     - Show the list of items at a shop\n"
+    "  use <item>               - Use an item\n"
+    "  * Some commands have abbreviated forms, e.g. 'st' for 'stats'.\n"
     "-------------------------------------------------------------------\n";
 
 const wchar_t *msg_trace_savesize=L"Size of a save is %zu bytes.\n";
@@ -121,6 +128,10 @@ const wchar_t *msg_db_ipurchasemultitemhint=L"%ls (x%" PRIdFAST32 ") purchased.\
 const wchar_t *msg_db_icantafford=L"You cannot afford the item. (missing $%" PRIdFAST32 ")\n";
 const wchar_t *msg_db_icantaffordmult=L"You cannot afford the item. (missing $%" PRIdFAST32 ")\n";
 const wchar_t *msg_db_icantcarry=L"You can't carry this much.\n";
+const wchar_t *msg_db_iettake=L"You pick up the %ls.\n";
+const wchar_t *msg_db_ietmulttake=L"You pick up the %ls (x%" PRIdFAST32 ").\n";
+const wchar_t *msg_db_ietdrop=L"You drop the %ls.\n";
+const wchar_t *msg_db_ietmultdrop=L"You drop the %ls (x%" PRIdFAST32 ").\n";
 const wchar_t *msg_db_ridnullexceptionerror=L"Null exception error: invalid room id.\n";
 const wchar_t *msg_db_iidnullexceptionerror=L"Null exception error: invalid item id.\n";
 const wchar_t *msg_db_eidnullexceptionerror=L"Null exception error: invalid enemy id.\n";

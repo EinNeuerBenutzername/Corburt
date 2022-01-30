@@ -1,9 +1,6 @@
 #ifndef Corburt_Database_Map_h_Include_Guard
 #define Corburt_Database_Map_h_Include_Guard
 #include "cbbase.h"
-enum direction{
-    dir_East,dir_West,dir_North,dir_South,dir_Up,dir_Down
-};
 enum db_roomtype{
     db_roomtype_plain,
     db_roomtype_birth,

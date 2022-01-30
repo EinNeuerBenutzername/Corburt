@@ -2,6 +2,7 @@
 #define Corburt_Database_Item_h_Include_Guard
 #define ITEM_MAXSTACK 999
 #include "cbbase.h"
+#include "cbplayer.h"
 
 enum db_itemtype{
     db_itemtype_stackable_mask=16,
@@ -119,19 +120,19 @@ itemdb itemdbs[]={
     },
     {.id=13,.name=L"Huge Green Leaf",
         .type=db_itemtype_consume,
-        .price=35,
+        .price=53,
         .desc=L"Huge leaves of some exotic plant.",
         .stats={.min_=30,.max_=55}
     },
     {.id=14,.name=L"Enormous Green Leaf",
         .type=db_itemtype_consume,
-        .price=55,
+        .price=96,
         .desc=L"Enormous leaves of some exotic plant.",
         .stats={.min_=65,.max_=115}
     },
     {.id=15,.name=L"Tremendous Green Leaf",
         .type=db_itemtype_consume,
-        .price=93,
+        .price=134,
         .desc=L"Tremendous leaves of some exotic plant.",
         .stats={.min_=175,.max_=255}
     },
@@ -277,6 +278,9 @@ itemdb itemdbs[]={
 
 itemdb *db_ifindwithid(nat itemid);
 void getitemname(nat id,wchar_t *itemname);
+void consumeitem(nat itemid);
+
+
 itemdb *db_ifindwithid(nat itemid){
     for(nat i=0;;i++){
         if(itemdbs[i].id==itemid){
@@ -305,5 +309,18 @@ void getitemname(nat id,wchar_t *itemname){
         break;
     }
     wcscpy(itemname,p);
+}
+void consumeitem(nat itemid){
+    itemdb *idb=db_ifindwithid(itemid);
+    nat range=idb->stats.max_-idb->stats.min_;
+    nat regennum=idb->stats.min_;
+    if(range<0){
+        range=1-range;
+        regennum=genRandLong(&mtrand)%range+idb->stats.max_;
+    }else{
+        range++;
+        regennum=genRandLong(&mtrand)%range+idb->stats.min_;
+    }
+    phpchange(regennum);
 }
 #endif

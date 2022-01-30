@@ -43,7 +43,6 @@ void launchcb(){
     inputbufl=mallocpointer(128*sizeof(wchar_t));
     wmemset(inputbuf,0,128);
     wmemset(inputbufl,0,128);
-    printr(Default,msg_line);
 }
 void endcb(){
     freeall();

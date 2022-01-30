@@ -31,6 +31,7 @@ static void savesave(nat saveid,FILE *fp){
     saveinventory(saves[saveid].inv,fp);
 }
 static void save_overwrite(nat saveid){
+    saves[saveid].valid=true;
     player=saves[saveid].plr;
     inventory=saves[saveid].inv;
 }
@@ -99,14 +100,14 @@ static void saveinventory(struct inventory inv,FILE *fp){
 static void readet_items(FILE *fp){
     nat itemsmax_tmp;
     int_fast32_t_read(&itemsmax_tmp,fp);
-    tracelog(Cyan,L"max items: %" PRIdFAST32 ".\n",itemsmax_tmp);
+//    tracelog(Cyan,L"max items: %" PRIdFAST32 ".\n",itemsmax_tmp);
     while(itemsmax_tmp>itemsmax){
         etitem_expand();
     }
     for(nat i=0;i<itemsmax_tmp;i++){
         nat avail;
         int_fast32_t_read(&avail,fp);
-        et_items[i].available=(foo)avail;
+        et_items[i].available=(avail==1);
         if(avail){
             int_fast32_t_read(&et_items[i].roomid,fp);
             int_fast32_t_read(&et_items[i].itemid,fp);
@@ -114,12 +115,14 @@ static void readet_items(FILE *fp){
             itemscount++;
         }
     }
-    if(itemscount)tracelog(Cyan,msg_trace_loadeti,itemscount);
+    if(itemscount)
+        tracelog(Cyan,msg_trace_loadeti,itemscount);
 }
 static void saveet_items(FILE *fp){
     int_fast32_t_write(itemsmax,fp);
     for(nat i=0;i<itemsmax;i++){
-        int_fast32_t_write((nat)et_items[i].available,fp);
+        nat avail=et_items[i].available?1:0;
+        int_fast32_t_write(avail,fp);
         if(et_items[i].available){
             int_fast32_t_write(et_items[i].roomid,fp);
             int_fast32_t_write(et_items[i].itemid,fp);
@@ -128,12 +131,9 @@ static void saveet_items(FILE *fp){
     }
 }
 static void readsavesglobaldata(FILE *fp){
-    nat version;
-    int_fast32_t_read(&version,fp);
     readet_items(fp);
 }
 static void savesavesglobaldata(FILE *fp){
-    int_fast32_t_write(105,fp);
     saveet_items(fp);
 }
 void readsaves(){
@@ -147,10 +147,11 @@ void readsaves(){
     }else{
         printr(Cyan,msg_global_scansave);
         readsavesglobaldata(fp_save);
-        for(int i=0;i<savescount&&!fio.fail;i++){
+        for(int i=0;i<savescount;i++){
             readsave(foundsaves,fp_save);
             if(saves[foundsaves].valid)foundsaves++;
         }
+        fclose(fp_save);
         if(foundsaves==0)printr(Cyan|Bright,msg_global_saveempty);
         else if(foundsaves==1){
             printr(Cyan|Bright,msg_global_savecount,foundsaves);
@@ -163,7 +164,6 @@ void readsaves(){
             printr(Cyan|Bright,L"\n");
         }
     }
-    fclose(fp_save);
     while(true){
         printr(White|Bright,msg_global_enteryourname);
         wchar_t readsave_newname[32];

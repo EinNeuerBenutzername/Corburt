@@ -219,7 +219,8 @@ foo matchcommands(wchar_t *cmd){
         nat maxmatchid=0;
         nat ininvindex=0;
         foo noprev=true;
-        for(nat i=0;inventory.items[i]!=0;i++){
+        for(nat i=0;i<inventory.unlocked;i++){
+            if(inventory.items[i]==0)continue;
             itemdb *idb=db_ifindwithid(et_items[inventory.items[i]-1].itemid);
             if(idb==NULL){
                 printr(Red,msg_db_iidnullexceptionerror);
@@ -283,7 +284,205 @@ foo matchcommands(wchar_t *cmd){
                     }
                 }
             }
-            // consume
+            if(idb->type==db_itemtype_consume){
+                struct et_item *eti=&et_items[inventory.items[ininvindex]-1];
+                consumeitem(eti->itemid);
+                if(eti->qnty>1)eti->qnty--;
+                else{
+                    etitem_delete(inventory.items[ininvindex]);
+                }
+            }
+        }else{
+            printr(Default,msg_db_inosuchitem);
+        }
+        return true;
+    }
+    if(fullmatch(cmd,L"take")||
+       fullmatch(cmd,L"get")||
+       fullmatch(cmd,L"g")){
+        size_t startp=4;
+        if(fullmatch(cmd,L"get"))startp=3;
+        else if(fullmatch(cmd,L"g"))startp=1;
+        roomdb *rm=db_rfindwithid(player.roomid);
+        if(rm==NULL){
+            printr(Red,msg_db_ridnullexceptionerror);
+            return true;
+        }
+        wchar_t *taketarget=NULL;
+        taketarget=mallocpointer(128*sizeof(wchar_t));
+        wmemset(taketarget,0,128);
+        nat j=0,sth=0;
+        for(size_t i=startp;i<wcslen(cmd);i++){
+            if(cmd[i]!=L' '&&((cmd[i]>L'9'||cmd[i]<L'0')||sth==3))sth=2;
+            else{
+                if(cmd[i]==L' '&&sth==1)sth=3;
+                else if(cmd[i]!=L' '&&sth==0)sth=1;
+            }
+            if(sth==1||sth==2){
+                taketarget[j]=cmd[i];
+                j++;
+            }
+            if(sth==3&&wcslen(taketarget)>0){
+                j=0;
+                wmemset(taketarget,0,128);
+            }
+        }
+        nat qnty=0;
+        for(size_t i=startp;i<128;i++){
+            if((cmd[i]<L'0'||cmd[i]>L'9')&&!(cmd[i]==' '&&qnty==0))break;
+            if(qnty){
+                qnty*=10;
+                qnty+=cmd[i]-L'0';
+                if(qnty>=ITEM_MAXSTACK){
+                    qnty=ITEM_MAXSTACK;
+                    break;
+                }
+            }
+            if(cmd[i]>=L'1'&&cmd[i]<=L'9'&&qnty==0)qnty=cmd[i]-L'0';
+        }
+        if(qnty==0)qnty=1;
+        nat maxmatch=-1;
+        nat maxmatchid=0;
+        struct et_room *etr=et_findroomwithid(rm->id);
+        if(etr==NULL){
+            printr(Red,msg_db_retidnullexceptionerror);
+            return true;
+        }
+        for(nat i=0;i<DBE_ITEMCAP;i++){
+            if(etr->etitem[i]==0)continue;
+            struct et_item *eti=&et_items[etr->etitem[i]-1];
+            if(eti==NULL){
+                printr(Red,msg_db_ietidnullexceptionerror);
+                return true;
+            }
+            itemdb *idb=db_ifindwithid(eti->itemid);
+            if(idb==NULL){
+                printr(Red,msg_db_iidnullexceptionerror);
+                return true;
+            }
+            nat curmatch=match(taketarget,idb->name);
+            if(curmatch>maxmatch){
+                maxmatch=curmatch;
+                maxmatchid=etr->etitem[i];
+            }
+        }
+        freepointer(taketarget);
+        if(maxmatch>=0){
+            struct et_item *eti=&et_items[maxmatchid-1];
+            if(!eti->available){
+                printr(Red,msg_db_ietidnullexceptionerror);
+                return true;
+            }
+            itemdb *idb=db_ifindwithid(eti->itemid);
+            if(idb==NULL){
+                printr(Red,msg_db_iidnullexceptionerror);
+                return true;
+            }
+            if(idb->type&db_itemtype_stackable_mask){ ///
+                if(eti->qnty<=qnty){
+                    etitem_rebind(maxmatchid,0);
+                }else{
+                    eti->qnty-=qnty;
+                    etitem_push(eti->itemid,qnty,0,0);
+                }
+                if(qnty>1)printr(Cyan|Bright,msg_db_ietmulttake,idb->name,qnty);
+                else printr(Cyan|Bright,msg_db_iettake,idb->name);
+            }
+            else{
+                etitem_rebind(maxmatchid,0);
+                printr(Cyan|Bright,msg_db_iettake,idb->name);
+            }
+        }else{
+            printr(Default,msg_db_inosuchitem);
+        }
+        return true;
+    }
+    if(fullmatch(cmd,L"drop")){
+        struct et_room *etr=et_findroomwithid(player.roomid);
+        if(etr==NULL){
+            printr(Red,msg_db_retidnullexceptionerror);
+            return true;
+        }
+        wchar_t *droptarget=NULL;
+        droptarget=mallocpointer(128*sizeof(wchar_t));
+        wmemset(droptarget,0,128);
+        nat j=0,sth=0;
+        for(size_t i=4;i<wcslen(cmd);i++){
+            if(cmd[i]!=L' '&&((cmd[i]>L'9'||cmd[i]<L'0')||sth==3))sth=2;
+            else{
+                if(cmd[i]==L' '&&sth==1)sth=3;
+                else if(cmd[i]!=L' '&&sth==0)sth=1;
+            }
+            if(sth==1||sth==2){
+                droptarget[j]=cmd[i];
+                j++;
+            }
+            if(sth==3&&wcslen(droptarget)>0){
+                j=0;
+                wmemset(droptarget,0,128);
+            }
+        }
+        nat qnty=0;
+        for(size_t i=4;i<128;i++){
+            if((cmd[i]<L'0'||cmd[i]>L'9')&&!(cmd[i]==' '&&qnty==0))break;
+            if(qnty){
+                qnty*=10;
+                qnty+=cmd[i]-L'0';
+                if(qnty>=ITEM_MAXSTACK){
+                    qnty=ITEM_MAXSTACK;
+                    break;
+                }
+            }
+            if(cmd[i]>=L'1'&&cmd[i]<=L'9'&&qnty==0)qnty=cmd[i]-L'0';
+        }
+        if(qnty==0)qnty=1;
+        nat maxmatch=-1;
+        nat maxmatchid=0;
+        for(nat i=0;i<inventory.unlocked;i++){
+            if(inventory.items[i]==0)continue;
+            struct et_item *eti=&et_items[inventory.items[i]-1];
+            if(eti==NULL){
+                printr(Red,msg_db_ietidnullexceptionerror);
+                return true;
+            }
+            itemdb *idb=db_ifindwithid(eti->itemid);
+            if(idb==NULL){
+                printr(Red,msg_db_iidnullexceptionerror);
+                return true;
+            }
+            nat curmatch=match(droptarget,idb->name);
+            if(curmatch>maxmatch){
+                maxmatch=curmatch;
+                maxmatchid=inventory.items[i];
+            }
+        }
+        freepointer(droptarget);
+        if(maxmatch>=0){
+            struct et_item *eti=&et_items[maxmatchid-1];
+            if(!eti->available){
+                printr(Red,msg_db_ietidnullexceptionerror);
+                return true;
+            }
+            itemdb *idb=db_ifindwithid(eti->itemid);
+            if(idb==NULL){
+                printr(Red,msg_db_iidnullexceptionerror);
+                return true;
+            }
+            if(idb->type&db_itemtype_stackable_mask){
+                if(eti->qnty<=qnty){
+                    qnty=eti->qnty;
+                    etitem_rebind(maxmatchid,player.roomid);
+                }else{
+                    eti->qnty-=qnty;
+                    etitem_push(eti->itemid,qnty,player.roomid,0);
+                }
+                if(qnty>1)printr(Cyan|Bright,msg_db_ietmultdrop,idb->name,qnty);
+                else printr(Cyan|Bright,msg_db_ietdrop,idb->name);
+            }
+            else{
+                etitem_rebind(maxmatchid,player.roomid);
+                printr(Cyan|Bright,msg_db_ietdrop,idb->name);
+            }
         }else{
             printr(Default,msg_db_inosuchitem);
         }

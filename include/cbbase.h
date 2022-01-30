@@ -45,7 +45,7 @@ struct player{
         nat pts;
     } stats;
     nat roomid;
-} player={L"",1,1,0,10,10,{0,0,0,0,0,0,0,0},1};
+} player={L"",1,1,0,10,10,{0,0,0,0,0,0,0,14},1};
 struct inventory{
     nat unlocked;
     nat items[64];
@@ -161,12 +161,11 @@ void printr(int color,const wchar_t *format,...){
             wcsw+=wcwidth(printr_dest[i]);
             if(i+1==wcsld){
                 wprintf(L"%ls",printr_token);
-                pos=wcsw;wmemset(printr_token,0,wcsl);
+                pos+=wcsw;wmemset(printr_token,0,wcsl);
                 wcsl=0;wcsw=0;
             }
         }
     }
-
     if(color!=Default)cbc_setcolor(Default);
     fflush(stdout);
 }
@@ -264,7 +263,7 @@ void fatalerror(enum errorenum error_id){
         msg=msg_error_unknown;break;
     }
     printr(Red,msg);
-    FILE *errorlog=fopen("err.log","w");
+    FILE *errorlog=fopen("err.log","a");
     fprintf(errorlog,"%ls",msg);
     fclose(errorlog);
     exit(-1);
@@ -453,4 +452,23 @@ void initrng(){
     tracelog(Green,msg_trace_rngtest,genRandLong(&mtrand));
 }
 
+// cbm
+enum direction{
+    dir_East,dir_West,dir_North,dir_South,dir_Up,dir_Down
+};
+// cbp
+static void plvlup();
+static void paddgearstats();
+void paddexp(nat add);
+void phpchange(nat num);
+void pdie();
+void pcalcstats();
+void pshowstats();
+void pshowabl();
+void pshowinv();
+void pshowexp();
+void pmove(enum direction dir);
+void pattack();
+void ptrain();
+void peditstats();
 #endif

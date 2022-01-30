@@ -22,7 +22,9 @@ struct fio{
     int_fast8_t fail;
 } fio={0,0,4,8,2,0};
 
-static void fio_getfilesize(char *filename){
+void fio_getfilesize(char *filename);
+void fio_fail(const char *errmsg);
+void fio_getfilesize(char *filename){
     FILE *fp=fopen(filename,"rb");
     fio.filesize=0;
     fio.fileptr=0;
@@ -34,6 +36,15 @@ static void fio_getfilesize(char *filename){
     fseek(fp,0,SEEK_END);
     fio.filesize=ftell(fp);
     fclose(fp);
+}
+void fio_fail(const char *errmsg){
+    if(!fio.fail){
+        fio.fail=1;
+        printf("FIO Fail: failure at position %" PRIdFAST32 ": %s\n",fio.fileptr,errmsg);
+        FILE *errorlog=fopen("err.log","a");
+        fprintf(errorlog,"FIO Fail: failure at position %" PRIdFAST32 ": %s\n",fio.fileptr,errmsg);
+        fclose(errorlog);
+    }
 }
 
 static int_fast32_t int_fast32_t_makele (int_fast32_t n);
@@ -69,12 +80,12 @@ void                int_fast32_t_read   (int_fast32_t *n,FILE *fp){
     *n=0;
     if(fio.fail)return;
     if(fio.fileptr+fio.int_fast32_t_size>fio.filesize){
-        fio.fail=1;
+        fio_fail("exceeded file length.");
         return;
     }
     int_fast32_t r;
     if(fread(&r,fio.int_fast32_t_size,1,fp)!=1){
-        fio.fail=1;
+        fio_fail("fread() fail.");
         return;
     }
     fio.fileptr+=fio.int_fast32_t_size;
@@ -109,12 +120,12 @@ void                int_fast64_t_read   (int_fast64_t *b,FILE *fp){
     *b=0;
     if(fio.fail)return;
     if(fio.fileptr+fio.int_fast64_t_size>fio.filesize){
-        fio.fail=1;
+        fio_fail("exceeded file length.");
         return;
     }
     int_fast64_t r;
     if(fread(&r,fio.int_fast64_t_size,1,fp)!=1){
-        fio.fail=1;
+        fio_fail("fread() fail.");
         return;
     }
     fio.fileptr+=fio.int_fast64_t_size;
@@ -156,22 +167,21 @@ static void         wcs_makebe          (wchar_t *wcs){
     }
 }
 void                wcs_read            (wchar_t *wcs,size_t len,FILE *fp){
-    wcs=L"";
     if(fio.fail)return;
-//    if(fread(wcs,len*sizeof(wchar_t),1,fp)!=1)return 0;
     if(fio.fileptr+fio.wchar_t_size*len>fio.filesize){
-        fio.fail=1;
+        fio_fail("exceeded file length.");
         return;
     }
     for(size_t i=0;i<len;i++){
-        int_fast16_t tmpint16=0;
-        if(fread(&tmpint16,fio.wchar_t_size,1,fp)!=1){
-            fio.fail=1;
+        uint_fast32_t tmpint=0;
+        if(fread(&tmpint,fio.wchar_t_size,1,fp)!=1){
+            fio_fail("fread() fail.");
             return;
         }
-        wcs[i]=tmpint16;
+        wcs[i]=tmpint;
+        wcs[i]^=i%6+12042;
+        fio.fileptr+=fio.wchar_t_size;
     }
-    fio.fileptr+=fio.wchar_t_size;
     if(!fio_isle())wcs_makebe(wcs);
 }
 void                wcs_write           (wchar_t *wcs,size_t len,FILE *fp){
@@ -180,6 +190,7 @@ void                wcs_write           (wchar_t *wcs,size_t len,FILE *fp){
     for(size_t i=0;i<len;i++){
         int_fast32_t mask=(UCHAR_MAX+1)*(UCHAR_MAX+1)-1;
         int_fast16_t tmpint16=wcs[i]%mask;
+        tmpint16^=i%6+12042;
         fwrite(&tmpint16,fio.wchar_t_size,1,fp);
     }
     wcs_makebe(wcs);

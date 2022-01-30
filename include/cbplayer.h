@@ -1,8 +1,7 @@
 #ifndef Corburt_Player_h_Include_Guard
 #define Corburt_Player_h_Include_Guard
-//#define LVL_CAP 120
-#define LVL_CAP 20
-#include "dbitem.h"
+#define LVL_CAP 120
+//#define LVL_CAP 20
 #include "dbmap.h"
 const bat exp2next[]={
     [0]=20,
@@ -148,24 +147,13 @@ struct {
     } calcstats;
 } cbp;
 
-static void plvlup();
-static void paddgearstats();
-void paddexp(nat add);
-void pcalcstats();
-void pshowstats();
-void pshowabl();
-void pshowinv();
-void pshowexp();
-void pmove(enum direction dir);
-void pattack();
-void ptrain();
-void peditstats();
+#include "dbitem.h"
 
 static void plvlup(){
     if(player.lvl>=LVL_CAP)return;
     player.lvl++;
     player.stats.pts+=4;
-    player.stats.pts+=player.lvl/9.257f;
+    player.stats.pts+=player.lvl/9.429f;
     player.maxhp=10;
     player.maxhp+=player.lvl*player.lvl/1.942f;
     player.maxhp+=player.stats.con*player.lvl/2.85f;
@@ -215,6 +203,34 @@ void paddexp(nat add){
     else if(add<0&&player.exp+add>0)player.exp+=add;
     if(player.exp>exp2next[LVL_CAP-1])player.exp=exp2next[LVL_CAP-1];
 }
+void phpchange(nat num){
+    if(num==0)return;
+    if(num>0){
+        if(player.hp==player.maxhp)return;
+        if(player.hp+num<player.maxhp)player.hp+=num;
+        else player.hp=player.maxhp;
+        putc('[',stdout);
+        nat color;
+        if(player.hp<player.maxhp*0.3333333f)color=Red|Bright;
+        else if(player.hp<player.maxhp*0.6666667f)color=Yellow|Bright;
+        else color=Green|Bright;
+        printc(color,L"%" PRIdFAST64,player.hp);
+        printc(Default,L"/%" PRIdFAST64 "]\n",player.maxhp);
+    }else{
+        if(player.hp+num>0){
+            player.hp+=num;
+            printf("[");
+            nat color;
+            if(player.hp<player.maxhp*0.3333333f)color=Red|Bright;
+            else if(player.hp<player.maxhp*0.6666667f)color=Yellow|Bright;
+            else color=Green|Bright;
+            printc(color,L"%" PRIdFAST64,player.hp);
+            printc(Default,L"/%" PRIdFAST64 "]\n",player.maxhp);
+        }
+        else pdie();
+    }
+}
+void pdie(){}
 void pcalcstats(){
     if(player.stats.atk>99999)player.stats.atk=99999;
     if(player.stats.def>99999)player.stats.def=99999;

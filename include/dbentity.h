@@ -3,10 +3,12 @@
 #include "cbbase.h"
 #include "dbmap.h"
 #include "dbenemy.h"
+#include "dbitem.h"
 #define DBE_ENEMYCAP 64
 #define DBE_ITEMCAP 32
 #define DBE_INTCAP 16
 #define DBE_EXPANDSTEP 64
+#define DBE_TRACELOG 0
 struct et_room{
     nat id;
     nat etenemy[DBE_ENEMYCAP];
@@ -43,12 +45,14 @@ void etenemy_expand();
 void etenemy_push(nat enemyid,nat roomid);
 enemydb *et_getenemydb(nat enemyentityid);
 void etitem_expand();
+void etitem_delete(nat entityid);
+void etitem_rebind(nat entityid,nat newroomid);
 void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase);
 itemdb *et_getitemdb(nat itementityid);
 void et_spawnenemies();
 void setupentitydata(){
-    tracelog(Green,L"Setting up entity data...\n");
-    tracelog(Green,L"Rooms count: %" PRIdFAST32 "\n",roomsmax);
+    if(DBE_TRACELOG)tracelog(Green,L"Setting up entity data...\n");
+    if(DBE_TRACELOG)tracelog(Green,L"Rooms count: %" PRIdFAST32 "\n",roomsmax);
     et_rooms=mallocpointer(roomsmax*sizeof(struct et_room));
     struct et_room etr={0};
     for(nat i=0;i<roomsmax;i++){
@@ -78,7 +82,7 @@ struct et_room *et_findroomwithid(nat roomid){
     return NULL;
 }
 void etenemy_expand(){
-    tracelog(Green,L"Expanding enemy entity list... (%" PRIdFAST32 "->%" PRIdFAST32 ")\n",enemiesmax,enemiesmax+DBE_EXPANDSTEP);
+    if(DBE_TRACELOG)tracelog(Green,L"Expanding enemy entity list... (%" PRIdFAST32 "->%" PRIdFAST32 ")\n",enemiesmax,enemiesmax+DBE_EXPANDSTEP);
     enemiesmax+=DBE_EXPANDSTEP;
     et_enemies=reallocpointer(et_enemies,enemiesmax*sizeof(struct et_enemy));
     struct et_enemy ete={0};
@@ -143,7 +147,7 @@ void etenemy_push(nat enemyid,nat roomid){
     et_enemies[enemyentityindex]=ete;
     etr->etenemy[enemyreferenceindex]=enemyentityindex+1;
     enemiescount++;
-    tracelog(Cyan,L"Create enemy entity: entityid=%d (enemyid=%d, roomid=%d)\n",(int)enemyentityindex+1,(int)enemyid,(int)roomid);
+    if(DBE_TRACELOG)tracelog(Cyan,L"Create enemy entity: entityid=%d (enemyid=%d, roomid=%d)\n",(int)enemyentityindex+1,(int)enemyid,(int)roomid);
 }
 enemydb *et_getenemydb(nat enemyentityid){
     if(et_enemies[enemyentityid-1].available==false){
@@ -154,13 +158,71 @@ enemydb *et_getenemydb(nat enemyentityid){
     return edb;
 }
 void etitem_expand(){
-    tracelog(Green,L"Expanding item entity list... (%" PRIdFAST32 "->%" PRIdFAST32 ")\n",itemsmax,itemsmax+DBE_EXPANDSTEP);
+    if(DBE_TRACELOG)tracelog(Green,L"Expanding item entity list... (%" PRIdFAST32 "->%" PRIdFAST32 ")\n",itemsmax,itemsmax+DBE_EXPANDSTEP);
     itemsmax+=DBE_EXPANDSTEP;
     et_items=reallocpointer(et_items,itemsmax*sizeof(struct et_item));
     struct et_item eti={0};
     for(nat i=itemsmax-DBE_EXPANDSTEP;i<itemsmax;i++){
         et_items[i]=eti;
     }
+}
+void etitem_delete(nat entityid){
+    struct et_item *eti=&et_items[entityid-1];
+    if(!eti->available){
+        printr(Red,msg_db_ietidnullexceptionerror);
+        return;
+    }
+    if(eti->roomid!=0){
+        struct et_room *etr=et_findroomwithid(eti->roomid);
+        if(etr==NULL){
+            printr(Red,msg_db_retidnullexceptionerror);
+            return;
+        }
+        for(nat i=0;i<DBE_ITEMCAP;i++){
+            if(etr->etitem[i]==entityid){
+                etr->etitem[i]=0;
+                break;
+            }
+        }
+    }
+    else{
+        nat invindex=-1;
+        for(nat i=0;i<inventory.unlocked;i++){
+            if(inventory.items[i]==entityid){
+                inventory.items[i]=0;
+                invindex=i;
+                break;
+            }
+        }
+        if(inventory.weapon==invindex+1){
+            inventory.weapon=0;
+        }
+        if(inventory.armor==invindex+1){
+            inventory.armor=0;
+        }
+        for(nat i=0;i<5;i++){
+            if(inventory.accessories[i]==invindex+1){
+                inventory.accessories[i]=0;
+                break;
+            }
+        }
+    }
+    eti->available=false;
+    eti->roomid=0;
+    eti->itemid=0;
+    eti->qnty=0;
+    if(itempointer>=entityid)itempointer=entityid-1;
+    if(DBE_TRACELOG)tracelog(Cyan,L"Item entity #%" PRIdFAST32 " deleted.\n",entityid);
+}
+void etitem_rebind(nat entityid,nat newroomid){
+    struct et_item *eti=&et_items[entityid-1];
+    struct et_item etio=et_items[entityid-1];
+    if(!eti->available){
+        printr(Red,msg_db_ietidnullexceptionerror);
+        return;
+    }
+    etitem_delete(entityid);
+    etitem_push(etio.itemid,etio.qnty,newroomid,0);
 }
 void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
     if(qnty<=0)return; //
@@ -356,7 +418,7 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
         }
     }
     if(!success)itempointer--;
-    tracelog(Cyan,L"Create item entity: entityid=%d (qnty=%d, itemid=%d, roomid=%d) %ls\n",(int)itementityindex+1,(int)qnty,(int)itemid,(int)roomid,success?L"":L"fail");
+    if(DBE_TRACELOG)tracelog(Cyan,L"Create item entity: entityid=%d (qnty=%d, itemid=%d, roomid=%d) %ls\n",(int)itementityindex+1,(int)qnty,(int)itemid,(int)roomid,success?L"":L"fail");
 }
 itemdb *et_getitemdb(nat itementityid){
     if(et_items[itementityid-1].available==false){
