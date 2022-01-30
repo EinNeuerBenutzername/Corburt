@@ -14,11 +14,25 @@ static int fio_isle(){
 }
 
 struct fio{
+    size_t filesize;
+    size_t fileptr;
     int_fast8_t int_fast32_t_size;
     int_fast8_t int_fast64_t_size;
     int_fast8_t wchar_t_size;
     int_fast8_t fail;
-} fio={4,8,2,0};
+} fio={0,0,4,8,2,0};
+
+static void fio_getfilesize(char *filename){
+    FILE *fp=fopen(filename,"rb");
+    fio.filesize=0;
+    fio.fileptr=0;
+    if(fp==NULL){
+        return;
+    }
+    fseek(fp,0,SEEK_END);
+    fio.filesize=ftell(fp);
+    fclose(fp);
+}
 
 static int_fast32_t int_fast32_t_makele (int_fast32_t n);
 static int_fast32_t int_fast32_t_makebe (int_fast32_t n);
@@ -50,12 +64,18 @@ static int_fast32_t int_fast32_t_makebe (int_fast32_t n){
     return result;
 }
 void                int_fast32_t_read   (int_fast32_t *n,FILE *fp){
+    *n=0;
     if(fio.fail)return;
+    if(fio.fileptr+fio.int_fast32_t_size>fio.filesize){
+        fio.fail=1;
+        return;
+    }
     int_fast32_t r;
     if(fread(&r,fio.int_fast32_t_size,1,fp)!=1){
         fio.fail=1;
         return;
     }
+    fio.fileptr+=fio.int_fast32_t_size;
     if(!fio_isle())r=int_fast32_t_makebe(r);
     *n=r;
 }
@@ -84,12 +104,18 @@ static int_fast32_t int_fast64_t_makebe (int_fast64_t b){
     return result;
 }
 void                int_fast64_t_read   (int_fast64_t *b,FILE *fp){
+    *b=0;
     if(fio.fail)return;
+    if(fio.fileptr+fio.int_fast64_t_size>fio.filesize){
+        fio.fail=1;
+        return;
+    }
     int_fast64_t r;
     if(fread(&r,fio.int_fast64_t_size,1,fp)!=1){
         fio.fail=1;
         return;
     }
+    fio.fileptr+=fio.int_fast64_t_size;
     if(!fio_isle())r=int_fast64_t_makebe(r);
     *b=r;
 }
@@ -128,8 +154,13 @@ static void         wcs_makebe          (wchar_t *wcs){
     }
 }
 void                wcs_read            (wchar_t *wcs,size_t len,FILE *fp){
+    wcs=L"";
     if(fio.fail)return;
 //    if(fread(wcs,len*sizeof(wchar_t),1,fp)!=1)return 0;
+    if(fio.fileptr+fio.wchar_t_size*len>fio.filesize){
+        fio.fail=1;
+        return;
+    }
     for(size_t i=0;i<len;i++){
         int_fast16_t tmpint16=0;
         if(fread(&tmpint16,fio.wchar_t_size,1,fp)!=1){
@@ -138,6 +169,7 @@ void                wcs_read            (wchar_t *wcs,size_t len,FILE *fp){
         }
         wcs[i]=tmpint16;
     }
+    fio.fileptr+=fio.wchar_t_size;
     if(!fio_isle())wcs_makebe(wcs);
 }
 void                wcs_write           (wchar_t *wcs,size_t len,FILE *fp){
