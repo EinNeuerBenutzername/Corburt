@@ -3,7 +3,7 @@
 #include <inttypes.h>
 #include <wchar.h>
 // prepared for future translations. :)
-const wchar_t *msg_global_corburtversion=L"v0.1.6";
+const wchar_t *msg_global_corburtversion=L"v0.1.7";
 const wchar_t *msg_global_welcome=L"Welcome to Corburt.\n\n";
 const wchar_t *msg_global_splash=L"   @@@@                @@\n"
 "  @@  @@               @@                  @@\n"
@@ -38,7 +38,7 @@ const wchar_t *msg_global_help=L"-----------------------------------------------
     "  save                     - Save current progress\n"
     "Player Stats\n"
     "  abilities                - Show player's abilities\n"
-    "  experience               - Show player's expierence\n"
+    "  experience               - Show player's experience\n"
     "  inventory                - Show player's inventory\n"
     "  stats                    - Show player's statistics\n"
     "  train                    - Train at the training grounds\n"
@@ -54,6 +54,7 @@ const wchar_t *msg_global_help=L"-----------------------------------------------
     "  use <item>               - Use an item\n"
     "  * Some commands have abbreviated forms, e.g. 'st' for 'stats'.\n"
     "-------------------------------------------------------------------\n";
+const wchar_t *msg_global_save_incompat=L"Incompatible save version: expected %ls.\n";
 
 const wchar_t *msg_trace_savesize=L"Size of a save is %zu bytes.\n";
 const wchar_t *msg_trace_endianess_le=L"Machine is little endian.\n";
@@ -72,7 +73,7 @@ const wchar_t *msg_trace_loadeti=L"%" PRIdFAST32 " item entities loaded.\n";
 
 const wchar_t *msg_error_cannotmalloc=L"Fatal error: Cannot allocate memory.";
 const wchar_t *msg_error_cannotrealloc=L"Fatal error: Cannot reallocate memory.";
-const wchar_t *msg_error_unknown=L"Fatal error: An unknown fatal error occured.";
+const wchar_t *msg_error_unknown=L"Fatal error: An unknown fatal error occurred.";
 const wchar_t *msg_error_badcharbit=L"Fatal error: Macro CHAR_BIT is not 8.";
 const wchar_t *msg_error_bufferpooloverflow=L"Fatal error: Buffer pool overflow. Possible reason: memory leak.";
 const wchar_t *msg_error_cannotsave=L"Fatal error: Cannot create save file.";
@@ -96,14 +97,14 @@ const wchar_t *msg_player_info=L"-----------------------------------------------
     "Rank:          %ls\n"
     "Hit Points:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n"
     "Level:         %" PRIdFAST32 "\n"
-    "Expierence:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n\n"
-    "Attack Damage: %-08" PRIdFAST32 "            Damage Absorb: %-08" PRIdFAST32 "\n"
-    "Accuracy:      %-08" PRIdFAST32 "            Dodging:       %-08" PRIdFAST32 "\n"
-    "Stealth:       %-08" PRIdFAST32 "            Activity:      %-08" PRIdFAST32 "\n"
-    "Constitution:  %-08" PRIdFAST32 "            Stat Points:   %-08" PRIdFAST32 "\n"
+    "Experience:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n\n"
+    "Strike Power:   %-08" PRIdFAST32 "            Damage Absorb:  %-08" PRIdFAST32 "\n"
+    "Accuracy:       %-08" PRIdFAST32 "            Dodging:        %-08" PRIdFAST32 "\n"
+    "Stealth:        %-08" PRIdFAST32 "            Responsiveness: %-08" PRIdFAST32 "\n"
+    "Constitution:   %-08" PRIdFAST32 "            Stat Points:    %-08" PRIdFAST32 "\n"
     "-------------------------------------------------------------------\n";
 const wchar_t *msg_player_exp=L"Level:         %" PRIdFAST32 "\n"
-    "Expierence:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n";
+    "Experience:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n";
 const wchar_t *msg_player_inv=L"-------------------------------------------------------------------\n"
     "                           Your Inventory\n"
     "Money:         $%-08" PRIdFAST64 "\n"

@@ -237,8 +237,8 @@ roomdb roomdbs[]={
     },
     {.id=27,
         .region=db_roomregion_nlcity,
-        .name=L"Cemetary Path",
-        .desc=L"You stand at the end of the narrow path that leads to the cemetary. "
+        .name=L"Cemetery Path",
+        .desc=L"You stand at the end of the narrow path that leads to the cemetery. "
                 "The cemetery is on low ground and you can see most of the cemetery "
                 "from this location. Yet the eastern part of the cemetery is "
                 "shrouded in darkness.",
@@ -247,7 +247,7 @@ roomdb roomdbs[]={
     },
     {.id=28,
         .region=db_roomregion_nlcity,
-        .name=L"Cemetary",
+        .name=L"Cemetery",
         .desc=L"There are tombstones all around. Apparently, the number of "
                 "tombstones is far greater than the number of inhabitants of the "
                 "town.",
@@ -256,14 +256,14 @@ roomdb roomdbs[]={
     },
     {.id=29,
         .region=db_roomregion_nlcity,
-        .name=L"Cemetary",
+        .name=L"Cemetery",
         .desc=L"Tombstones are crowded.",
         .type=db_roomtype_plain,
         .exits={[dir_North]=28,[dir_East]=30}
     },
     {.id=30,
         .region=db_roomregion_nlcity,
-        .name=L"Cemetary",
+        .name=L"Cemetery",
         .desc=L"Do not disturb the peace of the dead.",
         .type=db_roomtype_plain,
         .exits={[dir_West]=29,[dir_North]=31},
@@ -271,7 +271,7 @@ roomdb roomdbs[]={
     },
     {.id=31,
         .region=db_roomregion_nlcity,
-        .name=L"Cemetary",
+        .name=L"Cemetery",
         .desc=L"Is it because the city was once too prosperous, or because it is "
                 "too decadent now? Or is it neither, just because the history here "
                 "is too old?",

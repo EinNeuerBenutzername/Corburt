@@ -131,9 +131,16 @@ static void saveet_items(FILE *fp){
     }
 }
 static void readsavesglobaldata(FILE *fp){
+    nat version=0;
+    int_fast32_t_read(&version,fp);
+    if(version!=106){
+        printr(Red,msg_global_save_incompat,msg_global_corburtversion);
+        fio.fail=1;
+    }
     readet_items(fp);
 }
 static void savesavesglobaldata(FILE *fp){
+    int_fast32_t_write(106,fp);
     saveet_items(fp);
 }
 void readsaves(){
