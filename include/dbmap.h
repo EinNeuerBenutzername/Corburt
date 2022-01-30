@@ -546,7 +546,7 @@ void db_rshowtable(nat roomid){
                 printr(Red,msg_db_iidnullexceptionerror);
                 return;
             }
-            printr(Default,msg_db_listitem,idb->name,idb->price);
+            printrp(Default,L"            | ",msg_db_listitem,idb->price,idb->name);
         }else break;
     }
     printr(Default,msg_line);

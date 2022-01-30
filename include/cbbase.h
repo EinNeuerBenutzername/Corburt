@@ -53,7 +53,7 @@ struct inventory{
     nat weapon;
     nat armor;
     bat money;
-} inventory={16,{0},{0},0,0,1000};
+} inventory={16,{0},{0},0,0,100000};
 struct save{
     nat valid;
     struct player plr;
@@ -71,12 +71,14 @@ enum errorenum{
     error_cannotmalloc,
     error_cannotrealloc,
     error_badcharbit,
-    error_bufferpooloverflow
+    error_bufferpooloverflow,
+    error_cannotsave,
 };
 void printc(int color,const wchar_t *format,...); // obsolete, please use printr()
 size_t wcwidth(const wchar_t wc);
 size_t wcswidth(const wchar_t *wcs);
 void printr(int color,const wchar_t *format,...);
+void printrp(int color,const wchar_t *linepref,const wchar_t *format,...);
 void printword(size_t *pos,size_t width,wchar_t *word);
 void tracelog(int color,const wchar_t *format,...);
 void fatalerror(enum errorenum error_id);
@@ -111,17 +113,17 @@ size_t wcswidth(const wchar_t *wcs){
     }
     return len;
 }
-wchar_t *printr_dest=NULL;
-wchar_t *printr_token=NULL;
+    wchar_t *printr_dest=NULL;
+    wchar_t *printr_token=NULL;
+    size_t pos=0;
 void printr(int color,const wchar_t *format,...){
-    static size_t pos=0;
     if(color!=Default)cbc_setcolor(color);
     fflush(stdout);
-    wmemset(printr_dest,0,1024);
+    wmemset(printr_dest,0,4096);
     wmemset(printr_token,0,DISPLAY_WIDTH);
     va_list args;
     va_start(args,format);
-    vswprintf(printr_dest,1024,format,args);
+    vswprintf(printr_dest,4096,format,args);
     va_end(args);
 
     size_t wcsl=0,wcsw=0,wcsld=wcslen(printr_dest);
@@ -168,6 +170,69 @@ void printr(int color,const wchar_t *format,...){
     if(color!=Default)cbc_setcolor(Default);
     fflush(stdout);
 }
+void printrp(int color,const wchar_t *linepref,const wchar_t *format,...){
+    if(color!=Default)cbc_setcolor(color);
+    fflush(stdout);
+    wmemset(printr_dest,0,4096);
+    wmemset(printr_token,0,DISPLAY_WIDTH);
+    va_list args;
+    va_start(args,format);
+    vswprintf(printr_dest,4096,format,args);
+    va_end(args);
+
+    size_t wcsl=0,wcsw=0,wcsld=wcslen(printr_dest),wcswp=wcswidth(linepref);
+    for(size_t i=0;i<wcsld;i++){
+        if(printr_dest[i]==L'\n'){
+            if(wcsl>0)wprintf(L"%ls\n",printr_token);
+            else putc('\n',stdout);
+            if(i<wcsld-1){
+                wprintf(L"%ls",linepref);
+                pos=wcswp;
+            }else pos=0;
+            wmemset(printr_token,0,wcsl);
+            wcsl=0;wcsw=0;
+        }
+        else if(printr_dest[i]==L' '){
+            if(wcsl>0)wprintf(L"%ls ",printr_token);
+            else putc(' ',stdout);
+            pos+=wcsl+1;wmemset(printr_token,0,wcsl);
+            wcsl=0;wcsw=0;
+        }
+        else{
+            if(wcsw+pos>=DISPLAY_WIDTH-1){
+                size_t j;
+                for(j=i;j<wcslen(printr_dest);j++){
+                    if(printr_dest[j]==L'\n'||printr_dest[j]==L' ')break;
+                }
+                if(j-i+1<DISPLAY_WIDTH-wcswp){
+                    wprintf(L"\n%ls%ls",linepref,printr_token);
+                    pos=wcsw+wcswp;wmemset(printr_token,0,wcsl);
+                    wcsl=0;wcsw=0;
+                }else{
+                    wprintf(L"%ls\n%ls",printr_token,linepref);
+                    pos=wcswp;wmemset(printr_token,0,wcsl);
+                    wcsl=0;wcsw=0;
+                }
+            }
+            printr_token[wcsl]=printr_dest[i];
+            wcsl++;
+            wcsw+=wcwidth(printr_dest[i]);
+            if(i+1==wcsld){
+                pos=0;
+                if(wcsl<wcsld){
+                    wprintf(L"%ls",linepref);
+                    pos+=wcswp;
+                }
+                wprintf(L"%ls",printr_token);
+                pos+=wcsw;wmemset(printr_token,0,wcsl);
+                wcsl=0;wcsw=0;
+            }
+        }
+    }
+
+    if(color!=Default)cbc_setcolor(Default);
+    fflush(stdout);
+}
 void tracelog(int color,const wchar_t *format,...){
 #ifdef Corburt_Debug
     if(color!=Default)cbc_setcolor(color);
@@ -193,6 +258,8 @@ void fatalerror(enum errorenum error_id){
         msg=msg_error_badcharbit;break;
     case error_bufferpooloverflow:
         msg=msg_error_bufferpooloverflow;break;
+    case error_cannotsave:
+        msg=msg_error_cannotsave;break;
     default:
         msg=msg_error_unknown;break;
     }
@@ -349,13 +416,13 @@ nat match(const wchar_t *sub_str,const wchar_t *main_str){
     wcslower(&str2l);
     str1l[wcslen(str1l)]=0;
     str2l[wcslen(str2l)]=0;
-    wchar_t *pos=wcsstr(str1l,str2l);
-    if(pos==NULL){
+    wchar_t *matchpos=wcsstr(str1l,str2l);
+    if(matchpos==NULL){
         freepointer(str1l);
         freepointer(str2l);
         return -1;
     }else{
-        if(pos==str1l||str1l[(pos-str1l)-1]==L' '){
+        if(matchpos==str1l||str1l[(matchpos-str1l)-1]==L' '){
             freepointer(str1l);
             freepointer(str2l);
             real m=(10000.0f*wcslen(sub_str))/(1.0f*wcslen(main_str));

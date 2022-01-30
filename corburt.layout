@@ -2,46 +2,213 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="include\cbfio.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="include\cbio.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4780" topLine="0" />
+			<Cursor1 position="4536" topLine="0" />
 		</Cursor>
 		<Folding>
 			<Collapse line="11" />
-			<Collapse line="17" />
-			<Collapse line="22" />
+			<Collapse line="16" />
+			<Collapse line="23" />
+			<Collapse line="28" />
+			<Collapse line="29" />
+			<Collapse line="35" />
 			<Collapse line="41" />
-			<Collapse line="58" />
+			<Collapse line="46" />
+			<Collapse line="51" />
+			<Collapse line="56" />
+			<Collapse line="61" />
+			<Collapse line="66" />
+			<Collapse line="70" />
+			<Collapse line="74" />
+			<Collapse line="79" />
+			<Collapse line="85" />
+			<Collapse line="90" />
 			<Collapse line="95" />
+			<Collapse line="100" />
+			<Collapse line="104" />
+			<Collapse line="109" />
+			<Collapse line="114" />
+			<Collapse line="118" />
+			<Collapse line="120" />
+			<Collapse line="124" />
 			<Collapse line="132" />
+			<Collapse line="148" />
+			<Collapse line="163" />
+			<Collapse line="165" />
+			<Collapse line="170" />
+			<Collapse line="176" />
+			<Collapse line="178" />
+			<Collapse line="182" />
+			<Collapse line="183" />
+			<Collapse line="191" />
+			<Collapse line="204" />
+			<Collapse line="293" />
+		</Folding>
+	</File>
+	<File name="include\cbbase.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1651" topLine="30" />
+		</Cursor>
+		<Folding>
+			<Collapse line="25" />
+			<Collapse line="29" />
+			<Collapse line="48" />
+			<Collapse line="56" />
+			<Collapse line="69" />
+			<Collapse line="92" />
+			<Collapse line="102" />
+			<Collapse line="103" />
+			<Collapse line="108" />
+			<Collapse line="118" />
+			<Collapse line="172" />
+			<Collapse line="184" />
+			<Collapse line="194" />
+			<Collapse line="200" />
+			<Collapse line="201" />
+			<Collapse line="219" />
+			<Collapse line="235" />
+			<Collapse line="249" />
+			<Collapse line="271" />
+			<Collapse line="272" />
+			<Collapse line="291" />
+			<Collapse line="292" />
+			<Collapse line="311" />
+			<Collapse line="329" />
+			<Collapse line="349" />
+			<Collapse line="369" />
+			<Collapse line="379" />
+			<Collapse line="391" />
+			<Collapse line="405" />
+			<Collapse line="408" />
+			<Collapse line="419" />
+			<Collapse line="424" />
+			<Collapse line="436" />
+			<Collapse line="447" />
+		</Folding>
+	</File>
+	<File name="include\cbcurses.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4873" topLine="45" />
+		</Cursor>
+		<Folding>
+			<Collapse line="41" />
+			<Collapse line="69" />
+			<Collapse line="80" />
+			<Collapse line="88" />
+			<Collapse line="99" />
+			<Collapse line="114" />
+			<Collapse line="142" />
+			<Collapse line="179" />
+			<Collapse line="210" />
+			<Collapse line="225" />
+			<Collapse line="240" />
+			<Collapse line="263" />
+			<Collapse line="289" />
+			<Collapse line="317" />
+			<Collapse line="326" />
+			<Collapse line="329" />
+			<Collapse line="345" />
+			<Collapse line="371" />
 		</Folding>
 	</File>
 	<File name="include\msg.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3790" topLine="45" />
+			<Cursor1 position="4532" topLine="56" />
 		</Cursor>
 	</File>
 	<File name="include\cbplayer.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="9505" topLine="0" />
+			<Cursor1 position="3000" topLine="4" />
 		</Cursor>
 		<Folding>
 			<Collapse line="6" />
 			<Collapse line="128" />
 			<Collapse line="137" />
 			<Collapse line="138" />
+			<Collapse line="163" />
 			<Collapse line="175" />
+			<Collapse line="176" />
+			<Collapse line="187" />
+			<Collapse line="198" />
 			<Collapse line="199" />
-			<Collapse line="204" />
+			<Collapse line="212" />
+			<Collapse line="217" />
+			<Collapse line="234" />
+			<Collapse line="249" />
+			<Collapse line="251" />
+			<Collapse line="254" />
+			<Collapse line="260" />
+			<Collapse line="266" />
+			<Collapse line="269" />
+			<Collapse line="272" />
+			<Collapse line="288" />
+			<Collapse line="291" />
+			<Collapse line="335" />
 		</Folding>
+	</File>
+	<File name="curburt.c" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="530" topLine="3" />
+		</Cursor>
+		<Folding>
+			<Collapse line="25" />
+			<Collapse line="47" />
+		</Folding>
+	</File>
+	<File name="include\dbfio_.h" open="0" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="498" topLine="2" />
+		</Cursor>
+		<Folding>
+			<Collapse line="10" />
+			<Collapse line="19" />
+			<Collapse line="23" />
+			<Collapse line="41" />
+		</Folding>
+	</File>
+	<File name="include\dbbuff.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="337" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="include\cbfio.h" open="1" top="1" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="705" topLine="15" />
+		</Cursor>
+		<Folding>
+			<Collapse line="19" />
+			<Collapse line="26" />
+			<Collapse line="32" />
+			<Collapse line="36" />
+			<Collapse line="40" />
+			<Collapse line="59" />
+			<Collapse line="76" />
+			<Collapse line="88" />
+			<Collapse line="98" />
+			<Collapse line="102" />
+			<Collapse line="105" />
+			<Collapse line="118" />
+			<Collapse line="129" />
+			<Collapse line="134" />
+			<Collapse line="138" />
+			<Collapse line="143" />
+			<Collapse line="211" />
+		</Folding>
+	</File>
+	<File name="include\mtwister.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="66" topLine="43" />
+		</Cursor>
 	</File>
 	<File name="include\dbitem.h" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="8893" topLine="43" />
+			<Cursor1 position="953" topLine="0" />
 		</Cursor>
 		<Folding>
 			<Collapse line="5" />
 			<Collapse line="15" />
+			<Collapse line="37" />
 			<Collapse line="38" />
 			<Collapse line="45" />
 			<Collapse line="52" />
@@ -83,16 +250,44 @@
 			<Collapse line="279" />
 			<Collapse line="280" />
 			<Collapse line="281" />
+			<Collapse line="289" />
 		</Folding>
 	</File>
-	<File name="include\mtwister.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="include\cbfio_base.h" open="0" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="66" topLine="43" />
+			<Cursor1 position="1776" topLine="18" />
 		</Cursor>
+		<Folding>
+			<Collapse line="10" />
+			<Collapse line="15" />
+			<Collapse line="31" />
+			<Collapse line="41" />
+			<Collapse line="51" />
+			<Collapse line="61" />
+			<Collapse line="65" />
+			<Collapse line="75" />
+			<Collapse line="85" />
+			<Collapse line="95" />
+			<Collapse line="105" />
+			<Collapse line="117" />
+			<Collapse line="129" />
+			<Collapse line="142" />
+		</Folding>
+	</File>
+	<File name="include\dbenemy.h" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="658" topLine="0" />
+		</Cursor>
+		<Folding>
+			<Collapse line="3" />
+			<Collapse line="9" />
+			<Collapse line="31" />
+			<Collapse line="79" />
+		</Folding>
 	</File>
 	<File name="include\dbentity.h" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1401" topLine="14" />
+			<Cursor1 position="1224" topLine="23" />
 		</Cursor>
 		<Folding>
 			<Collapse line="9" />
@@ -112,68 +307,39 @@
 			<Collapse line="147" />
 			<Collapse line="155" />
 			<Collapse line="164" />
-			<Collapse line="182" />
-			<Collapse line="193" />
-			<Collapse line="200" />
+			<Collapse line="171" />
+			<Collapse line="183" />
+			<Collapse line="189" />
+			<Collapse line="194" />
+			<Collapse line="195" />
+			<Collapse line="201" />
 			<Collapse line="207" />
-			<Collapse line="217" />
-			<Collapse line="231" />
-			<Collapse line="237" />
-			<Collapse line="243" />
-			<Collapse line="248" />
-			<Collapse line="250" />
+			<Collapse line="208" />
+			<Collapse line="214" />
+			<Collapse line="218" />
+			<Collapse line="229" />
+			<Collapse line="246" />
+			<Collapse line="251" />
+			<Collapse line="268" />
 			<Collapse line="271" />
-		</Folding>
-	</File>
-	<File name="include\cbfio_base.h" open="1" top="1" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1684" topLine="15" />
-		</Cursor>
-		<Folding>
-			<Collapse line="10" />
-			<Collapse line="15" />
-			<Collapse line="31" />
-			<Collapse line="41" />
-			<Collapse line="51" />
-			<Collapse line="61" />
-			<Collapse line="65" />
-			<Collapse line="75" />
-			<Collapse line="85" />
-			<Collapse line="95" />
-			<Collapse line="105" />
-			<Collapse line="117" />
-			<Collapse line="129" />
-			<Collapse line="142" />
-		</Folding>
-	</File>
-	<File name="include\cbcurses.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="4873" topLine="45" />
-		</Cursor>
-		<Folding>
-			<Collapse line="41" />
-			<Collapse line="69" />
-			<Collapse line="80" />
-			<Collapse line="88" />
-			<Collapse line="99" />
-			<Collapse line="114" />
-			<Collapse line="142" />
-			<Collapse line="179" />
-			<Collapse line="210" />
-			<Collapse line="225" />
-			<Collapse line="240" />
-			<Collapse line="263" />
-			<Collapse line="289" />
-			<Collapse line="317" />
-			<Collapse line="326" />
+			<Collapse line="276" />
+			<Collapse line="277" />
+			<Collapse line="278" />
+			<Collapse line="297" />
+			<Collapse line="301" />
+			<Collapse line="305" />
+			<Collapse line="323" />
+			<Collapse line="328" />
 			<Collapse line="329" />
-			<Collapse line="345" />
-			<Collapse line="371" />
+			<Collapse line="346" />
+			<Collapse line="350" />
+			<Collapse line="360" />
+			<Collapse line="361" />
 		</Folding>
 	</File>
 	<File name="include\dbmap.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="20667" topLine="73" />
+			<Cursor1 position="17094" topLine="0" />
 		</Cursor>
 		<Folding>
 			<Collapse line="3" />
@@ -235,113 +401,9 @@
 			<Collapse line="439" />
 			<Collapse line="448" />
 			<Collapse line="459" />
-			<Collapse line="460" />
-			<Collapse line="461" />
-		</Folding>
-	</File>
-	<File name="curburt.c" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1436" topLine="0" />
-		</Cursor>
-		<Folding>
-			<Collapse line="25" />
-			<Collapse line="47" />
-		</Folding>
-	</File>
-	<File name="include\dbfio_.h" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="498" topLine="0" />
-		</Cursor>
-		<Folding>
-			<Collapse line="10" />
-			<Collapse line="23" />
-			<Collapse line="41" />
-		</Folding>
-	</File>
-	<File name="include\dbbuff.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="337" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="include\cbio.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="8917" topLine="10" />
-		</Cursor>
-		<Folding>
-			<Collapse line="11" />
-			<Collapse line="29" />
-			<Collapse line="35" />
-			<Collapse line="41" />
-			<Collapse line="46" />
-			<Collapse line="51" />
-			<Collapse line="56" />
-			<Collapse line="61" />
-			<Collapse line="66" />
-			<Collapse line="70" />
-			<Collapse line="74" />
-			<Collapse line="79" />
-			<Collapse line="85" />
-			<Collapse line="90" />
-			<Collapse line="95" />
-			<Collapse line="100" />
-			<Collapse line="104" />
-			<Collapse line="109" />
-			<Collapse line="114" />
-			<Collapse line="118" />
-			<Collapse line="133" />
-			<Collapse line="182" />
-			<Collapse line="188" />
-			<Collapse line="199" />
-			<Collapse line="206" />
-			<Collapse line="271" />
-		</Folding>
-	</File>
-	<File name="include\dbenemy.h" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="784" topLine="0" />
-		</Cursor>
-		<Folding>
-			<Collapse line="3" />
-			<Collapse line="9" />
-			<Collapse line="32" />
-			<Collapse line="39" />
-			<Collapse line="46" />
-			<Collapse line="53" />
-			<Collapse line="60" />
-			<Collapse line="67" />
-			<Collapse line="79" />
-		</Folding>
-	</File>
-	<File name="include\cbbase.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="8772" topLine="54" />
-		</Cursor>
-		<Folding>
-			<Collapse line="25" />
-			<Collapse line="29" />
-			<Collapse line="48" />
-			<Collapse line="56" />
-			<Collapse line="69" />
-			<Collapse line="90" />
-			<Collapse line="100" />
-			<Collapse line="101" />
-			<Collapse line="106" />
-			<Collapse line="115" />
-			<Collapse line="170" />
-			<Collapse line="184" />
-			<Collapse line="204" />
-			<Collapse line="205" />
-			<Collapse line="224" />
-			<Collapse line="225" />
-			<Collapse line="244" />
-			<Collapse line="262" />
-			<Collapse line="282" />
-			<Collapse line="312" />
-			<Collapse line="324" />
-			<Collapse line="338" />
-			<Collapse line="341" />
-			<Collapse line="369" />
-			<Collapse line="380" />
+			<Collapse line="469" />
+			<Collapse line="530" />
+			<Collapse line="541" />
 		</Folding>
 	</File>
 </CodeBlocks_layout_file>

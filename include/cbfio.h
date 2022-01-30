@@ -4,8 +4,16 @@
 #include "cbbase.h"
 static void readsave(nat saveid,FILE *fp);
 static void savesave(nat saveid,FILE *fp);
+static void save_overwrite(nat saveid);
+static void save_overwritten(nat saveid);
 static void readplayerstats(struct player *p,FILE *fp);
 static void saveplayerstats(struct player plr,FILE *fp);
+static void readinventory(struct inventory *inv,FILE *fp);
+static void saveinventory(struct inventory inv,FILE *fp);
+static void readet_items(FILE *fp);
+static void saveet_items(FILE *fp);
+static void readsavesglobaldata(FILE *fp);
+static void savesavesglobaldata(FILE *fp);
 void readsaves();
 void savesaves();
 
@@ -14,11 +22,21 @@ static void readsave(nat saveid,FILE *fp){
     //tracelog(Green,L"Valid: %" PRIuFAST32 "\n",saves[saveid].valid);
     if(!saves[saveid].valid)return;
     readplayerstats(&saves[saveid].plr,fp);
+    readinventory(&saves[saveid].inv,fp);
 }
 static void savesave(nat saveid,FILE *fp){
     int_fast32_t_write(saves[saveid].valid,fp);
     if(!saves[saveid].valid)return;
     saveplayerstats(saves[saveid].plr,fp);
+    saveinventory(saves[saveid].inv,fp);
+}
+static void save_overwrite(nat saveid){
+    player=saves[saveid].plr;
+    inventory=saves[saveid].inv;
+}
+static void save_overwritten(nat saveid){
+    saves[saveid].plr=player;
+    saves[saveid].inv=inventory;
 }
 static void readplayerstats(struct player *p,FILE *fp){
     struct player plr={0};
@@ -56,17 +74,79 @@ static void saveplayerstats(struct player plr,FILE *fp){
     int_fast32_t_write(plr.stats.pts,fp);
     int_fast32_t_write(plr.roomid,fp);
 }
+static void readinventory(struct inventory *inv,FILE *fp){
+    struct inventory v;
+    int_fast32_t_read(&v.unlocked,fp);
+    for(nat i=0;i<64;i++)
+        int_fast32_t_read(&v.items[i],fp);
+    for(nat i=0;i<5;i++)
+        int_fast32_t_read(&v.accessories[i],fp);
+    int_fast32_t_read(&v.weapon,fp);
+    int_fast32_t_read(&v.armor,fp);
+    int_fast64_t_read(&v.money,fp);
+    *inv=v;
+}
+static void saveinventory(struct inventory inv,FILE *fp){
+    int_fast32_t_write(inv.unlocked,fp);
+    for(nat i=0;i<64;i++)
+        int_fast32_t_write(inv.items[i],fp);
+    for(nat i=0;i<5;i++)
+        int_fast32_t_write(inv.accessories[i],fp);
+    int_fast32_t_write(inv.weapon,fp);
+    int_fast32_t_write(inv.armor,fp);
+    int_fast64_t_write(inv.money,fp);
+}
+static void readet_items(FILE *fp){
+    nat itemsmax_tmp;
+    int_fast32_t_read(&itemsmax_tmp,fp);
+    tracelog(Cyan,L"max items: %" PRIdFAST32 ".\n",itemsmax_tmp);
+    while(itemsmax_tmp>itemsmax){
+        etitem_expand();
+    }
+    for(nat i=0;i<itemsmax_tmp;i++){
+        nat avail;
+        int_fast32_t_read(&avail,fp);
+        et_items[i].available=(foo)avail;
+        if(avail){
+            int_fast32_t_read(&et_items[i].roomid,fp);
+            int_fast32_t_read(&et_items[i].itemid,fp);
+            int_fast32_t_read(&et_items[i].qnty,fp);
+            itemscount++;
+        }
+    }
+    if(itemscount)tracelog(Cyan,msg_trace_loadeti,itemscount);
+}
+static void saveet_items(FILE *fp){
+    int_fast32_t_write(itemsmax,fp);
+    for(nat i=0;i<itemsmax;i++){
+        int_fast32_t_write((nat)et_items[i].available,fp);
+        if(et_items[i].available){
+            int_fast32_t_write(et_items[i].roomid,fp);
+            int_fast32_t_write(et_items[i].itemid,fp);
+            int_fast32_t_write(et_items[i].qnty,fp);
+        }
+    }
+}
+static void readsavesglobaldata(FILE *fp){
+    nat version;
+    int_fast32_t_read(&version,fp);
+    readet_items(fp);
+}
+static void savesavesglobaldata(FILE *fp){
+    int_fast32_t_write(105,fp);
+    saveet_items(fp);
+}
 void readsaves(){
     fio.fail=0;
     FILE *fp_save=NULL;
     nat foundsaves=0;
+    fio_getfilesize("save.txt");
     fp_save=fopen("save.txt","rb");
     if(fp_save==NULL){
         printr(Cyan,msg_global_nosave);
-        fp_save=fopen("save.txt","w");
-        fclose(fp_save);
     }else{
         printr(Cyan,msg_global_scansave);
+        readsavesglobaldata(fp_save);
         for(int i=0;i<savescount&&!fio.fail;i++){
             readsave(foundsaves,fp_save);
             if(saves[foundsaves].valid)foundsaves++;
@@ -114,14 +194,14 @@ void readsaves(){
                     printr(Green|Bright,msg_global_welcomeplayer,readsave_newname);
                     break;
                 }
-            }else{
+            }
+            else{
                 printr(White|Bright,msg_global_confirmchoice,saves[saveid].plr.name);
                 wchar_t yes[2];
                 scanline(yes,2);
                 if(yes[0]==L'Y'||yes[0]==L'y'){
                     cursaveid=saveid;
-                    //wcscpy(player.name,readsave_newname);
-                    player=saves[saveid].plr;
+                    save_overwrite(saveid);
                     printr(Green|Bright,msg_global_welcomeplayer2,readsave_newname);
                     break;
                 }
@@ -133,10 +213,13 @@ void readsaves(){
 void savesaves(){
     FILE *fp_save=NULL;
     fp_save=fopen("save.txt","wb");
+    if(fp_save==NULL){
+        fatalerror(error_cannotsave);
+        return;
+    }
+    savesavesglobaldata(fp_save);
+    save_overwritten(cursaveid);
     for(nat i=0;i<savescount;i++){
-        if(i==cursaveid){
-            saves[i].plr=player;
-        }
         savesave(i,fp_save);
     }
     fclose(fp_save);

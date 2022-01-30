@@ -26,7 +26,9 @@ static void fio_getfilesize(char *filename){
     FILE *fp=fopen(filename,"rb");
     fio.filesize=0;
     fio.fileptr=0;
+    fio.fail=0;
     if(fp==NULL){
+        fio.fail=1;
         return;
     }
     fseek(fp,0,SEEK_END);

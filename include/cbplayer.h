@@ -247,7 +247,7 @@ void pshowstats(){
     );
 }
 void pshowabl(){printr(Default,msg_player_abl);}
-void pshowinv(){ //
+void pshowinv(){
     nat invitemscount=0;
     for(nat i=0;i<64;i++){
         if(inventory.items[i]!=0)invitemscount++;
@@ -258,7 +258,7 @@ void pshowinv(){ //
         invitemscount,inventory.unlocked
     );
     if(invitemscount==0)printr(Default,L"(none)");
-    else{ //
+    else{
         for(nat i=0,j=0;i<64;i++){
             if(inventory.items[i]!=0){
                 struct et_item *eti=&et_items[inventory.items[i]-1];
@@ -274,9 +274,9 @@ void pshowinv(){ //
                     printr(Magenta|Bright,msg_player_inv_equipping);
                     break;
                 }
-                printr(Default,L"%ls ",idb->name);
+                printrp(Default,L"                ",L"%ls ",idb->name);
                 if(idb->type&db_itemtype_stackable_mask&&eti->qnty>1){
-                    printr(Default,L"(x%" PRIdFAST32 ")",eti->qnty);
+                    printrp(Default,L"                ",L"(x%" PRIdFAST32 ")",eti->qnty);
                 }
                 invitemscount--;
                 j++;

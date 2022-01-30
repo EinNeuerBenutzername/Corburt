@@ -25,7 +25,7 @@ int main(){
 }
 void launchcb(){
     atexit(endcb);
-    printr_dest=mallocpointer(1024*sizeof(wchar_t));
+    printr_dest=mallocpointer(4096*sizeof(wchar_t));
     printr_token=mallocpointer(DISPLAY_WIDTH*sizeof(wchar_t));
     assertcheck();
     cbc_init();

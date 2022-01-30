@@ -3,7 +3,7 @@
 #include <inttypes.h>
 #include <wchar.h>
 // prepared for future translations. :)
-const wchar_t *msg_global_corburtversion=L"v0.1.4";
+const wchar_t *msg_global_corburtversion=L"v0.1.5";
 const wchar_t *msg_global_welcome=L"Welcome to Corburt.\n\n";
 const wchar_t *msg_global_splash=L"   @@@@                @@\n"
 "  @@  @@               @@                  @@\n"
@@ -26,9 +26,12 @@ const wchar_t *msg_global_confirmchoice=L"Are you sure to play as the character 
 const wchar_t *msg_global_welcomeplayer=L"Welcome, %ls.\n";
 const wchar_t *msg_global_welcomeplayer2=L"Welcome back, %ls.\n";
 const wchar_t *msg_global_help=L"-------------------------------------------------------------------\n"
-    "                           Commands\n"
+    "                           Commands\n\n"
+    "<label>                    - command target\n"
+    "[label]                    - optional modifier\n\n"
     "(none)                     - Repeat your last command\n"
     "abilities                  - Show player's abilities\n"
+    "buy [quantity] <item>      - Buy item\n"
     "cls                        - Clear screen\n"
     "east (west, south, north)  - Move towards certain directions\n"
     "experience                 - Show player's expierence\n"
@@ -41,7 +44,7 @@ const wchar_t *msg_global_help=L"-----------------------------------------------
     "save                       - Save current progress\n"
     "stats                      - Show player's statistics\n"
     "train                      - Train at the training grounds\n"
-    "use                        - Use item\n"
+    "use <item>                 - Use item\n"
     " * Some commands have abbreviated forms, e.g. 'st' for 'stats'.\n"
     "-------------------------------------------------------------------\n";
 
@@ -58,12 +61,14 @@ const wchar_t *msg_trace_pointerinuse=L"Number of pointers in use: %" PRIdFAST32
 const wchar_t *msg_trace_illegalrealloc=L"Error: Illegal realloc() target\n";
 const wchar_t *msg_trace_illegalfree=L"Error: Illegal free() target\n";
 const wchar_t *msg_trace_freealled=L"All pointers freed.\n";
+const wchar_t *msg_trace_loadeti=L"%" PRIdFAST32 " item entities loaded.\n";
 
 const wchar_t *msg_error_cannotmalloc=L"Fatal error: Cannot allocate memory.";
 const wchar_t *msg_error_cannotrealloc=L"Fatal error: Cannot reallocate memory.";
 const wchar_t *msg_error_unknown=L"Fatal error: An unknown fatal error occured.";
 const wchar_t *msg_error_badcharbit=L"Fatal error: Macro CHAR_BIT is not 8.";
 const wchar_t *msg_error_bufferpooloverflow=L"Fatal error: Buffer pool overflow. Possible reason: memory leak.";
+const wchar_t *msg_error_cannotsave=L"Fatal error: Cannot create save file.";
 
 const wchar_t *msg_line=L"-------------------------------------------------------------------\n";
 
@@ -114,6 +119,7 @@ const wchar_t *msg_db_inosuchitem=L"There is no such item.\n";
 const wchar_t *msg_db_ipurchaseitemhint=L"%ls purchased.\n";
 const wchar_t *msg_db_ipurchasemultitemhint=L"%ls (x%" PRIdFAST32 ") purchased.\n";
 const wchar_t *msg_db_icantafford=L"You cannot afford the item. (missing $%" PRIdFAST32 ")\n";
+const wchar_t *msg_db_icantaffordmult=L"You cannot afford the item. (missing $%" PRIdFAST32 ")\n";
 const wchar_t *msg_db_icantcarry=L"You can't carry this much.\n";
 const wchar_t *msg_db_ridnullexceptionerror=L"Null exception error: invalid room id.\n";
 const wchar_t *msg_db_iidnullexceptionerror=L"Null exception error: invalid item id.\n";
@@ -122,5 +128,5 @@ const wchar_t *msg_db_retidnullexceptionerror=L"Null exception error: invalid ro
 const wchar_t *msg_db_ietidnullexceptionerror=L"Null exception error: invalid item entity id.\n";
 const wchar_t *msg_db_eetidnullexceptionerror=L"Null exception error: invalid enemy entity id.\n";
 const wchar_t *msg_db_ietfull=L"%ls disappeared into the pile of objects on the ground..\n";
-const wchar_t *msg_db_listitem=L"%-50ls  | $%" PRIdFAST32 "\n";
+const wchar_t *msg_db_listitem=L"$%-10" PRIdFAST32 " | %ls\n";
 #endif

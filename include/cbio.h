@@ -99,7 +99,7 @@ foo matchcommands(wchar_t *cmd){
         return true;
     }
     if(fullmatch(cmd,L"help")){
-        printr(Default,msg_global_help);
+        printc(Default,msg_global_help);
         return true;
     }
     if(fullmatch(cmd,L"abilities")||
@@ -116,7 +116,7 @@ foo matchcommands(wchar_t *cmd){
         db_rshowtable(player.roomid);
         return true;
     }
-    if(fullmatch(cmd,L"buy")){ //
+    if(fullmatch(cmd,L"buy")){
         roomdb *rm=db_rfindwithid(player.roomid);
         if(rm==NULL){
             printr(Red,msg_db_ridnullexceptionerror);
@@ -129,15 +129,36 @@ foo matchcommands(wchar_t *cmd){
         wchar_t *buytarget=NULL;
         buytarget=mallocpointer(128*sizeof(wchar_t));
         wmemset(buytarget,0,128);
-        foo sth=false;
-        nat j=0;
+        nat j=0,sth=0;
         for(size_t i=3;i<wcslen(cmd);i++){
-            if(cmd[i]!=L' ')sth=true;
-            if(sth){
+            if(cmd[i]!=L' '&&((cmd[i]>L'9'||cmd[i]<L'0')||sth==3))sth=2;
+            else{
+                if(cmd[i]==L' '&&sth==1)sth=3;
+                else if(cmd[i]!=L' '&&sth==0)sth=1;
+            }
+            if(sth==1||sth==2){
                 buytarget[j]=cmd[i];
                 j++;
             }
+            if(sth==3&&wcslen(buytarget)>0){
+                j=0;
+                wmemset(buytarget,0,128);
+            }
         }
+        nat qnty=0;
+        for(size_t i=3;i<128;i++){
+            if((cmd[i]<L'0'||cmd[i]>L'9')&&!(cmd[i]==' '&&qnty==0))break;
+            if(qnty){
+                qnty*=10;
+                qnty+=cmd[i]-L'0';
+                if(qnty>=ITEM_MAXSTACK){
+                    qnty=ITEM_MAXSTACK;
+                    break;
+                }
+            }
+            if(cmd[i]>=L'1'&&cmd[i]<=L'9'&&qnty==0)qnty=cmd[i]-L'0';
+        }
+        if(qnty==0)qnty=1;
         nat maxmatch=-1;
         nat maxmatchid=0;
         for(nat i=0;rm->table[i]!=0;i++){
@@ -160,15 +181,16 @@ foo matchcommands(wchar_t *cmd){
                 return true;
             }
             if(idb->type&db_itemtype_stackable_mask){
-                if(inventory.money>idb->price){
-                    etitem_push(idb->id,1,0,1);
+                if(inventory.money>=idb->price*qnty){
+                    etitem_push(idb->id,qnty,0,1);
                     return true;
                 }else{
-                    printr(Default,msg_db_icantafford,idb->price-inventory.money);
+                    if(qnty==1)printr(Default,msg_db_icantafford,idb->price*qnty-inventory.money);
+                    else printr(Default,msg_db_icantaffordmult,idb->price*qnty-inventory.money);
                 }
             }
             else{
-                if(inventory.money>idb->price){
+                if(inventory.money>=idb->price){
                     etitem_push(idb->id,1,0,1);
                     return true;
                 }else{
