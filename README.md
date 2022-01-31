@@ -109,7 +109,6 @@ Please report if you find any typos or grammar mistakes.
   - inventory data saving & loading implemented.
   - item entity data saving & loading implemented.
 - **0.1.4** (Jan 29, 2022)
-
   - **What's new**: visual & security improvements
   - word wrap now detects CJK full-width characters.
   - minor improvements on visual effects.
@@ -118,7 +117,6 @@ Please report if you find any typos or grammar mistakes.
   - free() and realloc() check whether the pointer is a malloc()'ed pointer.
   - message "you can't afford it" fixed.
 - **0.1.3** (Jan 29, 2022)
-
   - **What's new**: purchasing stackable items is now possible
   - word wrap improved.
   - map fixed.
@@ -127,7 +125,6 @@ Please report if you find any typos or grammar mistakes.
   - items and enemies in a room are shown.
   - added several checks for null exceptions.
 - **0.1.2** (Jan 28, 2022)
-
   - **What's new**: entities
   - stackable items are temporarily unavailable for purchase.
     - this is because the merging feature of stackable items has not yet been implemented.
@@ -137,7 +134,6 @@ Please report if you find any typos or grammar mistakes.
   - the 'use' command added.
   - enemies are now shown in room descriptions with brutal line breaks.
 - **0.1.1** (Jan 27, 2022)
-
   - **What's new**: shops
   - finished shop lists.
   - made item database for the goods.
@@ -147,7 +143,6 @@ Please report if you find any typos or grammar mistakes.
   - room exits' structure revised to leave space for future updates; typo-fixed.
   - enemy database opened. enemies might be added in the 0.1.2 update.
 - **0.1.0** (Jan 25, 2022)
-
   - **What's new**: region - Nameless City
   - visual effect on windows terminal fixed (I guess).
   - added several basic commands.
@@ -155,7 +150,6 @@ Please report if you find any typos or grammar mistakes.
   - added the first region: Nameless City (9kb database).
   - map revised.
 - **0.0.3** (Jan 23, 2022)
-
   - **What's new**: basic commands
   - file I/O functions' portability greatly improved.
   - basic curses library revised and finished.
@@ -164,12 +158,9 @@ Please report if you find any typos or grammar mistakes.
   - basic inventory information implemented.
   - typo fixes.
   - typedef revised: Corburt would now use signed 32- and 64-bit integers to store integer values.
-
   - stability fixes on file I/O.
 - **0.0.2** (Jan 22, 2022)
-
   - **What's new**: basic game structure implementation
-
   - added <inttypes.h> and <stdbool.h> dependencies for stability and portability.
   - basic inventory functions implemented.
   - basic curses library mostly finished.
@@ -179,7 +170,6 @@ Please report if you find any typos or grammar mistakes.
   - several empty databases created.
   - several bugs fixed and several new bugs introduced.
 - **0.0.1** (Dec 19, 2021)
-
   - **What's new**: interface
   - the very beginning of Corburt!
   - basic file I/O functions implemented.
