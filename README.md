@@ -79,9 +79,16 @@ When reporting bugs (if you came across any), please clarify:
 - were any error log files generated?
 - did the game crash?
 
+## Typo report
+
+Please report if you find any typos or grammar mistakes.
+
 ## Version history
 ### Demo Version
 
+- **0.1.7** (WiP)
+  - typos fixed.
+  
 - **0.1.6** (Jan 30, 2022)
   - **What's new**: take & drop items
   - "use" function on consumable items implemented.
