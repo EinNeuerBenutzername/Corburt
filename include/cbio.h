@@ -327,7 +327,7 @@ foo matchcommands(wchar_t *cmd){
                 wmemset(taketarget,0,128);
             }
         }
-        nat qnty=0;
+        nat qnty=0,qnty2=0;
         for(size_t i=startp;i<128;i++){
             if((cmd[i]<L'0'||cmd[i]>L'9')&&!(cmd[i]==' '&&qnty==0))break;
             if(qnty){
@@ -341,6 +341,7 @@ foo matchcommands(wchar_t *cmd){
             if(cmd[i]>=L'1'&&cmd[i]<=L'9'&&qnty==0)qnty=cmd[i]-L'0';
         }
         if(qnty==0)qnty=1;
+        qnty2=qnty;
         nat maxmatch=-1;
         nat maxmatchid=0;
         struct et_room *etr=et_findroomwithid(rm->id);
@@ -378,15 +379,42 @@ foo matchcommands(wchar_t *cmd){
                 printr(Red,msg_db_iidnullexceptionerror);
                 return true;
             }
-            if(idb->type&db_itemtype_stackable_mask){ ///
+            if(idb->type&db_itemtype_stackable_mask){
                 if(eti->qnty<=qnty){
+                    qnty-=eti->qnty;
+                    nat itemid=eti->itemid;
                     etitem_rebind(maxmatchid,0);
-                }else{
+                    if(qnty>0){
+                        for(nat i=0;i<DBE_ITEMCAP;i++){
+                            if(etr->etitem[i]==0)continue;
+                            struct et_item *etii=&et_items[etr->etitem[i]-1];
+                            if(etii->available==false){
+                                printr(Red,msg_db_ietidnullexceptionerror);
+                                return true;
+                            }
+                            if(etii->itemid==itemid){
+                                if(etii->qnty<=qnty){
+                                    qnty-=etii->qnty;
+                                    etitem_rebind(etr->etitem[i],0);
+                                    if(qnty==0)break;
+                                }else{
+                                    etii->qnty-=qnty;
+                                    etitem_push(etii->itemid,qnty,0,0);
+                                    qnty=0;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                else{
                     eti->qnty-=qnty;
                     etitem_push(eti->itemid,qnty,0,0);
+                    qnty=0;
                 }
-                if(qnty>1)printr(Cyan|Bright,msg_db_ietmulttake,idb->name,qnty);
-                else printr(Cyan|Bright,msg_db_iettake,idb->name);
+                if(qnty2-qnty>1)printr(Cyan|Bright,msg_db_ietmulttake,idb->name,qnty2-qnty);
+                else if(qnty2-qnty==1)printr(Cyan|Bright,msg_db_iettake,idb->name);
+                else printr(Default,msg_db_inosuchitem);
             }
             else{
                 etitem_rebind(maxmatchid,0);
@@ -422,7 +450,7 @@ foo matchcommands(wchar_t *cmd){
                 wmemset(droptarget,0,128);
             }
         }
-        nat qnty=0;
+        nat qnty=0,qnty2=0;
         for(size_t i=4;i<128;i++){
             if((cmd[i]<L'0'||cmd[i]>L'9')&&!(cmd[i]==' '&&qnty==0))break;
             if(qnty){
@@ -436,6 +464,7 @@ foo matchcommands(wchar_t *cmd){
             if(cmd[i]>=L'1'&&cmd[i]<=L'9'&&qnty==0)qnty=cmd[i]-L'0';
         }
         if(qnty==0)qnty=1;
+        qnty2=qnty;
         nat maxmatch=-1;
         nat maxmatchid=0;
         for(nat i=0;i<inventory.unlocked;i++){
@@ -470,13 +499,37 @@ foo matchcommands(wchar_t *cmd){
             }
             if(idb->type&db_itemtype_stackable_mask){
                 if(eti->qnty<=qnty){
-                    qnty=eti->qnty;
+                    qnty-=eti->qnty;
+                    nat itemid=eti->itemid;
                     etitem_rebind(maxmatchid,player.roomid);
+                    if(qnty>0){
+                        for(nat i=0;i<inventory.unlocked;i++){
+                            if(inventory.items[i]==0)continue;
+                            struct et_item *etii=&et_items[inventory.items[i]-1];
+                            if(etii->available==false){
+                                printr(Red,msg_db_ietidnullexceptionerror);
+                                return true;
+                            }
+                            if(etii->itemid==itemid){
+                                if(etii->qnty<=qnty){
+                                    qnty-=etii->qnty;
+                                    etitem_rebind(inventory.items[i],player.roomid);
+                                    if(qnty==0)break;
+                                }else{
+                                    etii->qnty-=qnty;
+                                    etitem_push(etii->itemid,qnty,player.roomid,0);
+                                    qnty=0;
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }else{
                     eti->qnty-=qnty;
                     etitem_push(eti->itemid,qnty,player.roomid,0);
+                    qnty=0;
                 }
-                if(qnty>1)printr(Cyan|Bright,msg_db_ietmultdrop,idb->name,qnty);
+                if(qnty2-qnty>1)printr(Cyan|Bright,msg_db_ietmultdrop,idb->name,qnty2-qnty);
                 else printr(Cyan|Bright,msg_db_ietdrop,idb->name);
             }
             else{
@@ -486,6 +539,119 @@ foo matchcommands(wchar_t *cmd){
         }else{
             printr(Default,msg_db_inosuchitem);
         }
+        return true;
+    }
+    if(fullmatch(cmd,L"sell")){
+        roomdb *rm=db_rfindwithid(player.roomid);
+        if(rm==NULL){
+            printr(Red,msg_db_ridnullexceptionerror);
+            return true;
+        }
+        if(rm->type!=db_roomtype_shop){
+            printr(Default,msg_db_notinstore);
+            return true;
+        }
+        wchar_t *selltarget=NULL;
+        selltarget=mallocpointer(128*sizeof(wchar_t));
+        wmemset(selltarget,0,128);
+        nat j=0,sth=0;
+        for(size_t i=4;i<wcslen(cmd);i++){
+            if(cmd[i]!=L' '&&((cmd[i]>L'9'||cmd[i]<L'0')||sth==3))sth=2;
+            else{
+                if(cmd[i]==L' '&&sth==1)sth=3;
+                else if(cmd[i]!=L' '&&sth==0)sth=1;
+            }
+            if(sth==1||sth==2){
+                selltarget[j]=cmd[i];
+                j++;
+            }
+            if(sth==3&&wcslen(selltarget)>0){
+                j=0;
+                wmemset(selltarget,0,128);
+            }
+        }
+        nat qnty=0,qnty2=0;
+        for(size_t i=4;i<128;i++){
+            if((cmd[i]<L'0'||cmd[i]>L'9')&&!(cmd[i]==' '&&qnty==0))break;
+            if(qnty){
+                qnty*=10;
+                qnty+=cmd[i]-L'0';
+                if(qnty>=ITEM_MAXSTACK){
+                    qnty=ITEM_MAXSTACK;
+                    break;
+                }
+            }
+            if(cmd[i]>=L'1'&&cmd[i]<=L'9'&&qnty==0)qnty=cmd[i]-L'0';
+        }
+        if(qnty==0)qnty=1;
+        qnty2=qnty;
+        nat maxmatch=-1;
+        nat maxmatchitemid=0;
+        for(nat i=0;rm->table[i]!=0;i++){
+            itemdb *idb=db_ifindwithid(rm->table[i]);
+            if(idb==NULL){
+                printr(Red,msg_db_iidnullexceptionerror);
+                return true;
+            }
+            nat curmatch=match(selltarget,idb->name);
+            if(curmatch>maxmatch){
+                maxmatch=curmatch;
+                maxmatchitemid=idb->id;
+            }else if(curmatch==maxmatch){
+                for(nat k=0;k<inventory.unlocked;k++){
+                    if(et_items[inventory.items[k]-1].itemid==idb->id){
+                        maxmatchitemid=idb->id;
+                        break;
+                    }
+                }
+            }
+        }
+        freepointer(selltarget);
+        if(maxmatch>=0){
+            itemdb *idb=db_ifindwithid(maxmatchitemid);
+            if(idb==NULL){
+                printr(Red,msg_db_iidnullexceptionerror);
+                return true;
+            }
+        }else{
+            printr(Default,msg_db_inosuchitem);
+            return true;
+        }
+        itemdb *idb=NULL;
+        for(nat i=0;i<inventory.unlocked;i++){
+            if(inventory.items[i]==0)continue;
+            struct et_item *eti=&et_items[inventory.items[i]-1];
+            if(eti==NULL){
+                printr(Red,msg_db_ietidnullexceptionerror);
+                return true;
+            }
+            idb=db_ifindwithid(eti->itemid);
+            if(idb==NULL){
+                printr(Red,msg_db_iidnullexceptionerror);
+                return true;
+            }
+            if(idb->id==maxmatchitemid){
+                if(idb->type&db_itemtype_stackable_mask){
+                    if(eti->qnty>qnty){
+                        eti->qnty-=qnty;
+                        inventory.money+=(qnty*ITEM_SELLRATE*idb->price);
+                        qnty=0;
+                        break;
+                    }else{
+                        qnty-=eti->qnty;
+                        inventory.money+=(eti->qnty*ITEM_SELLRATE*idb->price);
+                        etitem_delete(inventory.items[i]);
+                    }
+                }else{
+                    etitem_delete(inventory.items[i]);
+                    qnty=0;qnty2=1;
+                    break;
+                }
+            }
+        }
+        if(qnty2==qnty)printr(Default,msg_db_inosuchitem);
+        else if(qnty2-qnty==1)printr(Cyan|Bright,msg_db_isellitemhint,idb->name);
+        else printr(Cyan|Bright,msg_db_isellmultitemhint,idb->name,qnty2-qnty);
         return true;
     }
     return false;

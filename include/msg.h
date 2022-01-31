@@ -48,9 +48,10 @@ const wchar_t *msg_global_help=L"-----------------------------------------------
     "Items\n"
     "  buy [quantity] <item>    - Buy items\n"
     "  drop [quantity] <item>   - Drop items to the ground\n"
-    "  get [quantity] <item>   - Pick up items in the room\n"
-    "  take [quantity] <item>  - Pick up items in the room\n"
-    "  list                     - Show the list of items at a shop\n"
+    "  get [quantity] <item>    - Pick up items in the room\n"
+    "  list                     - Show the list of items at a store\n"
+    "  sell [quantity] <item>   - Sell items at a store\n"
+    "  take [quantity] <item>   - Pick up items in the room\n"
     "  use <item>               - Use an item\n"
     "  * Some commands have abbreviated forms, e.g. 'st' for 'stats'.\n"
     "-------------------------------------------------------------------\n";
@@ -126,6 +127,8 @@ const wchar_t *msg_db_notinstore=L"You are not in a store.\n";
 const wchar_t *msg_db_inosuchitem=L"There is no such item.\n";
 const wchar_t *msg_db_ipurchaseitemhint=L"%ls purchased.\n";
 const wchar_t *msg_db_ipurchasemultitemhint=L"%ls (x%" PRIdFAST32 ") purchased.\n";
+const wchar_t *msg_db_isellitemhint=L"%ls sold.\n";
+const wchar_t *msg_db_isellmultitemhint=L"%ls (x%" PRIdFAST32 ") sold.\n";
 const wchar_t *msg_db_icantafford=L"You cannot afford the item. (missing $%" PRIdFAST32 ")\n";
 const wchar_t *msg_db_icantaffordmult=L"You cannot afford the item. (missing $%" PRIdFAST32 ")\n";
 const wchar_t *msg_db_icantcarry=L"You can't carry this much.\n";

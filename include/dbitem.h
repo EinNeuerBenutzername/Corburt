@@ -1,6 +1,7 @@
 #ifndef Corburt_Database_Item_h_Include_Guard
 #define Corburt_Database_Item_h_Include_Guard
 #define ITEM_MAXSTACK 999
+#define ITEM_SELLRATE 0.9f
 #include "cbbase.h"
 #include "cbplayer.h"
 

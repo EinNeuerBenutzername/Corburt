@@ -87,8 +87,12 @@ Please report if you find any typos or grammar mistakes.
 ### Demo Version
 
 - **0.1.7** (WiP)
+  - **What's new**: sell items
   - typos fixed.
-  
+  - stability fix for commands: "buy", "take" and "drop"
+  - implemented the new command "sell"
+  - added a function to detect the version of the save file. 
+    - forward-compatibility is not yet taken into account, because Corburt is in a very early stage of development, meaning that the structure of save files would change many times in the future.
 - **0.1.6** (Jan 30, 2022)
   - **What's new**: take & drop items
   - "use" function on consumable items implemented.
