@@ -84,9 +84,9 @@ When reporting bugs (if you came across any), please clarify:
 Please report if you find any typos or grammar mistakes.
 
 ## Version history
-### Demo Version
+### Demos
 
-- **0.1.7** (WiP)
+- **0.1.7**
   - **What's new**: sell items
   - typos fixed.
   - stability fix for commands: "buy", "take" and "drop"

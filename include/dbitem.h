@@ -302,7 +302,7 @@ void getitemname(nat id,wchar_t *itemname){
         itemdb *idb=db_ifindwithid(id);
         if(idb==NULL){
             printf("\n");
-            printr(Red,msg_db_iidnullexceptionerror);
+            printr(Red,msg->db_iidnullexceptionerror);
             p=L"undefined";
             break;
         }

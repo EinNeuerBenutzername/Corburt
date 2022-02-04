@@ -9,10 +9,10 @@
 #include "include/dbentity.h"
 int main(){
     launchcb();
-    printr(Green|Bright,L"%ls",msg_global_welcome);
-    printr(White,msg_global_splash);
-    printr(Yellow,msg_global_splash2);
-    printr(White,L"%50ls\n",msg_global_corburtversion);
+    printr(Green|Bright,L"%ls",msg->global_welcome);
+    printr(White,msg->global_splash);
+    printr(Yellow,msg->global_splash2);
+    printr(White,L"%50ls\n",msg->global_corburtversion);
     readsaves();
     db_rshowdesc(player.roomid);
 	while(!quit_game){
@@ -32,7 +32,7 @@ void launchcb(){
     cbc_setwindowtitle("Corburt");
     cbc_setcolor(Default);
     cbc_clearscreen();
-    tracelog(Green,msg_trace_savesize,sizeof(struct save));
+    tracelog(Green,msg->trace_savesize,sizeof(struct save));
     tracelog(Green,L"Size of room database: %.2f KB\n",sizeof(roomdbs)/1024.0f);
     tracelog(Green,L"Size of item database: %.2f KB\n",sizeof(itemdbs)/1024.0f);
     initrng();

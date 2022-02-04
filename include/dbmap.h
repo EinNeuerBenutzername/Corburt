@@ -467,7 +467,7 @@ roomdb *db_rfindwithid(nat roomid){
 void db_rshowdesc(nat roomid){
     roomdb *rm=db_rfindwithid(roomid);
     if(rm==NULL){
-        printr(Red,msg_db_ridnullexceptionerror);
+        printr(Red,msg->db_ridnullexceptionerror);
         return;
     }
     printr(White|Bright,L"\n%ls\n",rm->name);
@@ -479,7 +479,7 @@ void db_rshowdesc(nat roomid){
     if(rm->exits[dir_West])printr(Green|Bright,L"WEST  ");
     struct et_room *etr=et_findroomwithid(roomid);
     if(etr==NULL){
-        printr(Red,msg_db_retidnullexceptionerror);
+        printr(Red,msg->db_retidnullexceptionerror);
     }
     else{
         for(nat i=0,first=1;i<DBE_ENEMYCAP;i++){
@@ -497,12 +497,12 @@ void db_rshowdesc(nat roomid){
             if(etr->etitem[i]!=0){
                 struct et_item *eti=&et_items[etr->etitem[i]-1];
                 if(eti->available==false){
-                    printr(Red,msg_db_ietidnullexceptionerror);
+                    printr(Red,msg->db_ietidnullexceptionerror);
                     continue;
                 }
                 itemdb *idb=db_ifindwithid(eti->itemid);
                 if(idb==NULL){
-                    printr(Red,msg_db_iidnullexceptionerror);
+                    printr(Red,msg->db_iidnullexceptionerror);
                     continue;
                 }
                 if(first){
@@ -528,24 +528,24 @@ void db_rshowdesc(nat roomid){
 void db_rshowtable(nat roomid){
     roomdb *rm=db_rfindwithid(roomid);
     if(rm==NULL){
-        printr(Red,msg_db_ridnullexceptionerror);
+        printr(Red,msg->db_ridnullexceptionerror);
         return;
     }
     if(rm->type!=db_roomtype_shop){
-        printr(Default,msg_db_notinstore);
+        printr(Default,msg->db_notinstore);
         return;
     }
-    printr(Default,msg_line);
+    printr(Default,msg->line);
     for(nat i=0;i<32;i++){
         if(rm->table[i]!=0){
             itemdb *idb=db_ifindwithid(rm->table[i]);
             if(idb==NULL){
-                printr(Red,msg_db_iidnullexceptionerror);
+                printr(Red,msg->db_iidnullexceptionerror);
                 return;
             }
-            printrp(Default,L"            | ",msg_db_listitem,idb->price,idb->name);
+            printrp(Default,L"            | ",msg->db_listitem,idb->price,idb->name);
         }else break;
     }
-    printr(Default,msg_line);
+    printr(Default,msg->line);
 }
 #endif

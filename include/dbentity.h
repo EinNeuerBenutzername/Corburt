@@ -102,7 +102,7 @@ void etenemy_push(nat enemyid,nat roomid){
         }
     }
     if(etr==NULL){ // no such room
-        printr(Red,msg_db_ridnullexceptionerror);
+        printr(Red,msg->db_ridnullexceptionerror);
         return;
     }
     for(nat i=0;enemydbs[i].id!=0;i++){
@@ -112,7 +112,7 @@ void etenemy_push(nat enemyid,nat roomid){
         }
     }
     if(edb==NULL){ // no such enemy
-        printr(Red,msg_db_eidnullexceptionerror);
+        printr(Red,msg->db_eidnullexceptionerror);
         return;
     }
     for(nat i=0;i<DBE_ENEMYCAP;i++){
@@ -151,7 +151,7 @@ void etenemy_push(nat enemyid,nat roomid){
 }
 enemydb *et_getenemydb(nat enemyentityid){
     if(et_enemies[enemyentityid-1].available==false){
-        printr(Red,msg_db_eetidnullexceptionerror);
+        printr(Red,msg->db_eetidnullexceptionerror);
         return NULL;
     }
     enemydb *edb=db_efindwithid(et_enemies[enemyentityid-1].enemyid);
@@ -169,13 +169,13 @@ void etitem_expand(){
 void etitem_delete(nat entityid){
     struct et_item *eti=&et_items[entityid-1];
     if(!eti->available){
-        printr(Red,msg_db_ietidnullexceptionerror);
+        printr(Red,msg->db_ietidnullexceptionerror);
         return;
     }
     if(eti->roomid!=0){
         struct et_room *etr=et_findroomwithid(eti->roomid);
         if(etr==NULL){
-            printr(Red,msg_db_retidnullexceptionerror);
+            printr(Red,msg->db_retidnullexceptionerror);
             return;
         }
         for(nat i=0;i<DBE_ITEMCAP;i++){
@@ -218,7 +218,7 @@ void etitem_rebind(nat entityid,nat newroomid){
     struct et_item *eti=&et_items[entityid-1];
     struct et_item etio=et_items[entityid-1];
     if(!eti->available){
-        printr(Red,msg_db_ietidnullexceptionerror);
+        printr(Red,msg->db_ietidnullexceptionerror);
         return;
     }
     etitem_delete(entityid);
@@ -239,7 +239,7 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
             }
         }
         if(etr==NULL){ // no such room
-            printr(Red,msg_db_ridnullexceptionerror);
+            printr(Red,msg->db_ridnullexceptionerror);
             return;
         }
     }
@@ -250,7 +250,7 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
         }
     }
     if(idb==NULL){
-        printr(Red,msg_db_iidnullexceptionerror);
+        printr(Red,msg->db_iidnullexceptionerror);
         return;
     }
     nat stackable=idb->type&db_itemtype_stackable_mask;
@@ -275,7 +275,7 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
                 }
             }
             if(itemreferenceindex==-1){ // etr->etitem[] is full
-                printr(Default,msg_db_ietfull,db_ifindwithid(itemid)->name);
+                printr(Default,msg->db_ietfull,db_ifindwithid(itemid)->name);
                 return;
             }
             struct et_item eti={
@@ -329,7 +329,7 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
                 }
             }
             else if((!success)&&(!hasslot)){
-                printr(Default,msg_db_ietfull);
+                printr(Default,msg->db_ietfull,idb->name);
             }
             else if(success){
                 itempointer--;
@@ -351,14 +351,14 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
                     itemscount++;
                     if(purchase){
                         inventory.money-=idb->price;
-                        printr(Default,msg_db_ipurchaseitemhint,idb->name);
+                        printr(Default,msg->db_ipurchaseitemhint,idb->name);
                     }
                     success=true;
                     break;
                 }
             }
             if(!success){ // drops to the ground
-                printr(Default,msg_db_icantcarry);
+                printr(Default,msg->db_icantcarry);
                 if(!purchase)etitem_push(itemid,qnty,player.roomid,0);
             }
             else if(success){
@@ -407,12 +407,12 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
                 }
             }
             else if((!success)&&(!hasslot)){ // drops to the ground
-                printr(Default,msg_db_icantcarry);
+                printr(Default,msg->db_icantcarry);
                 if(!purchase)etitem_push(itemid,qnty,player.roomid,0);
             }
             if(purchase&&qnty2>qnty){
                 inventory.money-=idb->price*(qnty2-qnty);
-                printr(Default,msg_db_ipurchasemultitemhint,idb->name,(qnty2-qnty));
+                printr(Default,msg->db_ipurchasemultitemhint,idb->name,(qnty2-qnty));
             }
             qnty=qnty2;
         }
@@ -422,7 +422,7 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
 }
 itemdb *et_getitemdb(nat itementityid){
     if(et_items[itementityid-1].available==false){
-        printr(Red,msg_db_ietidnullexceptionerror);
+        printr(Red,msg->db_ietidnullexceptionerror);
         return NULL;
     }
     itemdb *idb=db_ifindwithid(et_items[itementityid-1].itemid);

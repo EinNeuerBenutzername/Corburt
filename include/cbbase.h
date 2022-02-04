@@ -64,8 +64,6 @@ struct save saves[5]={0};
 int_fast32_t cursaveid=0;
 void *pointerpool[128]={NULL};
 nat pointerinuse=0;
-real tick=0.0f;
-
 //basic
 enum errorenum{
     error_cannotmalloc,
@@ -247,24 +245,24 @@ void tracelog(int color,const wchar_t *format,...){
 #endif
 }
 void fatalerror(enum errorenum error_id){
-    const wchar_t *msg;
+    const wchar_t *m;
     switch(error_id){
     case error_cannotmalloc:
-        msg=msg_error_cannotmalloc;break;
+        m=msg->error_cannotmalloc;break;
     case error_cannotrealloc:
-        msg=msg_error_cannotrealloc;break;
+        m=msg->error_cannotrealloc;break;
     case error_badcharbit:
-        msg=msg_error_badcharbit;break;
+        m=msg->error_badcharbit;break;
     case error_bufferpooloverflow:
-        msg=msg_error_bufferpooloverflow;break;
+        m=msg->error_bufferpooloverflow;break;
     case error_cannotsave:
-        msg=msg_error_cannotsave;break;
+        m=msg->error_cannotsave;break;
     default:
-        msg=msg_error_unknown;break;
+        m=msg->error_unknown;break;
     }
-    printr(Red,msg);
+    printr(Red,m);
     FILE *errorlog=fopen("err.log","a");
-    fprintf(errorlog,"%ls",msg);
+    fprintf(errorlog,"%ls",m);
     fclose(errorlog);
     exit(-1);
 }
@@ -277,8 +275,8 @@ void *mallocpointer_(size_t bytes){
     if(pointer==NULL)fatalerror(error_cannotmalloc);
     pointerinuse++;
     if(Corburt_Pointer_Trace_Level>0){
-        tracelog(Green,msg_trace_malloced,bytes);
-        tracelog(Green,msg_trace_pointerinuse,pointerinuse);
+        tracelog(Green,msg->trace_malloced,bytes);
+        tracelog(Green,msg->trace_pointerinuse,pointerinuse);
     }
     for(nat i=0;i<128;i++){
         if(pointerpool[i]==NULL){
@@ -297,8 +295,8 @@ void *mallocpointer(size_t bytes){
     if(pointer==NULL)fatalerror(error_cannotmalloc);
     pointerinuse++;
     if(Corburt_Pointer_Trace_Level>1){
-        tracelog(Green,msg_trace_malloced,bytes);
-        tracelog(Green,msg_trace_pointerinuse,pointerinuse);
+        tracelog(Green,msg->trace_malloced,bytes);
+        tracelog(Green,msg->trace_pointerinuse,pointerinuse);
     }
     for(nat i=0;i<128;i++){
         if(pointerpool[i]==NULL){
@@ -315,14 +313,14 @@ void *reallocpointer(void *pointer,size_t bytes){
             break;
         }
         if(i==127&&found==0){
-            printc(Red,msg_trace_illegalrealloc);
+            printc(Red,msg->trace_illegalrealloc);
             return NULL;
         }
     }
     pointer=realloc(pointer,bytes);
     if(pointer==NULL)fatalerror(error_cannotmalloc);
     if(Corburt_Pointer_Trace_Level>0){
-        tracelog(Green,msg_trace_realloced,bytes);
+        tracelog(Green,msg->trace_realloced,bytes);
     }
     return pointer;
 }
@@ -334,15 +332,15 @@ void freepointer_(void *pointer){
             break;
         }
         if(i==127){
-            printc(Red,msg_trace_illegalfree);
+            printc(Red,msg->trace_illegalfree);
             return;
         }
     }
     free(pointer);
     pointerinuse--;
     if(Corburt_Pointer_Trace_Level>0){
-        tracelog(Green,msg_trace_freed);
-        tracelog(Green,msg_trace_pointerinuse,pointerinuse);
+        tracelog(Green,msg->trace_freed);
+        tracelog(Green,msg->trace_pointerinuse,pointerinuse);
     }
     pointer=NULL;
 }
@@ -354,27 +352,27 @@ void freepointer(void *pointer){
             break;
         }
         if(i==127){
-            printc(Red,msg_trace_illegalfree);
+            printc(Red,msg->trace_illegalfree);
             return;
         }
     }
     free(pointer);
     pointerinuse--;
     if(Corburt_Pointer_Trace_Level>1){
-        tracelog(Green,msg_trace_freed);
-        tracelog(Green,msg_trace_pointerinuse,pointerinuse);
+        tracelog(Green,msg->trace_freed);
+        tracelog(Green,msg->trace_pointerinuse,pointerinuse);
     }
     pointer=NULL;
 }
 void freeall(){
-    tracelog(Green,msg_trace_pointerinuse,pointerinuse);
+    tracelog(Green,msg->trace_pointerinuse,pointerinuse);
     for(nat i=0;i<128&&pointerinuse>0;i++){
         if(pointerpool[i]!=NULL){
             free(pointerpool[i]);
             pointerinuse--;
         }
     }
-    tracelog(Green,msg_trace_freealled);
+    tracelog(Green,msg->trace_freealled);
 }
 void scanline(wchar_t *scan_str,int scans){
     cbc_setcolor(Yellow);
@@ -437,19 +435,19 @@ void checkendianess(){
     const int i=1;
     char c=*(char*)&i;
     if(c==1){
-        tracelog(Green,msg_trace_endianess_le);
+        tracelog(Green,msg->trace_endianess_le);
         isle=true;
     }else{
-        tracelog(Green,msg_trace_endianess_be);
+        tracelog(Green,msg->trace_endianess_be);
         isle=false;
     }
 }
 void initrng(){
     bat seed;
-    tracelog(Green,msg_trace_rnginit);
-    tracelog(Green,msg_trace_rngseed,seed=time(NULL));
+    tracelog(Green,msg->trace_rnginit);
+    tracelog(Green,msg->trace_rngseed,seed=time(NULL));
     mtrand=seedRand(seed);
-    tracelog(Green,msg_trace_rngtest,genRandLong(&mtrand));
+    tracelog(Green,msg->trace_rngtest,genRandLong(&mtrand));
 }
 
 // cbm

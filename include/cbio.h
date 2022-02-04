@@ -99,7 +99,7 @@ foo matchcommands(wchar_t *cmd){
         return true;
     }
     if(fullmatch(cmd,L"help")){
-        printc(Default,msg_global_help);
+        printc(Default,msg->global_help);
         return true;
     }
     if(fullmatch(cmd,L"abilities")||
@@ -109,7 +109,7 @@ foo matchcommands(wchar_t *cmd){
     }
     if(fullmatch(cmd,L"save")){
         savesaves();
-        printr(Cyan|Bright,msg_global_progresssaved);
+        printr(Cyan|Bright,msg->global_progresssaved);
         return true;
     }
     if(fullmatch(cmd,L"list")){
@@ -119,11 +119,11 @@ foo matchcommands(wchar_t *cmd){
     if(fullmatch(cmd,L"buy")){
         roomdb *rm=db_rfindwithid(player.roomid);
         if(rm==NULL){
-            printr(Red,msg_db_ridnullexceptionerror);
+            printr(Red,msg->db_ridnullexceptionerror);
             return true;
         }
         if(rm->type!=db_roomtype_shop){
-            printr(Default,msg_db_notinstore);
+            printr(Default,msg->db_notinstore);
             return true;
         }
         wchar_t *buytarget=NULL;
@@ -164,7 +164,7 @@ foo matchcommands(wchar_t *cmd){
         for(nat i=0;rm->table[i]!=0;i++){
             itemdb *idb=db_ifindwithid(rm->table[i]);
             if(idb==NULL){
-                printr(Red,msg_db_iidnullexceptionerror);
+                printr(Red,msg->db_iidnullexceptionerror);
                 return true;
             }
             nat curmatch=match(buytarget,idb->name);
@@ -177,7 +177,7 @@ foo matchcommands(wchar_t *cmd){
         if(maxmatch>=0){
             itemdb *idb=db_ifindwithid(maxmatchid);
             if(idb==NULL){
-                printr(Red,msg_db_iidnullexceptionerror);
+                printr(Red,msg->db_iidnullexceptionerror);
                 return true;
             }
             if(idb->type&db_itemtype_stackable_mask){
@@ -185,8 +185,8 @@ foo matchcommands(wchar_t *cmd){
                     etitem_push(idb->id,qnty,0,1);
                     return true;
                 }else{
-                    if(qnty==1)printr(Default,msg_db_icantafford,idb->price*qnty-inventory.money);
-                    else printr(Default,msg_db_icantaffordmult,idb->price*qnty-inventory.money);
+                    if(qnty==1)printr(Default,msg->db_icantafford,idb->price*qnty-inventory.money);
+                    else printr(Default,msg->db_icantaffordmult,idb->price*qnty-inventory.money);
                 }
             }
             else{
@@ -194,11 +194,11 @@ foo matchcommands(wchar_t *cmd){
                     etitem_push(idb->id,1,0,1);
                     return true;
                 }else{
-                    printr(Default,msg_db_icantafford,idb->price-inventory.money);
+                    printr(Default,msg->db_icantafford,idb->price-inventory.money);
                 }
             }
         }else{
-            printr(Default,msg_db_inosuchitem);
+            printr(Default,msg->db_inosuchitem);
         }
         return true;
     }
@@ -223,7 +223,7 @@ foo matchcommands(wchar_t *cmd){
             if(inventory.items[i]==0)continue;
             itemdb *idb=db_ifindwithid(et_items[inventory.items[i]-1].itemid);
             if(idb==NULL){
-                printr(Red,msg_db_iidnullexceptionerror);
+                printr(Red,msg->db_iidnullexceptionerror);
                 return true;
             }
             nat curmatch=match(usetarget,idb->name);
@@ -254,22 +254,22 @@ foo matchcommands(wchar_t *cmd){
         if(maxmatch>=0){
             itemdb *idb=db_ifindwithid(maxmatchid);
             if(idb==NULL){
-                printr(Red,msg_db_iidnullexceptionerror);
+                printr(Red,msg->db_iidnullexceptionerror);
                 return true;
             }
             if(idb->type==db_itemtype_weapon){
                 inventory.weapon=ininvindex+1;
-                printr(Default,msg_player_inv_wield,idb->name);
+                printr(Default,msg->player_inv_wield,idb->name);
             }
             if(idb->type==db_itemtype_armor){
                 inventory.armor=ininvindex+1;
-                printr(Default,msg_player_inv_wear,idb->name);
+                printr(Default,msg->player_inv_wear,idb->name);
             }
             if(idb->type==db_itemtype_accessory){
                 foo canequip=true;
                 for(nat k=0;k<5;k++){
                     if(inventory.accessories[k]==ininvindex+1){
-                        printr(Default,msg_player_inv_alreadyequipped,idb->name);
+                        printr(Default,msg->player_inv_alreadyequipped,idb->name);
                         canequip=false;
                         break;
                     }
@@ -278,7 +278,7 @@ foo matchcommands(wchar_t *cmd){
                     for(nat k=0;k<5;k++){
                         if(inventory.accessories[k]==0){
                             inventory.accessories[k]=ininvindex+1;
-                            printr(Default,msg_player_inv_equip,idb->name);
+                            printr(Default,msg->player_inv_equip,idb->name);
                             break;
                         }
                     }
@@ -293,7 +293,7 @@ foo matchcommands(wchar_t *cmd){
                 }
             }
         }else{
-            printr(Default,msg_db_inosuchitem);
+            printr(Default,msg->db_inosuchitem);
         }
         return true;
     }
@@ -305,7 +305,7 @@ foo matchcommands(wchar_t *cmd){
         else if(fullmatch(cmd,L"g"))startp=1;
         roomdb *rm=db_rfindwithid(player.roomid);
         if(rm==NULL){
-            printr(Red,msg_db_ridnullexceptionerror);
+            printr(Red,msg->db_ridnullexceptionerror);
             return true;
         }
         wchar_t *taketarget=NULL;
@@ -346,19 +346,19 @@ foo matchcommands(wchar_t *cmd){
         nat maxmatchid=0;
         struct et_room *etr=et_findroomwithid(rm->id);
         if(etr==NULL){
-            printr(Red,msg_db_retidnullexceptionerror);
+            printr(Red,msg->db_retidnullexceptionerror);
             return true;
         }
         for(nat i=0;i<DBE_ITEMCAP;i++){
             if(etr->etitem[i]==0)continue;
             struct et_item *eti=&et_items[etr->etitem[i]-1];
             if(eti==NULL){
-                printr(Red,msg_db_ietidnullexceptionerror);
+                printr(Red,msg->db_ietidnullexceptionerror);
                 return true;
             }
             itemdb *idb=db_ifindwithid(eti->itemid);
             if(idb==NULL){
-                printr(Red,msg_db_iidnullexceptionerror);
+                printr(Red,msg->db_iidnullexceptionerror);
                 return true;
             }
             nat curmatch=match(taketarget,idb->name);
@@ -371,12 +371,12 @@ foo matchcommands(wchar_t *cmd){
         if(maxmatch>=0){
             struct et_item *eti=&et_items[maxmatchid-1];
             if(!eti->available){
-                printr(Red,msg_db_ietidnullexceptionerror);
+                printr(Red,msg->db_ietidnullexceptionerror);
                 return true;
             }
             itemdb *idb=db_ifindwithid(eti->itemid);
             if(idb==NULL){
-                printr(Red,msg_db_iidnullexceptionerror);
+                printr(Red,msg->db_iidnullexceptionerror);
                 return true;
             }
             if(idb->type&db_itemtype_stackable_mask){
@@ -389,7 +389,7 @@ foo matchcommands(wchar_t *cmd){
                             if(etr->etitem[i]==0)continue;
                             struct et_item *etii=&et_items[etr->etitem[i]-1];
                             if(etii->available==false){
-                                printr(Red,msg_db_ietidnullexceptionerror);
+                                printr(Red,msg->db_ietidnullexceptionerror);
                                 return true;
                             }
                             if(etii->itemid==itemid){
@@ -412,23 +412,23 @@ foo matchcommands(wchar_t *cmd){
                     etitem_push(eti->itemid,qnty,0,0);
                     qnty=0;
                 }
-                if(qnty2-qnty>1)printr(Cyan|Bright,msg_db_ietmulttake,idb->name,qnty2-qnty);
-                else if(qnty2-qnty==1)printr(Cyan|Bright,msg_db_iettake,idb->name);
-                else printr(Default,msg_db_inosuchitem);
+                if(qnty2-qnty>1)printr(Cyan|Bright,msg->db_ietmulttake,idb->name,qnty2-qnty);
+                else if(qnty2-qnty==1)printr(Cyan|Bright,msg->db_iettake,idb->name);
+                else printr(Default,msg->db_inosuchitem);
             }
             else{
                 etitem_rebind(maxmatchid,0);
-                printr(Cyan|Bright,msg_db_iettake,idb->name);
+                printr(Cyan|Bright,msg->db_iettake,idb->name);
             }
         }else{
-            printr(Default,msg_db_inosuchitem);
+            printr(Default,msg->db_inosuchitem);
         }
         return true;
     }
     if(fullmatch(cmd,L"drop")){
         struct et_room *etr=et_findroomwithid(player.roomid);
         if(etr==NULL){
-            printr(Red,msg_db_retidnullexceptionerror);
+            printr(Red,msg->db_retidnullexceptionerror);
             return true;
         }
         wchar_t *droptarget=NULL;
@@ -471,12 +471,12 @@ foo matchcommands(wchar_t *cmd){
             if(inventory.items[i]==0)continue;
             struct et_item *eti=&et_items[inventory.items[i]-1];
             if(eti==NULL){
-                printr(Red,msg_db_ietidnullexceptionerror);
+                printr(Red,msg->db_ietidnullexceptionerror);
                 return true;
             }
             itemdb *idb=db_ifindwithid(eti->itemid);
             if(idb==NULL){
-                printr(Red,msg_db_iidnullexceptionerror);
+                printr(Red,msg->db_iidnullexceptionerror);
                 return true;
             }
             nat curmatch=match(droptarget,idb->name);
@@ -489,12 +489,12 @@ foo matchcommands(wchar_t *cmd){
         if(maxmatch>=0){
             struct et_item *eti=&et_items[maxmatchid-1];
             if(!eti->available){
-                printr(Red,msg_db_ietidnullexceptionerror);
+                printr(Red,msg->db_ietidnullexceptionerror);
                 return true;
             }
             itemdb *idb=db_ifindwithid(eti->itemid);
             if(idb==NULL){
-                printr(Red,msg_db_iidnullexceptionerror);
+                printr(Red,msg->db_iidnullexceptionerror);
                 return true;
             }
             if(idb->type&db_itemtype_stackable_mask){
@@ -507,7 +507,7 @@ foo matchcommands(wchar_t *cmd){
                             if(inventory.items[i]==0)continue;
                             struct et_item *etii=&et_items[inventory.items[i]-1];
                             if(etii->available==false){
-                                printr(Red,msg_db_ietidnullexceptionerror);
+                                printr(Red,msg->db_ietidnullexceptionerror);
                                 return true;
                             }
                             if(etii->itemid==itemid){
@@ -529,26 +529,26 @@ foo matchcommands(wchar_t *cmd){
                     etitem_push(eti->itemid,qnty,player.roomid,0);
                     qnty=0;
                 }
-                if(qnty2-qnty>1)printr(Cyan|Bright,msg_db_ietmultdrop,idb->name,qnty2-qnty);
-                else printr(Cyan|Bright,msg_db_ietdrop,idb->name);
+                if(qnty2-qnty>1)printr(Cyan|Bright,msg->db_ietmultdrop,idb->name,qnty2-qnty);
+                else printr(Cyan|Bright,msg->db_ietdrop,idb->name);
             }
             else{
                 etitem_rebind(maxmatchid,player.roomid);
-                printr(Cyan|Bright,msg_db_ietdrop,idb->name);
+                printr(Cyan|Bright,msg->db_ietdrop,idb->name);
             }
         }else{
-            printr(Default,msg_db_inosuchitem);
+            printr(Default,msg->db_inosuchitem);
         }
         return true;
     }
     if(fullmatch(cmd,L"sell")){
         roomdb *rm=db_rfindwithid(player.roomid);
         if(rm==NULL){
-            printr(Red,msg_db_ridnullexceptionerror);
+            printr(Red,msg->db_ridnullexceptionerror);
             return true;
         }
         if(rm->type!=db_roomtype_shop){
-            printr(Default,msg_db_notinstore);
+            printr(Default,msg->db_notinstore);
             return true;
         }
         wchar_t *selltarget=NULL;
@@ -590,7 +590,7 @@ foo matchcommands(wchar_t *cmd){
         for(nat i=0;rm->table[i]!=0;i++){
             itemdb *idb=db_ifindwithid(rm->table[i]);
             if(idb==NULL){
-                printr(Red,msg_db_iidnullexceptionerror);
+                printr(Red,msg->db_iidnullexceptionerror);
                 return true;
             }
             nat curmatch=match(selltarget,idb->name);
@@ -610,11 +610,11 @@ foo matchcommands(wchar_t *cmd){
         if(maxmatch>=0){
             itemdb *idb=db_ifindwithid(maxmatchitemid);
             if(idb==NULL){
-                printr(Red,msg_db_iidnullexceptionerror);
+                printr(Red,msg->db_iidnullexceptionerror);
                 return true;
             }
         }else{
-            printr(Default,msg_db_inosuchitem);
+            printr(Default,msg->db_inosuchitem);
             return true;
         }
         itemdb *idb=NULL;
@@ -622,12 +622,12 @@ foo matchcommands(wchar_t *cmd){
             if(inventory.items[i]==0)continue;
             struct et_item *eti=&et_items[inventory.items[i]-1];
             if(eti==NULL){
-                printr(Red,msg_db_ietidnullexceptionerror);
+                printr(Red,msg->db_ietidnullexceptionerror);
                 return true;
             }
             idb=db_ifindwithid(eti->itemid);
             if(idb==NULL){
-                printr(Red,msg_db_iidnullexceptionerror);
+                printr(Red,msg->db_iidnullexceptionerror);
                 return true;
             }
             if(idb->id==maxmatchitemid){
@@ -649,9 +649,9 @@ foo matchcommands(wchar_t *cmd){
                 }
             }
         }
-        if(qnty2==qnty)printr(Default,msg_db_inosuchitem);
-        else if(qnty2-qnty==1)printr(Cyan|Bright,msg_db_isellitemhint,idb->name);
-        else printr(Cyan|Bright,msg_db_isellmultitemhint,idb->name,qnty2-qnty);
+        if(qnty2==qnty)printr(Default,msg->db_inosuchitem);
+        else if(qnty2-qnty==1)printr(Cyan|Bright,msg->db_isellitemhint,idb->name);
+        else printr(Cyan|Bright,msg->db_isellmultitemhint,idb->name,qnty2-qnty);
         return true;
     }
     return false;
@@ -674,7 +674,7 @@ void processinput(){
     }else{
         memset(inputbufl,0,128);
     }
-    printr(Cyan|Bright,msg_player_say,player.name);
+    printr(Cyan|Bright,msg->player_say,player.name);
     printr(Default,L"%ls\n",inputbuf);
     return;
 }

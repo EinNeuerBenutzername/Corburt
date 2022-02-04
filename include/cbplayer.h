@@ -159,7 +159,7 @@ static void plvlup(){
     player.maxhp+=player.stats.con*player.lvl/2.85f;
     player.maxhp+=player.stats.con*player.lvl*player.lvl/32.52f;
     player.maxhp+=player.stats.con*player.stats.con*player.lvl/25972.142f;
-    printr(Green|Bright,msg_player_trainsuccess,player.lvl);
+    printr(Green|Bright,msg->player_trainsuccess,player.lvl);
 }
 static void paddgearstats(){
     if(inventory.weapon!=0){
@@ -251,7 +251,7 @@ void pcalcstats(){
 void pshowstats(){
     pcalcstats();
     printr(Default,
-        msg_player_info,
+        msg->player_info,
         player.name,
         ranks[player.rnk],
         player.hp,player.maxhp,(player.hp*100.0f/player.maxhp),
@@ -262,14 +262,14 @@ void pshowstats(){
         cbp.calcstats.con,player.stats.pts
     );
 }
-void pshowabl(){printr(Default,msg_player_abl);}
+void pshowabl(){printr(Default,msg->player_abl);}
 void pshowinv(){
     nat invitemscount=0;
     for(nat i=0;i<64;i++){
         if(inventory.items[i]!=0)invitemscount++;
     }
     printr(Default,
-        msg_player_inv,
+        msg->player_inv,
         inventory.money,
         invitemscount,inventory.unlocked
     );
@@ -281,13 +281,13 @@ void pshowinv(){
                 itemdb *idb=db_ifindwithid(eti->itemid);
                 if(j>0)printr(Default,L"\n               ");
                 if(inventory.weapon==i+1){
-                    printr(Magenta|Bright,msg_player_inv_wielding);
+                    printr(Magenta|Bright,msg->player_inv_wielding);
                 }
                 if(inventory.armor==i+1){
-                    printr(Magenta|Bright,msg_player_inv_wearing);
+                    printr(Magenta|Bright,msg->player_inv_wearing);
                 }
                 for(nat k=0;k<5;k++)if(inventory.accessories[k]==i+1){
-                    printr(Magenta|Bright,msg_player_inv_equipping);
+                    printr(Magenta|Bright,msg->player_inv_equipping);
                     break;
                 }
                 printrp(Default,L"                ",L"%ls ",idb->name);
@@ -300,50 +300,50 @@ void pshowinv(){
             }
         }
     }
-    printr(Default,L"\n%ls",msg_line);
+    printr(Default,L"\n%ls",msg->line);
 }
 void pshowexp(){
-    printr(Default,msg_player_exp,player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]));
+    printr(Default,msg->player_exp,player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]));
 }
 void pmove(enum direction dir){ // ready for special exits
     roomdb *rm=db_rfindwithid(player.roomid);
     if(rm==NULL){
-        printr(Red,msg_db_ridnullexceptionerror);
+        printr(Red,msg->db_ridnullexceptionerror);
         return;
     }
-    if(!rm->exits[dir]){printr(Default,msg_player_walkno);return;}
-    if(db_rfindwithid(rm->exits[dir])==NULL){printr(Default,msg_player_walkno);return;}
+    if(!rm->exits[dir]){printr(Default,msg->player_walkno);return;}
+    if(db_rfindwithid(rm->exits[dir])==NULL){printr(Default,msg->player_walkno);return;}
     if(!rm->exitsid[dir]){
         player.roomid=rm->exits[dir];
         switch(dir){
         case dir_East:
-            printr(Green,msg_player_walkeast);
+            printr(Green,msg->player_walkeast);
             db_rshowdesc(player.roomid);
             return;
         case dir_West:
-            printr(Green,msg_player_walkwest);
+            printr(Green,msg->player_walkwest);
             db_rshowdesc(player.roomid);
             return;
         case dir_North:
-            printr(Green,msg_player_walknorth);
+            printr(Green,msg->player_walknorth);
             db_rshowdesc(player.roomid);
             return;
         case dir_South:
-            printr(Green,msg_player_walksouth);
+            printr(Green,msg->player_walksouth);
             db_rshowdesc(player.roomid);
             return;
         case dir_Up:
-            printr(Green,msg_player_walkup);
+            printr(Green,msg->player_walkup);
             db_rshowdesc(player.roomid);
             return;
         case dir_Down:
-            printr(Green,msg_player_walkdown);
+            printr(Green,msg->player_walkdown);
             db_rshowdesc(player.roomid);
             return;
         default:
             break;
         }
-        printr(Default,msg_player_walkno);
+        printr(Default,msg->player_walkno);
     }else{
         // special exits
     }
@@ -352,19 +352,19 @@ void pattack(){}
 void ptrain(){
     roomdb *rm=db_rfindwithid(player.roomid);
     if(rm==NULL){
-        printr(Red,msg_db_ridnullexceptionerror);
+        printr(Red,msg->db_ridnullexceptionerror);
         return;
     }
     if(rm->type!=db_roomtype_train){
-        printr(Default,msg_player_canttrain);
+        printr(Default,msg->player_canttrain);
         return;
     }
     if(player.lvl==LVL_CAP){
-        printr(Default,msg_player_canttrain_maxlvl);
+        printr(Default,msg->player_canttrain_maxlvl);
         return;
     }
     if(player.exp<exp2next[player.lvl-1]){
-        printr(Default,msg_player_canttrain_noexp);
+        printr(Default,msg->player_canttrain_noexp);
     }else{
         plvlup();
     }

@@ -12,6 +12,8 @@ static void readinventory(struct inventory *inv,FILE *fp);
 static void saveinventory(struct inventory inv,FILE *fp);
 static void readet_items(FILE *fp);
 static void saveet_items(FILE *fp);
+static void readet_rooms(FILE *fp);
+static void saveet_rooms(FILE *fp);
 static void readsavesglobaldata(FILE *fp);
 static void savesavesglobaldata(FILE *fp);
 void readsaves();
@@ -116,7 +118,7 @@ static void readet_items(FILE *fp){
         }
     }
     if(itemscount)
-        tracelog(Cyan,msg_trace_loadeti,itemscount);
+        tracelog(Cyan,msg->trace_loadeti,itemscount);
 }
 static void saveet_items(FILE *fp){
     int_fast32_t_write(itemsmax,fp);
@@ -130,17 +132,44 @@ static void saveet_items(FILE *fp){
         }
     }
 }
+static void readet_rooms(FILE *fp){
+    nat roomsmax_tmp;
+    int_fast32_t_read(&roomsmax_tmp,fp);
+    for(nat i=0;i<roomsmax_tmp;i++){
+        int_fast32_t_read(&et_rooms[i].id,fp);
+        for(nat j=0;j<DBE_ENEMYCAP;j++)
+            int_fast32_t_read(&et_rooms[i].etenemy[j],fp);
+        for(nat j=0;j<DBE_ITEMCAP;j++)
+            int_fast32_t_read(&et_rooms[i].etitem[j],fp);
+        for(nat j=0;j<DBE_INTCAP;j++)
+            int_fast32_t_read(&et_rooms[i].etinteract[j],fp);
+    }
+}
+static void saveet_rooms(FILE *fp){
+    int_fast32_t_write(roomsmax,fp);
+    for(nat i=0;i<roomsmax;i++){
+        int_fast32_t_write(et_rooms[i].id,fp);
+        for(nat j=0;j<DBE_ENEMYCAP;j++)
+            int_fast32_t_write(et_rooms[i].etenemy[j],fp);
+        for(nat j=0;j<DBE_ITEMCAP;j++)
+            int_fast32_t_write(et_rooms[i].etitem[j],fp);
+        for(nat j=0;j<DBE_INTCAP;j++)
+            int_fast32_t_write(et_rooms[i].etinteract[j],fp);
+    }
+}
 static void readsavesglobaldata(FILE *fp){
     nat version=0;
     int_fast32_t_read(&version,fp);
     if(version!=107){
-        printr(Red,msg_global_save_incompat,msg_global_corburtversion);
+        printr(Red,msg->global_save_incompat,msg->global_corburtversion);
         fio.fail=1;
     }
+    readet_rooms(fp);
     readet_items(fp);
 }
 static void savesavesglobaldata(FILE *fp){
     int_fast32_t_write(107,fp);
+    saveet_rooms(fp);
     saveet_items(fp);
 }
 void readsaves(){
@@ -150,33 +179,33 @@ void readsaves(){
     fio_getfilesize("save.txt");
     fp_save=fopen("save.txt","rb");
     if(fp_save==NULL){
-        printr(Cyan,msg_global_nosave);
+        printr(Cyan,msg->global_nosave);
     }else{
-        printr(Cyan,msg_global_scansave);
+        printr(Cyan,msg->global_scansave);
         readsavesglobaldata(fp_save);
         for(int i=0;i<savescount;i++){
             readsave(foundsaves,fp_save);
             if(saves[foundsaves].valid)foundsaves++;
         }
         fclose(fp_save);
-        if(foundsaves==0)printr(Cyan|Bright,msg_global_saveempty);
+        if(foundsaves==0)printr(Cyan|Bright,msg->global_saveempty);
         else if(foundsaves==1){
-            printr(Cyan|Bright,msg_global_savecount,foundsaves);
+            printr(Cyan|Bright,msg->global_savecount,foundsaves);
             printr(Cyan|Bright,L"%ls\n",saves[0].plr.name);
         }
         else{
-            printr(Cyan|Bright,msg_global_savecounts,foundsaves);
+            printr(Cyan|Bright,msg->global_savecounts,foundsaves);
             printr(Cyan|Bright,L"%ls",saves[0].plr.name);
             for(nat i=1;i<foundsaves;i++)printr(Cyan|Bright,L", %ls",saves[i].plr.name);
             printr(Cyan|Bright,L"\n");
         }
     }
     while(true){
-        printr(White|Bright,msg_global_enteryourname);
+        printr(White|Bright,msg->global_enteryourname);
         wchar_t readsave_newname[32];
         scanline(readsave_newname,32);
         if(wcslen(readsave_newname)<2){
-            printr(White|Bright,msg_global_nametooshort,readsave_newname);
+            printr(White|Bright,msg->global_nametooshort,readsave_newname);
             continue;
         }else{
             nat saveid=-1;
@@ -188,28 +217,28 @@ void readsaves(){
             }
             if(saveid==-1){
                 if(foundsaves==savescount){
-                    printr(White|Bright,msg_global_savetoomany);
+                    printr(White|Bright,msg->global_savetoomany);
                     continue;
                 }
-                printr(White|Bright,msg_global_confirmyourname,readsave_newname);
+                printr(White|Bright,msg->global_confirmyourname,readsave_newname);
                 wchar_t yes[2];
                 scanline(yes,2);
                 if(yes[0]==L'Y'||yes[0]==L'y'){
                     cursaveid=foundsaves;
                     saves[foundsaves].valid=1;
                     wcscpy(player.name,readsave_newname);
-                    printr(Green|Bright,msg_global_welcomeplayer,readsave_newname);
+                    printr(Green|Bright,msg->global_welcomeplayer,readsave_newname);
                     break;
                 }
             }
             else{
-                printr(White|Bright,msg_global_confirmchoice,saves[saveid].plr.name);
+                printr(White|Bright,msg->global_confirmchoice,saves[saveid].plr.name);
                 wchar_t yes[2];
                 scanline(yes,2);
                 if(yes[0]==L'Y'||yes[0]==L'y'){
                     cursaveid=saveid;
                     save_overwrite(saveid);
-                    printr(Green|Bright,msg_global_welcomeplayer2,readsave_newname);
+                    printr(Green|Bright,msg->global_welcomeplayer2,readsave_newname);
                     break;
                 }
 
