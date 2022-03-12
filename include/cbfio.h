@@ -57,6 +57,14 @@ static void readplayerstats(struct player *p,FILE *fp){
     int_fast32_t_read(&plr.stats.act,fp);
     int_fast32_t_read(&plr.stats.con,fp);
     int_fast32_t_read(&plr.stats.pts,fp);
+    int_fast32_t_read(&plr.bstats.atk,fp);
+    int_fast32_t_read(&plr.bstats.def,fp);
+    int_fast32_t_read(&plr.bstats.acc,fp);
+    int_fast32_t_read(&plr.bstats.dod,fp);
+    int_fast32_t_read(&plr.bstats.stl,fp);
+    int_fast32_t_read(&plr.bstats.act,fp);
+    int_fast32_t_read(&plr.bstats.con,fp);
+    int_fast32_t_read(&plr.bstats.pts,fp);
     int_fast32_t_read(&plr.roomid,fp);
     *p=plr;
 }
@@ -75,6 +83,14 @@ static void saveplayerstats(struct player plr,FILE *fp){
     int_fast32_t_write(plr.stats.act,fp);
     int_fast32_t_write(plr.stats.con,fp);
     int_fast32_t_write(plr.stats.pts,fp);
+    int_fast32_t_write(plr.bstats.atk,fp);
+    int_fast32_t_write(plr.bstats.def,fp);
+    int_fast32_t_write(plr.bstats.acc,fp);
+    int_fast32_t_write(plr.bstats.dod,fp);
+    int_fast32_t_write(plr.bstats.stl,fp);
+    int_fast32_t_write(plr.bstats.act,fp);
+    int_fast32_t_write(plr.bstats.con,fp);
+    int_fast32_t_write(plr.bstats.pts,fp);
     int_fast32_t_write(plr.roomid,fp);
 }
 static void readinventory(struct inventory *inv,FILE *fp){
@@ -160,15 +176,19 @@ static void saveet_rooms(FILE *fp){
 static void readsavesglobaldata(FILE *fp){
     nat version=0;
     int_fast32_t_read(&version,fp);
-    if(version!=107){
+    if(version!=CB_VERSIONNUM){
         printr(Red,msg->global_save_incompat,msg->global_corburtversion);
         fio.fail=1;
     }
+    int_fast32_t_read(&global.curtick,fp);
+    int_fast64_t_read(&global.curround,fp);
     readet_rooms(fp);
     readet_items(fp);
 }
 static void savesavesglobaldata(FILE *fp){
-    int_fast32_t_write(107,fp);
+    int_fast32_t_write(CB_VERSIONNUM,fp);
+    int_fast32_t_write(global.curtick,fp);
+    int_fast64_t_write(global.curround,fp);
     saveet_rooms(fp);
     saveet_items(fp);
 }

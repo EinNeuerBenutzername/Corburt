@@ -1,7 +1,7 @@
 #ifndef Corburt_Player_h_Include_Guard
 #define Corburt_Player_h_Include_Guard
-#define LVL_CAP 120
-//#define LVL_CAP 20
+//#define LVL_CAP 120
+#define LVL_CAP 20
 #include "dbmap.h"
 const bat exp2next[]={
     [0]=20,
@@ -148,6 +148,7 @@ struct {
 } cbp;
 
 #include "dbitem.h"
+#include "cbturn.h"
 
 static void plvlup(){
     if(player.lvl>=LVL_CAP)return;
@@ -239,13 +240,20 @@ void pcalcstats(){
     if(player.stats.stl>99999)player.stats.stl=99999;
     if(player.stats.act>99999)player.stats.act=99999;
     if(player.stats.con>99999)player.stats.con=99999;
-    cbp.calcstats.atk=player.stats.atk;
-    cbp.calcstats.def=player.stats.def;
-    cbp.calcstats.acc=player.stats.acc;
-    cbp.calcstats.dod=player.stats.dod;
-    cbp.calcstats.stl=player.stats.stl;
-    cbp.calcstats.act=player.stats.act;
-    cbp.calcstats.con=player.stats.con;
+    if(player.bstats.atk>99999)player.bstats.atk=99999;
+    if(player.bstats.def>99999)player.bstats.def=99999;
+    if(player.bstats.acc>99999)player.bstats.acc=99999;
+    if(player.bstats.dod>99999)player.bstats.dod=99999;
+    if(player.bstats.stl>99999)player.bstats.stl=99999;
+    if(player.bstats.act>99999)player.bstats.act=99999;
+    if(player.bstats.con>99999)player.bstats.con=99999;
+    cbp.calcstats.atk=player.stats.atk+player.bstats.atk;
+    cbp.calcstats.def=player.stats.def+player.bstats.def;
+    cbp.calcstats.acc=player.stats.acc+player.bstats.acc;
+    cbp.calcstats.dod=player.stats.dod+player.bstats.dod;
+    cbp.calcstats.stl=player.stats.stl+player.bstats.stl;
+    cbp.calcstats.act=player.stats.act+player.bstats.act;
+    cbp.calcstats.con=player.stats.con+player.bstats.con;
     paddgearstats();
 }
 void pshowstats(){
@@ -314,6 +322,7 @@ void pmove(enum direction dir){ // ready for special exits
     if(!rm->exits[dir]){printr(Default,msg->player_walkno);return;}
     if(db_rfindwithid(rm->exits[dir])==NULL){printr(Default,msg->player_walkno);return;}
     if(!rm->exitsid[dir]){
+        timepass(30);
         player.roomid=rm->exits[dir];
         switch(dir){
         case dir_East:

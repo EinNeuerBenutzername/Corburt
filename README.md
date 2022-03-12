@@ -1,10 +1,34 @@
 # Corburt
 
+[TOC]
+
 ## About
+
+### General
 
 Corburt is a pretty simple text-based RPG game developed based on the ideas of *SimpleMUD*. The original codebase for SimpleMUD was written in C++ by Ron Penton, the author of MUD Game Programming book.
 
 Inspirations come from a game called [93 Realms](http://windows93.net:8083/), which my friends and I had a great time playing in 2021.
+
+### Plans for Corburt v0.2
+
+- **Main**
+
+  - [ ] implement turn-based game process
+  - [ ] implement combat
+  - [ ] implement death & revival
+
+  - [ ] implement health regen
+  - [ ] implement enemy drops
+
+- **Polish**
+
+  - [ ] make balancing improvements
+  - [ ] add new item & enemy data entries
+
+- **Optional**
+
+  - [ ] add the new region
 
 ## Features/Highlights
 
@@ -65,9 +89,20 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
   - My friend **emf** and **Jack Q** for supporting me, giving valuable advice, contributing to Corburt and testing it.
 - You, probably ;)
 
-## Bug report
+## Report
 
-When reporting bugs (if you came across any), please clarify:
+If you are not sure what kind of report you are sending, or if your report contains more than one of the following types at the same time, you may just simply state "**Report**".
+
+Will your report be seen? Very probably... Anyway,
+
+- I may not have time to review your report and your content may be ignored.
+- Also, if the advice isn't given in a language I can use, or it's clearly incomplete, or I don't know how to implement it, I'll ignore it.
+- Even if I like your suggestion a lot, I might not be able to implement it if it's too difficult to implement due to my very limited programming ability.
+- Since I'm busy, if I can't or don't plan to implement a suggestion, I'll probably just ignore it or close it.
+
+### Bug report
+
+**When reporting bugs (if you came across any), please clarify:**
 
 - what's the version of Corburt?
   - if it is not the latest version, test on the latest version.
@@ -79,18 +114,56 @@ When reporting bugs (if you came across any), please clarify:
 - were any error log files generated?
 - did the game crash?
 
-## Typo report
+### Typo report
 
-Please report if you find any typos or grammar mistakes.
+**Please report if you find typos or grammar mistakes.**
+
+### Balancing feedback
+
+If you find an unbalanced design in **the latest version of Corburt** and **a) it's not a malicious joke or a trap**, and **b) it's adversely affecting gameplay**, please report it.
+
+If you wish to add new content, see "**Suggestions**".
+
+- **When giving a balancing feedback, please**
+  - make sure you are very familiar with what you are proposing to modify.
+  - make sure that what you propose to amend will not be offensive to others.
+  - explain what you think is bad in the original design.
+    - e.g. "The difficulty of the new area does not match with the stated threat level."
+  - [optional, but suggested] explain how you think it would improve the game experience.
+    - e.g. "It will ease the difficulty curve."
+  - provide detailed alternatives or suggested modifications.
+    - e.g. "$400 is a little too much, make it $250."
+- **Examples of what you are welcome to suggest include:**
+  - increase the cost of items to prevent abuse.
+  - increase enemy experience drops when leveling up is unnecessarily difficult.
+  - adjust bosses' difficulty to suit most players.
+
+### Suggestions
+
+This mainly refers to suggestions for new content. If it is an adjustment to existing content, see "**Balancing feedback**".
+
+- What you should think carefully before suggesting include:
+  - major changes to the map
+  - new mechanism
+  - local multiplayer mode
+  - any web-related content
 
 ## Version history
-### Demos
+###  Demo
 
-- **0.1.7**
+- **0.2.0** (Mar 12, 2022)
+  - **What's new**: turns
+  - item stats slightly revised.
+  - version control improved.
+  - player stats structure revised.
+  - implemented the new command "time".
+  - currently, moving to another room takes 1 turn (30 ticks).
+
+- **0.1.7** (Feb 4, 2022)
   - **What's new**: sell items
   - typos fixed.
-  - stability fix for commands: "buy", "take" and "drop"
-  - implemented the new command "sell"
+  - stability fix for commands: "buy", "take" and "drop".
+  - implemented the new command "sell".
   - added a function to detect the version of the save file. 
     - forward-compatibility is not yet taken into account, because Corburt is in a very early stage of development, meaning that the structure of save files would change many times in the future.
 - **0.1.6** (Jan 30, 2022)

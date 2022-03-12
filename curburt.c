@@ -32,9 +32,6 @@ void launchcb(){
     cbc_setwindowtitle("Corburt");
     cbc_setcolor(Default);
     cbc_clearscreen();
-    tracelog(Green,msg->trace_savesize,sizeof(struct save));
-    tracelog(Green,L"Size of room database: %.2f KB\n",sizeof(roomdbs)/1024.0f);
-    tracelog(Green,L"Size of item database: %.2f KB\n",sizeof(itemdbs)/1024.0f);
     initrng();
     checkendianess();
     setupentitydata();

@@ -19,7 +19,7 @@ typedef const struct{
     nat id;
     enum db_itemtype type;
     nat price;
-    real cd;
+    nat cd;
     real crit;
     wchar_t *name;
     wchar_t *desc;
@@ -41,35 +41,35 @@ itemdb itemdbs[]={
     {.id=1,.name=L"Wooden Stick",
         .type=db_itemtype_weapon,
         .price=5,
-        .cd=1.5f,
+        .cd=15,
         .desc=L"\"Now let's do it with a wooden stick!\"",
         .stats={.min_=0,.max_=3,.acc=-5}
     },
     {.id=2,.name=L"Rusty Knife",
         .type=db_itemtype_weapon,
         .price=5,
-        .cd=1.0f,
+        .cd=10,
         .desc=L"A simple rusty knife. What do you expect?",
         .stats={.min_=1,.max_=2,.acc=3}
     },
     {.id=3,.name=L"Stiletto",
         .type=db_itemtype_weapon,
         .price=15,
-        .cd=0.5f,
+        .cd=12,
         .desc=L"Born for stabbing.",
         .stats={.min_=1,.max_=4,.acc=5}
     },
     {.id=4,.name=L"Iron Shortsword",
         .type=db_itemtype_weapon,
         .price=30,
-        .cd=1.5f,
+        .cd=24,
         .desc=L"Classic newbie weapon.",
         .stats={.min_=3,.max_=6,.acc=3}
     },
     {.id=5,.name=L"Vicious Stiletto",
         .type=db_itemtype_weapon,
         .price=50,
-        .cd=0.5f,
+        .cd=8,
         .crit=0.05f,
         .desc=L"Specially enhanced for your stabbing pleasure...",
         .stats={.min_=2,.max_=5,.acc=13}
@@ -77,14 +77,14 @@ itemdb itemdbs[]={
     {.id=6,.name=L"Knife",
         .type=db_itemtype_weapon,
         .price=18,
-        .cd=1.0f,
+        .cd=14,
         .desc=L"Designed to cut things, not people.",
         .stats={.min_=2,.max_=5,.acc=4}
     },
     {.id=7,.name=L"Rusty Sword",
         .type=db_itemtype_weapon,
         .price=40,
-        .cd=1.5f,
+        .cd=32,
         .crit=0.05,
         .desc=L"Occasionally reveals its power.",
         .stats={.min_=1,.max_=7}
@@ -147,49 +147,49 @@ itemdb itemdbs[]={
         .type=db_itemtype_armor,
         .price=40,
         .desc=L"Pig skin, stronger than most people's.",
-        .stats={.def=1,.dod=4,.acc=5}
+        .stats={.def=2,.dod=4,.acc=5}
     },
     {.id=18,.name=L"Chain Shirt",
         .type=db_itemtype_armor,
         .price=75,
         .desc=L"Do you feel chained?",
-        .stats={.def=3,.dod=2,.acc=9}
+        .stats={.def=5,.dod=2,.acc=9}
     },
     {.id=19,.name=L"Hide",
         .type=db_itemtype_armor,
         .price=35,
         .desc=L"Pig skin, stronger than most pigs'.",
-        .stats={.def=2,.dod=-2,.acc=2}
+        .stats={.def=4,.dod=-2,.acc=2}
     },
     {.id=20,.name=L"Scalemail Armor",
         .type=db_itemtype_armor,
         .price=85,
         .desc=L"They're like flappy wings!",
-        .stats={.def=3,.dod=-3,.act=-3,.acc=5}
+        .stats={.def=7,.dod=-3,.act=-3,.acc=5}
     },
     {.id=21,.name=L"Chainmail Armor",
         .type=db_itemtype_armor,
         .price=165,
         .desc=L"\"The more you tank\"",
-        .stats={.def=4,.dod=-5,.acc=4}
+        .stats={.def=11,.dod=-5,.acc=4}
     },
     {.id=22,.name=L"Breastplate Armor",
         .type=db_itemtype_armor,
         .price=260,
         .desc=L"\"The less you dodge\"",
-        .stats={.def=5,.dod=-8,.acc=1}
+        .stats={.def=17,.dod=-8,.acc=1}
     },
     {.id=23,.name=L"Platemail Armor",
         .type=db_itemtype_armor,
         .price=400,
         .desc=L"Only the weak dodges.",
-        .stats={.def=6,.dod=-13,.acc=-1}
+        .stats={.def=20,.dod=-13,.acc=-1}
     },
     {.id=24,.name=L"Full Platemail Armor",
         .type=db_itemtype_armor,
         .price=650,
         .desc=L"Dodging? What's that?",
-        .stats={.def=8,.dod=-16,.acc=-3}
+        .stats={.def=25,.dod=-16,.acc=-3}
     },
     {.id=25,.name=L"Necklace of Slight Regeneration",
         .type=db_itemtype_accessory,
@@ -218,14 +218,14 @@ itemdb itemdbs[]={
     {.id=29,.name=L"Paper",
         .type=db_itemtype_weapon,
         .price=2,
-        .cd=0.78f,
+        .cd=8,
         .desc=L"For the long-forgotten glory...",
         .stats={.min_=2,.max_=8,.def=-34,.atk=57,.acc=68,.dod=-65,.stl=-53}
     },
     {.id=30,.name=L"Fan",
         .type=db_itemtype_weapon,
         .price=5,
-        .cd=2.5f,
+        .cd=30,
         .desc=L"Impractical.",
         .stats={.min_=-1,.max_=0}
     },
@@ -237,7 +237,7 @@ itemdb itemdbs[]={
     {.id=32,.name=L"Scissors",
         .type=db_itemtype_weapon,
         .price=7,
-        .cd=1.5f,
+        .cd=24,
         .desc=L"Two pieces of blade, but half the damage.",
         .stats={.min_=1,.max_=2}
     },

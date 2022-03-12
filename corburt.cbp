@@ -11,9 +11,6 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-g" />
-				</Compiler>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/corburt" prefix_auto="1" extension_auto="1" />
@@ -40,6 +37,7 @@
 		<Unit filename="include/cbfio_base.h" />
 		<Unit filename="include/cbio.h" />
 		<Unit filename="include/cbplayer.h" />
+		<Unit filename="include/cbturn.h" />
 		<Unit filename="include/dbbuff.h" />
 		<Unit filename="include/dbenemy.h" />
 		<Unit filename="include/dbentity.h" />
@@ -48,6 +46,10 @@
 		<Unit filename="include/dbmap.h" />
 		<Unit filename="include/msg.h" />
 		<Unit filename="include/mtwister.h" />
-		<Extensions />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

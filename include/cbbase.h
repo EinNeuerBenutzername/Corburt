@@ -1,11 +1,14 @@
 #ifndef Corburt_Base_h_Include_Guard
 #define Corburt_Base_h_Include_Guard
 #define DISPLAY_WIDTH 68
+#define CB_VERSIONNUM 200
+#define CB_VERSIONTEXT L"v0.2.0"
 #if __STDC_VERSION__<199901L
     #error Please use a C99 compiler.
 #endif
 #include "msg.h"
 #include "mtwister.h"
+#include <limits.h>
 #include <time.h>
 #include <wchar.h>
 #include <stdarg.h>
@@ -21,8 +24,6 @@ typedef double real;
 MTRand mtrand;
 foo quit_game=false;
 foo isle=true; //platform endianess. this is not a flag.
-wchar_t *inputbuf;
-wchar_t *buffer;
 struct input{
     nat deletable;
     wchar_t *line;
@@ -34,7 +35,7 @@ struct player{
     bat exp;
     bat maxhp;
     bat hp;
-    struct stats{
+    struct basestats{
         nat atk;
         nat def;
         nat acc;
@@ -44,8 +45,18 @@ struct player{
         nat con;
         nat pts;
     } stats;
+    struct booststats{
+        nat atk;
+        nat def;
+        nat acc;
+        nat dod;
+        nat stl;
+        nat act;
+        nat con;
+        nat pts;
+    } bstats;
     nat roomid;
-} player={L"",1,1,0,10,10,{0,0,0,0,0,0,0,14},1};
+} player={L"",1,1,0,10,10,{0,0,0,0,0,0,0,14},{0,0,0,0,0,0,0,0},1};
 struct inventory{
     nat unlocked;
     nat items[64];
@@ -62,8 +73,13 @@ struct save{
 const nat savescount=5;
 struct save saves[5]={0};
 int_fast32_t cursaveid=0;
-void *pointerpool[128]={NULL};
-nat pointerinuse=0;
+wchar_t *inputbuf;
+struct globaldata{
+    void *pointerpool[128];
+    nat pointerinuse;
+    nat curtick;
+    bat curround;
+}global={{NULL},0,0,0};
 //basic
 enum errorenum{
     error_cannotmalloc,
@@ -121,7 +137,7 @@ void printr(int color,const wchar_t *format,...){
     wmemset(printr_token,0,DISPLAY_WIDTH);
     va_list args;
     va_start(args,format);
-    vswprintf(printr_dest,4096,format,args);
+    vsnwprintf(printr_dest,4096,format,args);
     va_end(args);
 
     size_t wcsl=0,wcsw=0,wcsld=wcslen(printr_dest);
@@ -174,7 +190,7 @@ void printrp(int color,const wchar_t *linepref,const wchar_t *format,...){
     wmemset(printr_token,0,DISPLAY_WIDTH);
     va_list args;
     va_start(args,format);
-    vswprintf(printr_dest,4096,format,args);
+    vsnwprintf(printr_dest,4096,format,args);
     va_end(args);
 
     size_t wcsl=0,wcsw=0,wcsld=wcslen(printr_dest),wcswp=wcswidth(linepref);
@@ -267,40 +283,40 @@ void fatalerror(enum errorenum error_id){
     exit(-1);
 }
 void *mallocpointer_(size_t bytes){
-    if(pointerinuse>128){
+    if(global.pointerinuse>128){
         fatalerror(error_bufferpooloverflow);
     }
     void *pointer=NULL;
     pointer=malloc(bytes);
     if(pointer==NULL)fatalerror(error_cannotmalloc);
-    pointerinuse++;
+    global.pointerinuse++;
     if(Corburt_Pointer_Trace_Level>0){
         tracelog(Green,msg->trace_malloced,bytes);
-        tracelog(Green,msg->trace_pointerinuse,pointerinuse);
+        tracelog(Green,msg->trace_pointerinuse,global.pointerinuse);
     }
     for(nat i=0;i<128;i++){
-        if(pointerpool[i]==NULL){
-            pointerpool[i]=pointer;
+        if(global.pointerpool[i]==NULL){
+            global.pointerpool[i]=pointer;
             break;
         }
     }
     return pointer;
 }
 void *mallocpointer(size_t bytes){
-    if(pointerinuse>128){
+    if(global.pointerinuse>128){
         fatalerror(error_bufferpooloverflow);
     }
     void *pointer=NULL;
     pointer=malloc(bytes);
     if(pointer==NULL)fatalerror(error_cannotmalloc);
-    pointerinuse++;
+    global.pointerinuse++;
     if(Corburt_Pointer_Trace_Level>1){
         tracelog(Green,msg->trace_malloced,bytes);
-        tracelog(Green,msg->trace_pointerinuse,pointerinuse);
+        tracelog(Green,msg->trace_pointerinuse,global.pointerinuse);
     }
     for(nat i=0;i<128;i++){
-        if(pointerpool[i]==NULL){
-            pointerpool[i]=pointer;
+        if(global.pointerpool[i]==NULL){
+            global.pointerpool[i]=pointer;
             break;
         }
     }
@@ -308,7 +324,7 @@ void *mallocpointer(size_t bytes){
 }
 void *reallocpointer(void *pointer,size_t bytes){
     for(nat i=0,found=0;i<128;i++){
-        if(pointerpool[i]==pointer){
+        if(global.pointerpool[i]==pointer){
             found=1;
             break;
         }
@@ -327,8 +343,8 @@ void *reallocpointer(void *pointer,size_t bytes){
 void freepointer_(void *pointer){
     if(pointer==NULL)return;
     for(nat i=0;i<128;i++){
-        if(pointerpool[i]==pointer){
-            pointerpool[i]=NULL;
+        if(global.pointerpool[i]==pointer){
+            global.pointerpool[i]=NULL;
             break;
         }
         if(i==127){
@@ -337,18 +353,18 @@ void freepointer_(void *pointer){
         }
     }
     free(pointer);
-    pointerinuse--;
+    global.pointerinuse--;
     if(Corburt_Pointer_Trace_Level>0){
         tracelog(Green,msg->trace_freed);
-        tracelog(Green,msg->trace_pointerinuse,pointerinuse);
+        tracelog(Green,msg->trace_pointerinuse,global.pointerinuse);
     }
     pointer=NULL;
 }
 void freepointer(void *pointer){
     if(pointer==NULL)return;
     for(nat i=0;i<128;i++){
-        if(pointerpool[i]==pointer){
-            pointerpool[i]=NULL;
+        if(global.pointerpool[i]==pointer){
+            global.pointerpool[i]=NULL;
             break;
         }
         if(i==127){
@@ -357,19 +373,19 @@ void freepointer(void *pointer){
         }
     }
     free(pointer);
-    pointerinuse--;
+    global.pointerinuse--;
     if(Corburt_Pointer_Trace_Level>1){
         tracelog(Green,msg->trace_freed);
-        tracelog(Green,msg->trace_pointerinuse,pointerinuse);
+        tracelog(Green,msg->trace_pointerinuse,global.pointerinuse);
     }
     pointer=NULL;
 }
 void freeall(){
-    tracelog(Green,msg->trace_pointerinuse,pointerinuse);
-    for(nat i=0;i<128&&pointerinuse>0;i++){
-        if(pointerpool[i]!=NULL){
-            free(pointerpool[i]);
-            pointerinuse--;
+    tracelog(Green,msg->trace_pointerinuse,global.pointerinuse);
+    for(nat i=0;i<128&&global.pointerinuse>0;i++){
+        if(global.pointerpool[i]!=NULL){
+            free(global.pointerpool[i]);
+            global.pointerinuse--;
         }
     }
     tracelog(Green,msg->trace_freealled);

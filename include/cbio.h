@@ -93,6 +93,11 @@ foo matchcommands(wchar_t *cmd){
         ptrain();
         return true;
     }
+    if(fullmatch(cmd,L"time")||
+       fullmatch(cmd,L"tm")){
+        showtime();
+        return true;
+    }
     if(fullmatch(cmd,L"editstats")||
        fullmatch(cmd,L"editst")){
         peditstats();

@@ -24,6 +24,7 @@ struct msgtag{
     const wchar_t *global_welcomeplayer2;
     const wchar_t *global_help;
     const wchar_t *global_save_incompat;
+    const wchar_t *global_curtime;
     const wchar_t *trace_savesize;
     const wchar_t *trace_endianess_le;
     const wchar_t *trace_endianess_be;
@@ -91,7 +92,7 @@ struct msgtag{
     const wchar_t *db_listitem;
 };
 struct msgtag msg_en={
-    .global_corburtversion=L"v0.1.7",
+    .global_corburtversion=CB_VERSIONTEXT,
     .global_welcome=L"Welcome to Corburt.\n\n",
     .global_splash=L"   @@@@                @@\n"
                     "  @@  @@               @@                  @@\n"
@@ -144,6 +145,7 @@ struct msgtag msg_en={
                 "  * Some commands have abbreviated forms, e.g. 'st' for 'stats'.\n"
                 "-------------------------------------------------------------------\n",
     .global_save_incompat=L"Incompatible save version: expected %ls.\n",
+    .global_curtime=L"Current time: %" PRIdFAST64 " turns, %" PRIdFAST32 " ticks.\n",
     .trace_savesize=L"Size of a save is %zu bytes.\n",
     .trace_endianess_le=L"Machine is little endian.\n",
     .trace_endianess_be=L"Machine is big endian.\n",

@@ -50,8 +50,7 @@ typedef enum {
 	Cyan=0x07,
 	White=0x08,
 	Bright=0x80,
-	FG_Mask=0x7F,
-	Underline=0x10000
+	FG_Mask=0x7F
 } cbc_enum_color;
 void cbc_init();
 void cbc_setwindowtitle(const char *title);
@@ -164,15 +163,11 @@ void cbc_setcolor(cbc_enum_color color){
 			default:break;
 		}
 	}
-	if(color&Underline)wAttributes|=COMMON_LVB_UNDERSCORE;
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),wAttributes);
 #elif defined(CBCurses_Unix)
     printf("\033[m");
 	if (Default!=(color&FG_Mask)){
         printf("\033[%dm",29+(color&Mask)+((color&Bright)?60:0));
-    }
-	if(color & Underline){
-        printf ("\033[4m");
     }
 #else
 #endif

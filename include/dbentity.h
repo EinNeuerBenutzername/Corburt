@@ -22,7 +22,7 @@ struct et_enemy{
     nat roomid;
     nat enemyid;
     nat hp;
-    real attackcd;
+    nat attackcd;
 };
 nat enemiescount=0;
 nat enemiesmax=0;
