@@ -4,6 +4,7 @@
 #include "cbfio.h"
 #include "cbplayer.h"
 #include "dbmap.h"
+#include "dbitem.h"
 wchar_t *inputbufl=NULL;
 foo fullmatch(wchar_t *wcs,const wchar_t *wcs2);
 foo matchcommands(wchar_t *cmd);
@@ -649,6 +650,7 @@ foo matchcommands(wchar_t *cmd){
                     }
                 }else{
                     etitem_delete(inventory.items[i]);
+                    inventory.money+=(ITEM_SELLRATE*idb->price);
                     qnty=0;qnty2=1;
                     break;
                 }

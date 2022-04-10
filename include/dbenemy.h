@@ -1,34 +1,6 @@
 #ifndef Corburt_Database_Enemy_h_Include_Guard
 #define Corburt_Database_Enemy_h_Include_Guard
 #include "cbbase.h"
-enum db_enemytype {
-    db_enemytype_plain,
-    db_enemytype_sentinel,
-    db_enemytype_assassin,
-    db_enemytype_boss
-};
-typedef const struct {
-    nat id;
-    enum db_enemytype type;
-    wchar_t *name;
-    wchar_t *desc;
-    nat exp;
-    struct {
-        nat moneymin;
-        nat moneymax;
-    } loot;
-    struct {
-        nat hpmax;
-        nat atkcd;
-        nat atk;
-        nat def;
-        nat acc;
-        nat dod;
-        nat stl;
-        nat act;
-        nat con;
-    } stats;
-} enemydb;
 enemydb enemydbs[]={
     {.id=1,.name=L"Vagrant",
         .type=db_enemytype_plain,
@@ -70,7 +42,7 @@ enemydb enemydbs[]={
         .desc=L"Do not disturb the peace of the dead... Well... Too late...",
         .exp=350,
         .loot={.moneymin=53,.moneymax=78},
-        .stats={.hpmax=189,.atkcd=44,.atk=23,.def=35,.acc=95,.dod=67,.con=9}
+        .stats={.hpmax=189,.atkcd=44,.atk=33,.def=35,.acc=95,.dod=67,.con=9}
     },
 //              -------------------------------------------------------------------\n"
     {.id=0}

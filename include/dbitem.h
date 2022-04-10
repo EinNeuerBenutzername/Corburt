@@ -169,27 +169,27 @@ itemdb itemdbs[]={
     },
     {.id=21,.name=L"Chainmail Armor",
         .type=db_itemtype_armor,
-        .price=165,
+        .price=185,
         .desc=L"\"The more you tank\"",
-        .stats={.def=11,.dod=-5,.acc=4}
+        .stats={.def=9,.dod=-5,.acc=4}
     },
     {.id=22,.name=L"Breastplate Armor",
         .type=db_itemtype_armor,
-        .price=260,
+        .price=290,
         .desc=L"\"The less you dodge\"",
-        .stats={.def=17,.dod=-8,.acc=1}
+        .stats={.def=12,.dod=-8,.acc=1}
     },
     {.id=23,.name=L"Platemail Armor",
         .type=db_itemtype_armor,
         .price=400,
         .desc=L"Only the weak dodges.",
-        .stats={.def=20,.dod=-13,.acc=-1}
+        .stats={.def=15,.dod=-13,.acc=-1}
     },
     {.id=24,.name=L"Full Platemail Armor",
         .type=db_itemtype_armor,
         .price=650,
         .desc=L"Dodging? What's that?",
-        .stats={.def=25,.dod=-16,.acc=-3}
+        .stats={.def=20,.dod=-16,.acc=-3}
     },
     {.id=25,.name=L"Necklace of Slight Regeneration",
         .type=db_itemtype_accessory,

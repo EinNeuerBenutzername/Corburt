@@ -69,6 +69,9 @@ struct msgtag{
     const wchar_t *player_inv_alreadyequipped;
     const wchar_t *player_abl;
     const wchar_t *player_say;
+    const wchar_t *player_die;
+    const wchar_t *player_die_xplost;
+    const wchar_t *player_spawnupdate;
     const wchar_t *db_notinstore;
     const wchar_t *db_inosuchitem;
     const wchar_t *db_ipurchaseitemhint;
@@ -90,6 +93,9 @@ struct msgtag{
     const wchar_t *db_eetidnullexceptionerror;
     const wchar_t *db_ietfull;
     const wchar_t *db_listitem;
+    const wchar_t *db_eetattack;
+    const wchar_t *db_eetattackmiss;
+    const wchar_t *db_eetattackblocked;
 };
 struct msgtag msg_en={
     .global_corburtversion=CB_VERSIONTEXT,
@@ -208,6 +214,9 @@ struct msgtag msg_en={
     "                           Your Abilities\n"
     "-------------------------------------------------------------------\n",
     .player_say=L"%ls says: ",
+    .player_die=L"You died!\n",
+    .player_die_xplost=L"You lost %" PRIdFAST64 " exp.\n",
+    .player_spawnupdate=L"Your spawn point has been updated to: %ls\n",
     .db_notinstore=L"You are not in a store.\n",
     .db_inosuchitem=L"There is no such item.\n",
     .db_ipurchaseitemhint=L"%ls purchased.\n",
@@ -229,6 +238,9 @@ struct msgtag msg_en={
     .db_eetidnullexceptionerror=L"Null exception error: invalid enemy entity id.\n",
     .db_ietfull=L"%ls disappeared into the pile of objects on the ground..\n",
     .db_listitem=L"$%-10" PRIdFAST32 " | %ls\n",
+    .db_eetattack=L"%ls hits you for %" PRIdFAST32 " damage!\n",
+    .db_eetattackmiss=L"%ls swings at you but misses!\n",
+    .db_eetattackblocked=L"%ls swings at you but is blocked!\n",
 };
 struct msgtag *msg=&msg_en;
 #endif

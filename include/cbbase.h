@@ -1,8 +1,8 @@
 #ifndef Corburt_Base_h_Include_Guard
 #define Corburt_Base_h_Include_Guard
 #define DISPLAY_WIDTH 68
-#define CB_VERSIONNUM 200
-#define CB_VERSIONTEXT L"v0.2.0"
+#define CB_VERSIONNUM 210
+#define CB_VERSIONTEXT L"v0.2.1"
 #if __STDC_VERSION__<199901L
     #error Please use a C99 compiler.
 #endif
@@ -15,6 +15,7 @@
 #include <stdlib.h> //malloc() realloc() free() exit()
 #include <stdbool.h>
 #include <inttypes.h>
+#include <math.h>
 
 typedef bool foo;
 typedef int_fast32_t nat;//32-bit number
@@ -30,6 +31,7 @@ struct input{
 }input;
 struct player{
     wchar_t name[32];
+    nat spawn;
     nat rnk;
     nat lvl;
     bat exp;
@@ -56,7 +58,7 @@ struct player{
         nat pts;
     } bstats;
     nat roomid;
-} player={L"",1,1,0,10,10,{0,0,0,0,0,0,0,14},{0,0,0,0,0,0,0,0},1};
+} player={L"",1,1,1,0,10,10,{0,0,0,0,0,0,0,14},{0,0,0,0,0,0,0,0},1};
 struct inventory{
     nat unlocked;
     nat items[64];
@@ -465,12 +467,79 @@ void initrng(){
     mtrand=seedRand(seed);
     tracelog(Green,msg->trace_rngtest,genRandLong(&mtrand));
 }
-
+//misc2
+nat dmgreduc(nat dmg,nat def);
+bool accreduc(nat acc,nat dod);
+nat dmgreduc(nat dmg,nat def){
+    if(dmg<1&&dmg+def<1)return 0;
+    nat dmg2=dmg;
+    {
+        real calcdef=def;
+        real bdmg=dmg;
+        dmg2-=calcdef*calcdef/(calcdef+bdmg);
+    }
+    if(dmg2<0){
+        real hitrate=genRand(&mtrand);
+        nat delta=def-dmg2-50;
+        real sigmoid=1.0f/(1.0f+pow(2.71828f,delta/20.0f));
+        if(hitrate>sigmoid)dmg2=0;
+        else dmg2=1;
+    }
+    return dmg2;
+}
+bool accreduc(nat acc,nat dod){
+    real hitrate=genRand(&mtrand);
+    nat delta=dod-acc;
+    real sigmoid=1.0f/(1.0f+pow(1.783f,delta/20.0f));
+    if(hitrate>sigmoid)return true;
+    else return false;
+}
 // cbm
 enum direction{
     dir_East,dir_West,dir_North,dir_South,dir_Up,dir_Down
 };
+// dbe
+enum db_enemytype {
+    db_enemytype_plain,
+    db_enemytype_sentinel,
+    db_enemytype_assassin,
+    db_enemytype_boss
+};
+typedef const struct {
+    nat id;
+    enum db_enemytype type;
+    wchar_t *name;
+    wchar_t *desc;
+    nat exp;
+    struct {
+        nat moneymin;
+        nat moneymax;
+    } loot;
+    struct {
+        nat hpmax;
+        nat atkcd;
+        nat atk;
+        nat def;
+        nat acc;
+        nat dod;
+        nat stl;
+        nat act;
+        nat con;
+    } stats;
+} enemydb;
 // cbp
+struct {
+    struct calcstats{
+        nat atk;
+        nat def;
+        nat acc;
+        nat dod;
+        nat stl;
+        nat act;
+        nat con;
+        nat pts;
+    } calcstats;
+} cbp;
 static void plvlup();
 static void paddgearstats();
 void paddexp(nat add);
@@ -485,4 +554,7 @@ void pmove(enum direction dir);
 void pattack();
 void ptrain();
 void peditstats();
+void pregen();
+void ptakedmg(nat dmg);
+bool pcandodge(enemydb *edb);
 #endif

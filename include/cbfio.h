@@ -44,6 +44,7 @@ static void save_overwritten(nat saveid){
 static void readplayerstats(struct player *p,FILE *fp){
     struct player plr={0};
     wcs_read(plr.name,32,fp);
+    int_fast32_t_read(&plr.spawn,fp);
     int_fast32_t_read(&plr.rnk,fp);
     int_fast32_t_read(&plr.lvl,fp);
     int_fast64_t_read(&plr.exp,fp);
@@ -70,6 +71,7 @@ static void readplayerstats(struct player *p,FILE *fp){
 }
 static void saveplayerstats(struct player plr,FILE *fp){
     wcs_write(plr.name,32,fp);
+    int_fast32_t_write(plr.spawn,fp);
     int_fast32_t_write(plr.rnk,fp);
     int_fast32_t_write(plr.lvl,fp);
     int_fast64_t_write(plr.exp,fp);
@@ -265,6 +267,7 @@ void readsaves(){
             }
         }
     }
+    pcalcstats();
 }
 void savesaves(){
     FILE *fp_save=NULL;

@@ -179,7 +179,6 @@ void                wcs_read            (wchar_t *wcs,size_t len,FILE *fp){
             return;
         }
         wcs[i]=tmpint;
-        wcs[i]^=12042;
         fio.fileptr+=fio.wchar_t_size;
     }
     if(!fio_isle())wcs_makebe(wcs);
@@ -190,7 +189,6 @@ void                wcs_write           (wchar_t *wcs,size_t len,FILE *fp){
     for(size_t i=0;i<len;i++){
         int_fast32_t mask=(UCHAR_MAX+1)*(UCHAR_MAX+1)-1;
         int_fast16_t tmpint16=wcs[i]%mask;
-        tmpint16^=12042;
         fwrite(&tmpint16,fio.wchar_t_size,1,fp);
     }
     wcs_makebe(wcs);

@@ -134,18 +134,8 @@ const wchar_t *ranks[]={
     L"Admin",
     L"Dev"
 };
-struct {
-    struct calcstats{
-        nat atk;
-        nat def;
-        nat acc;
-        nat dod;
-        nat stl;
-        nat act;
-        nat con;
-        nat pts;
-    } calcstats;
-} cbp;
+bool playerdead=false;
+void pmovesuccess();
 
 #include "dbitem.h"
 #include "cbturn.h"
@@ -231,7 +221,16 @@ void phpchange(nat num){
         else pdie();
     }
 }
-void pdie(){}
+void pdie(){
+    printc(White|Bright,msg->player_die);
+    player.roomid=player.spawn;
+    // should be teleported back to the nearest spawn point
+    printc(White|Bright,msg->player_die_xplost,(bat)(player.exp-(bat)player.exp*0.9f));
+    player.exp*=0.9f;
+    player.hp=player.maxhp*0.7f;
+    playerdead=true;
+    db_rshowdesc(player.roomid);
+}
 void pcalcstats(){
     if(player.stats.atk>99999)player.stats.atk=99999;
     if(player.stats.def>99999)player.stats.def=99999;
@@ -323,31 +322,35 @@ void pmove(enum direction dir){ // ready for special exits
     if(db_rfindwithid(rm->exits[dir])==NULL){printr(Default,msg->player_walkno);return;}
     if(!rm->exitsid[dir]){
         timepass(30);
+        if(playerdead){
+            playerdead=false;
+            return;
+        }
         player.roomid=rm->exits[dir];
         switch(dir){
         case dir_East:
             printr(Green,msg->player_walkeast);
-            db_rshowdesc(player.roomid);
+            pmovesuccess();
             return;
         case dir_West:
             printr(Green,msg->player_walkwest);
-            db_rshowdesc(player.roomid);
+            pmovesuccess();
             return;
         case dir_North:
             printr(Green,msg->player_walknorth);
-            db_rshowdesc(player.roomid);
+            pmovesuccess();
             return;
         case dir_South:
             printr(Green,msg->player_walksouth);
-            db_rshowdesc(player.roomid);
+            pmovesuccess();
             return;
         case dir_Up:
             printr(Green,msg->player_walkup);
-            db_rshowdesc(player.roomid);
+            pmovesuccess();
             return;
         case dir_Down:
             printr(Green,msg->player_walkdown);
-            db_rshowdesc(player.roomid);
+            pmovesuccess();
             return;
         default:
             break;
@@ -355,6 +358,14 @@ void pmove(enum direction dir){ // ready for special exits
         printr(Default,msg->player_walkno);
     }else{
         // special exits
+    }
+}
+void pmovesuccess(){
+    db_rshowdesc(player.roomid);
+    roomdb *rm=db_rfindwithid(player.roomid);
+    if(rm->type==db_roomtype_birth&&player.spawn!=player.roomid){
+        player.spawn=player.roomid;
+        printr(Cyan|Bright,msg->player_spawnupdate,rm->name);
     }
 }
 void pattack(){}
@@ -379,4 +390,22 @@ void ptrain(){
     }
 }
 void peditstats(){}
+void pregen(){
+    player.hp+=player.lvl;
+    player.hp+=(player.lvl)/5*player.lvl;
+    player.hp+=player.bstats.con;
+    player.hp+=player.stats.con;
+    if(player.hp>player.maxhp)player.hp=player.maxhp;
+}
+void ptakedmg(nat dmg){
+    if(dmg>=player.hp){
+        player.hp=0;
+        pdie();
+    }else{
+        player.hp-=dmg;
+    }
+}
+bool pcandodge(enemydb *edb){
+    return accreduc(edb->stats.acc,cbp.calcstats.dod);
+}
 #endif

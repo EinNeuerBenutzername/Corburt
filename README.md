@@ -14,9 +14,9 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
 
 - **Main**
 
-  - [ ] implement turn-based game process
-  - [ ] implement combat
-  - [ ] implement death & revival
+  - [x] implement turn-based game process
+  - [x] implement combat
+  - [x] implement death & revival
 
   - [ ] implement health regen
   - [ ] implement enemy drops
@@ -58,6 +58,8 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
     - for `uint_fastX_t` types
   - `<locale.h>`
     - for Unicode support
+  - `<math.h>`
+    - for math calculation
   - `<stdarg.h>`
     - for I/O
   - `<stdbool.h>`
@@ -151,6 +153,11 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
 ## Version history
 ###  Demo
 
+- **0.2.1** (Apr 10, 2022)
+  - **What's new**: enemy attacks
+  - item stats slightly revised
+  - implemented player death and revival
+  - player's arrival to a new spawn point will be recorded
 - **0.2.0** (Mar 12, 2022)
   - **What's new**: turns
   - item stats slightly revised.
@@ -158,7 +165,6 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - player stats structure revised.
   - implemented the new command "time".
   - currently, moving to another room takes 1 turn (30 ticks).
-
 - **0.1.7** (Feb 4, 2022)
   - **What's new**: sell items
   - typos fixed.

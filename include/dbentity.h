@@ -43,6 +43,7 @@ void setupentitydata();
 struct et_room *et_findroomwithid(nat roomid);
 void etenemy_expand();
 void etenemy_push(nat enemyid,nat roomid);
+void etenemy_attack(nat etid,struct et_room *etr);
 enemydb *et_getenemydb(nat enemyentityid);
 void etitem_expand();
 void etitem_delete(nat entityid);
@@ -148,6 +149,22 @@ void etenemy_push(nat enemyid,nat roomid){
     etr->etenemy[enemyreferenceindex]=enemyentityindex+1;
     enemiescount++;
     if(DBE_TRACELOG)tracelog(Cyan,L"Create enemy entity: entityid=%d (enemyid=%d, roomid=%d)\n",(int)enemyentityindex+1,(int)enemyid,(int)roomid);
+}
+void etenemy_attack(nat etid,struct et_room *etr){
+    struct et_enemy *ete=&et_enemies[etid-1];
+    if(ete->attackcd>0)return;
+    const enemydb *edb=et_getenemydb(etid);
+    ete->attackcd=edb->stats.atkcd;
+    if(pcandodge(edb)){
+        printc(White,msg->db_eetattackmiss,edb->name);
+    }else{
+        nat atk=edb->stats.atk;
+        atk*=(genRand(&mtrand)-0.5f)*0.2f+1.0f;
+        nat dmg=dmgreduc(atk,cbp.calcstats.def);
+        if(dmg)printc(Red|Bright,msg->db_eetattack,edb->name,dmg);
+        else printc(White,msg->db_eetattackblocked,edb->name);
+        ptakedmg(dmg);
+    }
 }
 enemydb *et_getenemydb(nat enemyentityid){
     if(et_enemies[enemyentityid-1].available==false){

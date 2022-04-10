@@ -21,6 +21,7 @@ int main(){
         processinput();
 	}
 	savesaves();
+	endcb();
     return 0;
 }
 void launchcb(){
