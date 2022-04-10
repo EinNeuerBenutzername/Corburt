@@ -15,11 +15,12 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
 - **Main**
 
   - [x] implement turn-based game process
-  - [x] implement combat
+  - [ ] implement combat
   - [x] implement death & revival
-
-  - [ ] implement health regen
+  - [x] implement health regen
   - [ ] implement enemy drops
+  - [ ] implement death punishments
+  - [ ] implement money loot
 
 - **Polish**
 
@@ -156,8 +157,10 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
 - **0.2.1** (Apr 10, 2022)
   - **What's new**: enemy attacks
   - item stats slightly revised
-  - implemented player death and revival
+  - implemented player death and revival (at specific spawn points)
   - player's arrival to a new spawn point will be recorded
+  - player's hit points slowly regenerate (once per 50 turns)
+  - map remade with [Corburt Map Editor](https://github.com/EinNeuerBenutzername/Corburt-Map-Editor)
 - **0.2.0** (Mar 12, 2022)
   - **What's new**: turns
   - item stats slightly revised.
