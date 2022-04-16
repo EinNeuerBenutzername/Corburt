@@ -1,6 +1,6 @@
 #ifndef Corburt_Database_Item_h_Include_Guard
 #define Corburt_Database_Item_h_Include_Guard
-#define ITEM_MAXSTACK 999
+#define ITEM_MAXSTACK 64
 #define ITEM_SELLRATE 0.9f
 #include "cbbase.h"
 #include "cbplayer.h"
@@ -195,7 +195,7 @@ itemdb itemdbs[]={
         .type=db_itemtype_accessory,
         .price=75,
         .desc=L"It's... Blue?",
-        .stats={.regen=2}
+        .stats={.regen=1}
     },
     {.id=26,.name=L"Minor Healing Potion",
         .type=db_itemtype_consume,
@@ -213,14 +213,14 @@ itemdb itemdbs[]={
         .type=db_itemtype_accessory,
         .price=405,
         .desc=L"Why aren't necklaces of regeneration red?",
-        .stats={.regen=5,.def=1,.dod=3}
+        .stats={.regen=3,.def=1,.dod=3}
     },
     {.id=29,.name=L"Paper",
         .type=db_itemtype_weapon,
         .price=2,
         .cd=8,
         .desc=L"For the long-forgotten glory...",
-        .stats={.min_=2,.max_=8,.def=-34,.atk=57,.acc=68,.dod=-65,.stl=-53}
+        .stats={.min_=11,.max_=28,.def=-34,.atk=-1,.acc=35,.dod=-175,.stl=-73}
     },
     {.id=30,.name=L"Fan",
         .type=db_itemtype_weapon,
@@ -277,7 +277,7 @@ itemdb itemdbs[]={
         .cd=53,
         .crit=100,
         .desc=L"Are they getting the material from themselves? Well...",
-        .stats={.min_=23,.max_=35,.acc=24,.con=1}
+        .stats={.min_=23,.max_=35,.acc=24,.con=3}
     },
     {
         .id=0
@@ -332,5 +332,6 @@ void consumeitem(nat itemid){
         regennum=genRandLong(&mtrand)%range+idb->stats.min_;
     }
     phpchange(regennum);
+    pcalcstats();
 }
 #endif

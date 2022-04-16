@@ -11,8 +11,8 @@ void showtime();
 #include "dbentity.h"
 
 void timepass(nat tick){
-    if(playerdead){
-        playerdead=false;
+    if(cbp.playerdead){
+        cbp.playerdead=false;
     }
     if(tick<=0)return;
     struct et_room *etr=et_findroomwithid(player.roomid);
@@ -47,6 +47,12 @@ void tickfunc(struct et_room *etr){
 void turnfunc(){
     if(global.curround%25==0){
         pregen();
+        for(nat i=0,j=0;i<enemiesmax&&j<enemiescount;i++){
+            if(!et_enemies[i].available)continue;
+            j++;
+            enemydb *edb=et_getenemydb(i+1);
+            et_enemies[i].hp+=edb->stats.con;
+        }
     }
     if(global.curround%50==0){
         et_spawnenemies();

@@ -2,128 +2,129 @@
 #define Corburt_Player_h_Include_Guard
 //#define LVL_CAP 120
 #define LVL_CAP 20
+#define DMG_RATIO 0.2f
 #include "dbmap.h"
 const bat exp2next[]={
     [0]=20,
-    [1]=64,
-    [2]=132,
-    [3]=225,
-    [4]=344,
-    [5]=490,
-    [6]=665,
-    [7]=871,
-    [8]=1110,
-    [9]=1384,
-    [10]=1696,
-    [11]=2050,
-    [12]=2450,
-    [13]=2902,
-    [14]=3412,
-    [15]=3988,
-    [16]=4639,
-    [17]=5376,
-    [18]=6212,
-    [19]=7163,
-    [20]=8248,
-    [21]=9490,
-    [22]=10916,
-    [23]=12559,
-    [24]=14458,
-    [25]=16660,
-    [26]=19222,
-    [27]=22212,
-    [28]=25712,
-    [29]=29820,
-    [30]=34653,
-    [31]=40352,
-    [32]=47086,
-    [33]=55058,
-    [34]=64512,
-    [35]=75740,
-    [36]=89093,
-    [37]=104992,
-    [38]=123942,
-    [39]=146550,
-    [40]=173543,
-    [41]=205794,
-    [42]=244351,
-    [43]=290471,
-    [44]=345663,
-    [45]=411737,
-    [46]=490865,
-    [47]=585654,
-    [48]=699232,
-    [49]=835353,
-    [50]=998522,
-    [51]=1194144,
-    [52]=1428706,
-    [53]=1709992,
-    [54]=2047343,
-    [55]=2451968,
-    [56]=2937318,
-    [57]=3519534,
-    [58]=4217985,
-    [59]=5055914,
-    [60]=6061212,
-    [61]=7267349,
-    [62]=8714489,
-    [63]=10450829,
-    [64]=12534205,
-    [65]=15034020,
-    [66]=18033558,
-    [67]=21632759,
-    [68]=25951552,
-    [69]=31133851,
-    [70]=37352353,
-    [71]=44814295,
-    [72]=53768361,
-    [73]=64512972,
-    [74]=77406233,
-    [75]=92877870,
-    [76]=111443554,
-    [77]=133722090,
-    [78]=160456045,
-    [79]=192536499,
-    [80]=231032747,
-    [81]=277227944,
-    [82]=332661876,
-    [83]=399182286,
-    [84]=479006466,
-    [85]=574795166,
-    [86]=689741286,
-    [87]=827676306,
-    [88]=993198002,
-    [89]=1191823705,
-    [90]=1430174212,
-    [91]=1716194480,
-    [92]=2059418457,
-    [93]=2471286881,
-    [94]=2965528637,
-    [95]=3558618388,
-    [96]=4270325729,
-    [97]=5124374174,
-    [98]=6149231940,
-    [99]=7379060887,
-    [100]=8854855247,
-    [101]=10625808099,
-    [102]=12750951137,
-    [103]=15301122394,
-    [104]=18361327510,
-    [105]=22033573253,
-    [106]=26440267744,
-    [107]=31728300729,
-    [108]=38073939903,
-    [109]=45688706499,
-    [110]=54826425998,
-    [111]=65791688976,
-    [112]=78950004125,
-    [113]=94739981875,
-    [114]=113687954743,
-    [115]=136425521748,
-    [116]=163710601714,
-    [117]=196452697229,
-    [118]=235743211399,
-    [119]=235743211399
+    [1]=60,
+    [2]=130,
+    [3]=250,
+    [4]=430,
+    [5]=700,
+    [6]=1090,
+    [7]=1640,
+    [8]=2400,
+    [9]=3430,
+    [10]=4790,
+    [11]=6570,
+    [12]=8870,
+    [13]=11810,
+    [14]=15530,
+    [15]=20190,
+    [16]=25980,
+    [17]=33130,
+    [18]=41890,
+    [19]=52550,
+    [20]=65450,
+    [21]=80980,
+    [22]=99580,
+    [23]=121760,
+    [24]=148080,
+    [25]=179190,
+    [26]=215820,
+    [27]=258790,
+    [28]=309020,
+    [29]=367540,
+    [30]=435510,
+    [31]=514220,
+    [32]=605120,
+    [33]=709810,
+    [34]=830070,
+    [35]=967880,
+    [36]=1125430,
+    [37]=1305150,
+    [38]=1509710,
+    [39]=1742070,
+    [40]=2005490,
+    [41]=2303540,
+    [42]=2640160,
+    [43]=3019670,
+    [44]=3446810,
+    [45]=3926760,
+    [46]=4465190,
+    [47]=5068300,
+    [48]=5742860,
+    [49]=6496250,
+    [50]=7336510,
+    [51]=8272390,
+    [52]=9313400,
+    [53]=10469890,
+    [54]=11753090,
+    [55]=13175180,
+    [56]=14749360,
+    [57]=16489920,
+    [58]=18412340,
+    [59]=20533340,
+    [60]=22871010,
+    [61]=25444860,
+    [62]=28275960,
+    [63]=31387020,
+    [64]=34802510,
+    [65]=38548790,
+    [66]=42654230,
+    [67]=47149330,
+    [68]=52066880,
+    [69]=57442110,
+    [70]=63312830,
+    [71]=69719620,
+    [72]=76706000,
+    [73]=84318600,
+    [74]=92607390,
+    [75]=101625850,
+    [76]=111431230,
+    [77]=122084750,
+    [78]=133651860,
+    [79]=146202500,
+    [80]=159811360,
+    [81]=174558170,
+    [82]=190528000,
+    [83]=207811590,
+    [84]=226505670,
+    [85]=246713320,
+    [86]=268544320,
+    [87]=292115560,
+    [88]=317551440,
+    [89]=344984290,
+    [90]=374554850,
+    [91]=406412690,
+    [92]=440716770,
+    [93]=477635900,
+    [94]=517349330,
+    [95]=560047310,
+    [96]=605931680,
+    [97]=655216530,
+    [98]=708128820,
+    [99]=764909110,
+    [100]=825812270,
+    [101]=891108230,
+    [102]=961082810,
+    [103]=1036038520,
+    [104]=1116295450,
+    [105]=1202192180,
+    [106]=1294086730,
+    [107]=1392357580,
+    [108]=1497404700,
+    [109]=1609650630,
+    [110]=1729541670,
+    [111]=1857549020,
+    [112]=1994170080,
+    [113]=2139929710,
+    [114]=2295381630,
+    [115]=2461109820,
+    [116]=2637730020,
+    [117]=2825891280,
+    [118]=3026277580,
+    [119]=3239609520,
 };
 const wchar_t *ranks[]={
     L"The Condemned",
@@ -134,7 +135,6 @@ const wchar_t *ranks[]={
     L"Admin",
     L"Dev"
 };
-bool playerdead=false;
 static void pmovesuccess();
 
 #include "dbitem.h"
@@ -145,11 +145,7 @@ static void plvlup(){
     player.lvl++;
     player.stats.pts+=4;
     player.stats.pts+=player.lvl/9.429f;
-    player.maxhp=10;
-    player.maxhp+=player.lvl*(player.lvl/1.942f);
-    player.maxhp+=player.stats.con*player.lvl/2.85f;
-    player.maxhp+=player.stats.con*player.lvl*player.lvl/32.52f;
-    player.maxhp+=player.stats.con*player.stats.con*player.lvl/25972.142f;
+    pcalcstats();
     printr(Green|Bright,msg->player_trainsuccess,player.lvl);
 }
 static void paddgearstats(){
@@ -170,8 +166,8 @@ static void paddgearstats(){
         cbp.calcstats.crit=idb->crit;
     }else{
         cbp.calcstats.min_=1;
-        cbp.calcstats.max_=3;
-        cbp.calcstats.cd=30;
+        cbp.calcstats.max_=2;
+        cbp.calcstats.cd=10;
         cbp.calcstats.crit=0;
     }
     if(inventory.armor!=0){
@@ -219,7 +215,8 @@ void phpchange(nat num){
         else color=Green|Bright;
         printc(color,L"%" PRIdFAST64,player.hp);
         printc(Default,L"/%" PRIdFAST64 "]\n",player.maxhp);
-    }else{
+    }
+    else{
         if(player.hp+num>0){
             player.hp+=num;
             printf("[");
@@ -274,33 +271,42 @@ void pdie(){
             }
         }
     }
-    playerdead=true;
+    cbp.playerdead=true;
     player.roomid=player.spawn;
     db_rshowdesc(player.roomid);
 }
 void pcalcstats(){
-    if(player.stats.atk>99999)player.stats.atk=99999;
-    if(player.stats.def>99999)player.stats.def=99999;
-    if(player.stats.acc>99999)player.stats.acc=99999;
-    if(player.stats.dod>99999)player.stats.dod=99999;
-    if(player.stats.stl>99999)player.stats.stl=99999;
-    if(player.stats.act>99999)player.stats.act=99999;
-    if(player.stats.con>99999)player.stats.con=99999;
-    if(player.bstats.atk>99999)player.bstats.atk=99999;
-    if(player.bstats.def>99999)player.bstats.def=99999;
-    if(player.bstats.acc>99999)player.bstats.acc=99999;
-    if(player.bstats.dod>99999)player.bstats.dod=99999;
-    if(player.bstats.stl>99999)player.bstats.stl=99999;
-    if(player.bstats.act>99999)player.bstats.act=99999;
-    if(player.bstats.con>99999)player.bstats.con=99999;
-    cbp.calcstats.atk=player.stats.atk+player.bstats.atk;
-    cbp.calcstats.def=player.stats.def+player.bstats.def;
-    cbp.calcstats.acc=player.stats.acc+player.bstats.acc;
-    cbp.calcstats.dod=player.stats.dod+player.bstats.dod;
-    cbp.calcstats.stl=player.stats.stl+player.bstats.stl;
-    cbp.calcstats.act=player.stats.act+player.bstats.act;
-    cbp.calcstats.con=player.stats.con+player.bstats.con;
-    paddgearstats();
+    { // hp
+        player.maxhp=10;
+        player.maxhp+=player.lvl*(player.lvl/1.942f);
+        player.maxhp+=player.stats.con*player.lvl/2.85f;
+        player.maxhp+=player.stats.con*player.lvl*player.lvl/32.52f;
+        player.maxhp+=player.stats.con*player.stats.con*player.lvl/25972.142f;
+    }
+    { // stats
+        if(player.stats.atk>99999)player.stats.atk=99999;
+        if(player.stats.def>99999)player.stats.def=99999;
+        if(player.stats.acc>99999)player.stats.acc=99999;
+        if(player.stats.dod>99999)player.stats.dod=99999;
+        if(player.stats.stl>99999)player.stats.stl=99999;
+        if(player.stats.act>99999)player.stats.act=99999;
+        if(player.stats.con>99999)player.stats.con=99999;
+        if(player.bstats.atk>99999)player.bstats.atk=99999;
+        if(player.bstats.def>99999)player.bstats.def=99999;
+        if(player.bstats.acc>99999)player.bstats.acc=99999;
+        if(player.bstats.dod>99999)player.bstats.dod=99999;
+        if(player.bstats.stl>99999)player.bstats.stl=99999;
+        if(player.bstats.act>99999)player.bstats.act=99999;
+        if(player.bstats.con>99999)player.bstats.con=99999;
+        cbp.calcstats.atk=player.stats.atk+player.bstats.atk;
+        cbp.calcstats.def=player.stats.def+player.bstats.def;
+        cbp.calcstats.acc=player.stats.acc+player.bstats.acc;
+        cbp.calcstats.dod=player.stats.dod+player.bstats.dod;
+        cbp.calcstats.stl=player.stats.stl+player.bstats.stl;
+        cbp.calcstats.act=player.stats.act+player.bstats.act;
+        cbp.calcstats.con=player.stats.con+player.bstats.con;
+        paddgearstats();
+    }
 }
 void pshowstats(){
     pcalcstats();
@@ -369,8 +375,8 @@ void pmove(enum direction dir){ // ready for special exits
     if(db_rfindwithid(rm->exits[dir])==NULL){printr(Default,msg->player_walkno);return;}
     if(!rm->exitsid[dir]){
         timepass(30);
-        if(playerdead){
-            playerdead=false;
+        if(cbp.playerdead){
+            cbp.playerdead=false;
             return;
         }
         player.roomid=rm->exits[dir];
@@ -432,7 +438,7 @@ void pattack(nat entityid){
     if(enemycandodge){
         printc(White,msg->db_eetyouattackmiss,edb->name);
     }else{
-        nat bdmg=cbp.calcstats.atk,edef=edb->stats.def;
+        nat bdmg=cbp.calcstats.atk*DMG_RATIO,edef=edb->stats.def;
         { // player base damage
             nat delta=cbp.calcstats.max_-cbp.calcstats.min_;
             bdmg+=cbp.calcstats.min_;
@@ -453,7 +459,7 @@ void pattack(nat entityid){
                 edef+=db_ifindwithid(edb->loot.armor)->stats.def;
             }
         }
-        nat dmg=dmgreduc(bdmg,edef);
+        nat dmg=dmgreduc(bdmg,edef*DMG_RATIO);
         if(dmg)printc(Green|Bright,msg->db_eetyouattack,edb->name,dmg);
         else printc(White,msg->db_eetyouattackblocked,edb->name);
         etenemy_takedamage(entityid,dmg);
@@ -481,19 +487,55 @@ void ptrain(){
         plvlup();
     }
 }
-void peditstats(){}
+void peditstats(){
+    if(db_rfindwithid(player.roomid)->type!=db_roomtype_train){
+        printc(Default,msg->player_canteditstats);
+        return;
+    }
+    if(player.stats.pts||player.bstats.pts){
+        cbp.editstats=true;
+        printr(Default,msg->player_editstatshint);
+        printc(Default,msg->player_points,
+            player.stats.atk,player.stats.def,
+            player.stats.acc,player.stats.dod,
+            player.stats.stl,player.stats.act,
+            player.stats.con,player.stats.pts);
+    }else{
+        printc(Default,msg->player_points,
+            player.stats.atk,player.stats.def,
+            player.stats.acc,player.stats.dod,
+            player.stats.stl,player.stats.act,
+            player.stats.con,player.stats.pts);
+        printc(Default,msg->player_editstatsnopoints);
+    }
+}
+void peditstatsend(){
+    cbp.editstats=false;
+    pcalcstats();
+    db_rshowdesc(player.roomid);
+}
 void pregen(){
-    player.hp+=player.lvl;
-    player.hp+=cbp.calcstats.con;
-    player.hp+=cbp.calcstats.regen;
-    if(player.hp>player.maxhp)player.hp=player.maxhp;
+    nat regennum=player.lvl;
+    regennum+=cbp.calcstats.con;
+    regennum+=cbp.calcstats.regen;
+//    printc(Cyan,"Regen: +%d (extra +%d)\n",regennum,cbp.calcstats.regen);
+    phpchange(regennum);
 }
 void ptakedmg(nat dmg){
-    if(dmg>=player.hp){
+    if(dmg<=0)return;
+    if(player.hp-dmg>0){
+        player.hp-=dmg;
+        printf("[");
+        nat color;
+        if(player.hp<player.maxhp*0.3333333f)color=Red|Bright;
+        else if(player.hp<player.maxhp*0.6666667f)color=Yellow|Bright;
+        else color=Green|Bright;
+        printc(color,L"%" PRIdFAST64,player.hp);
+        printc(Default,L"/%" PRIdFAST64 "]\n",player.maxhp);
+    }
+    else{
         player.hp=0;
         pdie();
-    }else{
-        player.hp-=dmg;
     }
 }
 bool pcandodge(enemydb *edb){

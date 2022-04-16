@@ -60,6 +60,12 @@ struct msgtag{
     const wchar_t *player_trainsuccess;
     const wchar_t *player_info;
     const wchar_t *player_exp;
+    const wchar_t *player_points;
+    const wchar_t *player_canteditstats;
+    const wchar_t *player_editstatshint;
+    const wchar_t *player_editstatsnopoints;
+    const wchar_t *player_editstatsunknown;
+    const wchar_t *player_editstatsend;
     const wchar_t *player_inv;
     const wchar_t *player_inv_wielding;
     const wchar_t *player_inv_equipping;
@@ -139,10 +145,12 @@ struct msgtag msg_en={
                 "  cls                      - Clear screen\n"
                 "  help                     - Show this list\n"
                 "  quit                     - Save and quit game\n"
+                "  time                     - Show current time in-game\n"
                 "  * If you directly close the game, your progress will be lost.\n"
                 "  save                     - Save current progress\n"
                 "Player Stats\n"
-                "  abilities                - Show player's abilities\n"
+//                "  abilities                - Show player's abilities\n"
+                "  editstats                - Edit player stat points\n"
                 "  experience               - Show player's experience\n"
                 "  inventory                - Show player's inventory\n"
                 "  stats                    - Show player's statistics\n"
@@ -158,6 +166,8 @@ struct msgtag msg_en={
                 "  sell [quantity] <item>   - Sell items at a store\n"
                 "  take [quantity] <item>   - Pick up items in the room\n"
                 "  use <item>               - Use an item\n"
+                "Combat\n"
+                "  attack <[enemy name]>    - Attack an enemy\n"
                 "  * Some commands have abbreviated forms, e.g. 'st' for 'stats'.\n"
                 "-------------------------------------------------------------------\n",
     .global_save_incompat=L"Incompatible save version: expected %ls.\n",
@@ -209,6 +219,18 @@ struct msgtag msg_en={
                 "-------------------------------------------------------------------\n",
     .player_exp=L"Level:         %" PRIdFAST32 "\n"
                 "Experience:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n",
+    .player_points=L"-------------------------------------------------------------------\n"
+                "                           Your Base Stats\n"
+                "1) Strike Power:   %-08" PRIdFAST32 "      2) Damage Absorb:  %-08" PRIdFAST32 "\n"
+                "3) Accuracy:       %-08" PRIdFAST32 "      4) Dodging:        %-08" PRIdFAST32 "\n"
+                "5) Stealth:        %-08" PRIdFAST32 "      6) Responsiveness: %-08" PRIdFAST32 "\n"
+                "7) Constitution:   %-08" PRIdFAST32 "         Stat Points:    %-08" PRIdFAST32 "\n"
+                "-------------------------------------------------------------------\n",
+    .player_canteditstats=L"You can't edit your stats outside a training room.\n",
+    .player_editstatshint=L"Enter a number to enhance the corresponding stat, type 'exit' to return to game.\n",
+    .player_editstatsnopoints=L"You don't have available stat points.\n",
+    .player_editstatsunknown=L"Unknown command.\n",
+    .player_editstatsend=L"You have no more stat points available.\n",
     .player_inv=L"-------------------------------------------------------------------\n"
                 "                           Your Inventory\n"
                 "Money:         $%-08" PRIdFAST64 "\n"

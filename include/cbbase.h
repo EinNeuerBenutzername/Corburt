@@ -1,8 +1,9 @@
 #ifndef Corburt_Base_h_Include_Guard
 #define Corburt_Base_h_Include_Guard
 #define DISPLAY_WIDTH 68
-#define CB_VERSIONNUM 220
-#define CB_VERSIONTEXT L"v0.2.2"
+#define CB_VERSIONNUM 230
+#define CB_VERSIONCHECK 1
+#define CB_VERSIONTEXT L"v0.2.3"
 #if __STDC_VERSION__<199901L
     #error Please use a C99 compiler.
 #endif
@@ -490,7 +491,7 @@ nat dmgreduc(nat dmg,nat def){
 bool accreduc(nat acc,nat dod){
     real hitrate=genRand(&mtrand);
     nat delta=dod-acc;
-    real sigmoid=1.0f/(1.0f+pow(1.783f,delta/20.0f));
+    real sigmoid=1.0f/(1.0f+pow(1.783f,delta/50.0f));
     if(hitrate>sigmoid)return true;
     else return false;
 }
@@ -505,35 +506,8 @@ enum db_enemytype {
     db_enemytype_assassin,
     db_enemytype_boss
 };
-typedef const struct {
-    nat id;
-    enum db_enemytype type;
-    wchar_t *name;
-    wchar_t *desc;
-    bat exp;
-    struct {
-        nat moneymin;
-        nat moneymax;
-        nat weapon;
-        nat armor;
-        struct drops {
-            nat itemid;
-            nat rate;
-        } drops[16];
-    } loot;
-    struct {
-        nat hpmax;
-        nat atkcd;
-        nat atk;
-        nat def;
-        nat acc;
-        nat dod;
-        nat stl;
-        nat act;
-        nat con;
-    } stats;
-} enemydb;
-
+struct enemydb;
+typedef const struct enemydb enemydb;
 // cbp
 struct {
     struct calcstats{
@@ -551,7 +525,9 @@ struct {
         nat cd;
         nat crit;
     } calcstats;
-} cbp;
+    foo playerdead;
+    foo editstats;
+} cbp={0};
 static void plvlup();
 static void paddgearstats();
 void paddexp(nat add);
@@ -566,6 +542,7 @@ void pmove(enum direction dir);
 void pattack(nat entityid);
 void ptrain();
 void peditstats();
+void peditstatsend();
 void pregen();
 void ptakedmg(nat dmg);
 bool pcandodge(enemydb *edb);

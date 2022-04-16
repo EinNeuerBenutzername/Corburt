@@ -20,12 +20,12 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
   - [x] implement health regen
   - [x] implement enemy drops
   - [x] implement death punishments
-  - [ ] implement money loot
-  - [ ] implement stat edits
+  - [ ] implement money loot (WiP)
+  - [x] implement stat edits
 
 - **Polish**
 
-  - [ ] make balancing improvements
+  - [ ] make balancing improvements (WiP)
   - [ ] add new item & enemy data entries
 
 - **Optional**
@@ -155,10 +155,18 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
 ## Version history
 ###  Demo
 
+- **0.2.3** (Apr 16, 2022, WiP)
+  - **What's new**: stat edits
+  - hint message for selling items fixed.
+  - counters for enemies and items fixed.
+  - you can now edit stats.
+    - type "editstats" at the training room to edit stats.
+  - calculation formulas for damage and defense revised.
+  - experience mechanics revised to prevent players from leveling up too fast.
 - **0.2.2** (Apr 16, 2022)
   - **What's new**: enemy drops
   - enemy entity data saving/loading functions implemented.
-  - map errors fixed with CBME.
+  - map glitches fixed with CBME.
   - enemies can respawn (currently once per 50 rounds).
   - enemies are equipped with weapons and armors.
     - these could be dropped on their deaths and they contribute to enemies' stats.
@@ -167,7 +175,7 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - enemy stats slightly revised.
   - player and enemies can now attack each other.
   - functions accessing databases are revised and are more performant now.
-  - player now regenerates once per 25 rounds.
+  - player hit points now regenerate once per 25 rounds.
 - **0.2.1** (Apr 10, 2022)
   - **What's new**: enemy attacks
   - item stats slightly revised.

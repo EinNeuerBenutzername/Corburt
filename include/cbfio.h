@@ -126,6 +126,7 @@ static void readet_items(FILE *fp){
     while(itemsmax_tmp>itemsmax){
         etitem_expand();
     }
+    itemscount=0;
     for(nat i=0;i<itemsmax_tmp;i++){
         nat avail;
         int_fast32_t_read(&avail,fp);
@@ -155,7 +156,8 @@ static void saveet_items(FILE *fp){
 static void readet_enemies(FILE *fp){
     nat enemiesmax_tmp;
     int_fast32_t_read(&enemiesmax_tmp,fp);
-//    tracelog(Cyan,L"max items: %" PRIdFAST32 ".\n",itemsmax_tmp);
+//    tracelog(Cyan,L"max enemies: %" PRIdFAST32 ".\n",enemiesmax_tmp);
+    enemiescount=0;
     while(enemiesmax_tmp>enemiesmax){
         etenemy_expand();
     }
@@ -217,7 +219,7 @@ static void saveet_rooms(FILE *fp){
 static void readsavesglobaldata(FILE *fp){
     nat version=0;
     int_fast32_t_read(&version,fp);
-    if(version!=CB_VERSIONNUM){
+    if(version!=CB_VERSIONNUM&&CB_VERSIONCHECK){
         printr(Red,msg->global_save_incompat,msg->global_corburtversion);
         fio.fail=1;
     }

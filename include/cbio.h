@@ -8,6 +8,9 @@
 wchar_t *inputbufl=NULL;
 foo fullmatch(wchar_t *wcs,const wchar_t *wcs2);
 foo matchcommands(wchar_t *cmd);
+foo match__commands(wchar_t *cmd); // template
+foo matchregularcommands(wchar_t *cmd);
+foo matcheditstatscommands(wchar_t *cmd);
 void processinput();
 
 foo fullmatch(wchar_t *wcs,const wchar_t *wcs2){
@@ -28,6 +31,21 @@ foo fullmatch(wchar_t *wcs,const wchar_t *wcs2){
     }
 }
 foo matchcommands(wchar_t *cmd){
+    if(cbp.editstats){
+        return matcheditstatscommands(cmd);
+    }
+    return matchregularcommands(cmd);
+}
+foo match__commands(wchar_t *cmd){
+    if(fullmatch(cmd,L"quit")||
+       fullmatch(cmd,L"exitgame")||
+       fullmatch(cmd,L"quitgame")){
+        quit_game=true;
+        return true;
+    }
+    return false;
+}
+foo matchregularcommands(wchar_t *cmd){
     if(fullmatch(cmd,L"st")||
        fullmatch(cmd,L"stats")||
        fullmatch(cmd,L"statistics")){
@@ -265,10 +283,12 @@ foo matchcommands(wchar_t *cmd){
             }
             if(idb->type==db_itemtype_weapon){
                 inventory.weapon=ininvindex+1;
+                pcalcstats();
                 printr(Default,msg->player_inv_wield,idb->name);
             }
             if(idb->type==db_itemtype_armor){
                 inventory.armor=ininvindex+1;
+                pcalcstats();
                 printr(Default,msg->player_inv_wear,idb->name);
             }
             if(idb->type==db_itemtype_accessory){
@@ -285,6 +305,7 @@ foo matchcommands(wchar_t *cmd){
                         if(inventory.accessories[k]==0){
                             inventory.accessories[k]=ininvindex+1;
                             printr(Default,msg->player_inv_equip,idb->name);
+                            pcalcstats();
                             break;
                         }
                     }
@@ -303,7 +324,7 @@ foo matchcommands(wchar_t *cmd){
         }
         return true;
     }
-    if(fullmatch(cmd,L"take")||
+    if(fullmatch(cmd,L"take")|| // TODO: +take money
        fullmatch(cmd,L"get")||
        fullmatch(cmd,L"g")){
         size_t startp=4;
@@ -432,7 +453,7 @@ foo matchcommands(wchar_t *cmd){
         }
         return true;
     }
-    if(fullmatch(cmd,L"drop")){
+    if(fullmatch(cmd,L"drop")){ // TODO: +drop money
         struct et_room *etr=et_findroomwithid(player.roomid);
         if(etr==NULL){
             printr(Red,msg->db_retidnullexceptionerror);
@@ -543,6 +564,7 @@ foo matchcommands(wchar_t *cmd){
                 etitem_rebind(maxmatchid,player.roomid);
                 printr(Cyan|Bright,msg->db_ietdrop,idb->name);
             }
+            pcalcstats();
         }else{
             printr(Default,msg->db_inosuchitem);
         }
@@ -648,6 +670,7 @@ foo matchcommands(wchar_t *cmd){
                         qnty-=eti->qnty;
                         inventory.money+=(eti->qnty*ITEM_SELLRATE*idb->price);
                         etitem_delete(inventory.items[i]);
+                        if(qnty==0)break;
                     }
                 }else{
                     etitem_delete(inventory.items[i]);
@@ -657,6 +680,8 @@ foo matchcommands(wchar_t *cmd){
                 }
             }
         }
+        pcalcstats();
+        idb=db_ifindwithid(maxmatchitemid);
         if(qnty2==qnty)printr(Default,msg->db_inosuchitem);
         else if(qnty2-qnty==1)printr(Cyan|Bright,msg->db_isellitemhint,idb->name);
         else printr(Cyan|Bright,msg->db_isellmultitemhint,idb->name,qnty2-qnty);
@@ -712,6 +737,196 @@ foo matchcommands(wchar_t *cmd){
         return true;
     }
     return false;
+}
+foo matcheditstatscommands(wchar_t *cmd){
+    if(fullmatch(cmd,L"quit")||
+       fullmatch(cmd,L"exitgame")||
+       fullmatch(cmd,L"quitgame")){
+        peditstatsend();
+        quit_game=true;
+        return true;
+    }
+    if(fullmatch(cmd,L"exit")){
+        peditstatsend();
+        return true;
+    }
+    if(fullmatch(cmd,L"1")){
+        if(player.stats.pts){
+            player.stats.pts--;
+            player.stats.atk++;
+        }else if(player.bstats.pts){
+            player.bstats.pts--;
+            player.bstats.atk++;
+        }
+        // the rest is the same
+        else{
+            printc(Default,msg->player_editstatsnopoints);
+            peditstatsend();
+        }
+        printc(Default,msg->player_points,
+            player.stats.atk,player.stats.def,
+            player.stats.acc,player.stats.dod,
+            player.stats.stl,player.stats.act,
+            player.stats.con,player.stats.pts);
+        if(player.stats.pts||player.bstats.pts){
+        }else{
+            printc(Default,msg->player_editstatsend);
+            peditstatsend();
+        }
+        return true;
+    }
+    if(fullmatch(cmd,L"2")){
+        if(player.stats.pts){
+            player.stats.pts--;
+            player.stats.def++;
+        }else if(player.bstats.pts){
+            player.bstats.pts--;
+            player.bstats.def++;
+        }
+        // the rest is the same
+        else{
+            printc(Default,msg->player_editstatsnopoints);
+            peditstatsend();
+        }
+        printc(Default,msg->player_points,
+            player.stats.atk,player.stats.def,
+            player.stats.acc,player.stats.dod,
+            player.stats.stl,player.stats.act,
+            player.stats.con,player.stats.pts);
+        if(player.stats.pts||player.bstats.pts){
+        }else{
+            printc(Default,msg->player_editstatsend);
+            peditstatsend();
+        }
+        return true;
+    }
+    if(fullmatch(cmd,L"3")){
+        if(player.stats.pts){
+            player.stats.pts--;
+            player.stats.acc++;
+        }else if(player.bstats.pts){
+            player.bstats.pts--;
+            player.bstats.acc++;
+        }
+        // the rest is the same
+        else{
+            printc(Default,msg->player_editstatsnopoints);
+            peditstatsend();
+        }
+        printc(Default,msg->player_points,
+            player.stats.atk,player.stats.def,
+            player.stats.acc,player.stats.dod,
+            player.stats.stl,player.stats.act,
+            player.stats.con,player.stats.pts);
+        if(player.stats.pts||player.bstats.pts){
+        }else{
+            printc(Default,msg->player_editstatsend);
+            peditstatsend();
+        }
+        return true;
+    }
+    if(fullmatch(cmd,L"4")){
+        if(player.stats.pts){
+            player.stats.pts--;
+            player.stats.dod++;
+        }else if(player.bstats.pts){
+            player.bstats.pts--;
+            player.bstats.dod++;
+        }
+        // the rest is the same
+        else{
+            printc(Default,msg->player_editstatsnopoints);
+            peditstatsend();
+        }
+        printc(Default,msg->player_points,
+            player.stats.atk,player.stats.def,
+            player.stats.acc,player.stats.dod,
+            player.stats.stl,player.stats.act,
+            player.stats.con,player.stats.pts);
+        if(player.stats.pts||player.bstats.pts){
+        }else{
+            printc(Default,msg->player_editstatsend);
+            peditstatsend();
+        }
+        return true;
+    }
+    if(fullmatch(cmd,L"5")){
+        if(player.stats.pts){
+            player.stats.pts--;
+            player.stats.stl++;
+        }else if(player.bstats.pts){
+            player.bstats.pts--;
+            player.bstats.stl++;
+        }
+        // the rest is the same
+        else{
+            printc(Default,msg->player_editstatsnopoints);
+            peditstatsend();
+        }
+        printc(Default,msg->player_points,
+            player.stats.atk,player.stats.def,
+            player.stats.acc,player.stats.dod,
+            player.stats.stl,player.stats.act,
+            player.stats.con,player.stats.pts);
+        if(player.stats.pts||player.bstats.pts){
+        }else{
+            printc(Default,msg->player_editstatsend);
+            peditstatsend();
+        }
+        return true;
+    }
+    if(fullmatch(cmd,L"6")){
+        if(player.stats.pts){
+            player.stats.pts--;
+            player.stats.act++;
+        }else if(player.bstats.pts){
+            player.bstats.pts--;
+            player.bstats.act++;
+        }
+        // the rest is the same
+        else{
+            printc(Default,msg->player_editstatsnopoints);
+            peditstatsend();
+        }
+        printc(Default,msg->player_points,
+            player.stats.atk,player.stats.def,
+            player.stats.acc,player.stats.dod,
+            player.stats.stl,player.stats.act,
+            player.stats.con,player.stats.pts);
+        if(player.stats.pts||player.bstats.pts){
+        }else{
+            printc(Default,msg->player_editstatsend);
+            peditstatsend();
+        }
+        return true;
+    }
+    if(fullmatch(cmd,L"7")){
+        if(player.stats.pts){
+            player.stats.pts--;
+            player.stats.con++;
+        }else if(player.bstats.pts){
+            player.bstats.pts--;
+            player.bstats.con++;
+        }
+        // the rest is the same
+        else{
+            printc(Default,msg->player_editstatsnopoints);
+            peditstatsend();
+        }
+        printc(Default,msg->player_points,
+            player.stats.atk,player.stats.def,
+            player.stats.acc,player.stats.dod,
+            player.stats.stl,player.stats.act,
+            player.stats.con,player.stats.pts);
+        if(player.stats.pts||player.bstats.pts){
+        }else{
+            printc(Default,msg->player_editstatsend);
+            peditstatsend();
+        }
+        return true;
+    }
+    printc(Default,msg->player_editstatsunknown);
+    return true;
 }
 void processinput(){
     if(wcslen(inputbuf)==0){
