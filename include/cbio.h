@@ -426,7 +426,8 @@ foo matchcommands(wchar_t *cmd){
                 etitem_rebind(maxmatchid,0);
                 printr(Cyan|Bright,msg->db_iettake,idb->name);
             }
-        }else{
+        }
+        else{
             printr(Default,msg->db_inosuchitem);
         }
         return true;
@@ -659,6 +660,55 @@ foo matchcommands(wchar_t *cmd){
         if(qnty2==qnty)printr(Default,msg->db_inosuchitem);
         else if(qnty2-qnty==1)printr(Cyan|Bright,msg->db_isellitemhint,idb->name);
         else printr(Cyan|Bright,msg->db_isellmultitemhint,idb->name,qnty2-qnty);
+        return true;
+    }
+    if(fullmatch(cmd,L"attack")||
+       fullmatch(cmd,L"a")){
+        size_t startp=6;
+        if(fullmatch(cmd,L"a"))startp=1;
+        roomdb *rm=db_rfindwithid(player.roomid);
+        if(rm==NULL){
+            printr(Red,msg->db_ridnullexceptionerror);
+            return true;
+        }
+        wchar_t *attacktarget=NULL;
+        attacktarget=mallocpointer(128*sizeof(wchar_t));
+        wmemset(attacktarget,0,128);
+        foo sth=false;
+        nat j=0;
+        for(size_t i=startp;i<wcslen(cmd);i++){
+            if(cmd[i]!=L' ')sth=true;
+            if(sth){
+                attacktarget[j]=cmd[i];
+                j++;
+            }
+        }
+        struct et_room *etr=et_findroomwithid(rm->id);
+        nat maxmatch=-1;
+//        nat maxmatchenemyid=0;
+        nat maxmatchenemyentityid=0;
+        for(nat i=0;i<DBE_ENEMYCAP;i++){
+            if(etr->etenemy[i]==0)continue;
+            enemydb *edb=et_getenemydb(etr->etenemy[i]);
+            if(edb==NULL){
+                printr(Red,msg->db_eidnullexceptionerror);
+                return true;
+            }
+            nat curmatch=match(attacktarget,edb->name);
+            if(curmatch>maxmatch){
+                maxmatch=curmatch;
+//                maxmatchenemyid=edb->id;
+                maxmatchenemyentityid=etr->etenemy[i];
+            }
+        }
+        freepointer(attacktarget);
+        if(maxmatchenemyentityid==0){
+            printr(Default,msg->db_enosuchenemy);
+        }else if(maxmatch>=0){
+            pattack(maxmatchenemyentityid);
+        }else{
+            printr(Default,msg->db_enosuchenemy);
+        }
         return true;
     }
     return false;

@@ -1,8 +1,8 @@
 #ifndef Corburt_Base_h_Include_Guard
 #define Corburt_Base_h_Include_Guard
 #define DISPLAY_WIDTH 68
-#define CB_VERSIONNUM 210
-#define CB_VERSIONTEXT L"v0.2.1"
+#define CB_VERSIONNUM 220
+#define CB_VERSIONTEXT L"v0.2.2"
 #if __STDC_VERSION__<199901L
     #error Please use a C99 compiler.
 #endif
@@ -66,7 +66,7 @@ struct inventory{
     nat weapon;
     nat armor;
     bat money;
-} inventory={16,{0},{0},0,0,100000};
+} inventory={16,{0},{0},0,0,1000};
 struct save{
     nat valid;
     struct player plr;
@@ -510,10 +510,16 @@ typedef const struct {
     enum db_enemytype type;
     wchar_t *name;
     wchar_t *desc;
-    nat exp;
+    bat exp;
     struct {
         nat moneymin;
         nat moneymax;
+        nat weapon;
+        nat armor;
+        struct drops {
+            nat itemid;
+            nat rate;
+        } drops[16];
     } loot;
     struct {
         nat hpmax;
@@ -527,6 +533,7 @@ typedef const struct {
         nat con;
     } stats;
 } enemydb;
+
 // cbp
 struct {
     struct calcstats{
@@ -538,6 +545,11 @@ struct {
         nat act;
         nat con;
         nat pts;
+        nat regen;
+        nat min_;
+        nat max_;
+        nat cd;
+        nat crit;
     } calcstats;
 } cbp;
 static void plvlup();
@@ -551,7 +563,7 @@ void pshowabl();
 void pshowinv();
 void pshowexp();
 void pmove(enum direction dir);
-void pattack();
+void pattack(nat entityid);
 void ptrain();
 void peditstats();
 void pregen();

@@ -8,7 +8,7 @@
 #define DBE_ITEMCAP 32
 #define DBE_INTCAP 16
 #define DBE_EXPANDSTEP 64
-#define DBE_TRACELOG 0
+#define DBE_TRACELOG 1
 struct et_room{
     nat id;
     nat money;
@@ -158,41 +158,14 @@ void etenemy_push(nat enemyid,nat roomid){
 }
 void etenemy_attack(nat etid,struct et_room *etr){
     struct et_enemy *ete=&et_enemies[etid-1];
-    if(ete->available==false){
-        printc(Red,msg->db_eetidnullexceptionerror);
-        return;
-    }
     if(ete->attackcd>0)return;
     const enemydb *edb=et_getenemydb(etid);
-    if(edb==NULL){
-        printc(Red,msg->db_eetidnullexceptionerror);
-        return;
-    }
-    if(edb->loot.weapon){
-        const itemdb *idb=db_ifindwithid(edb->loot.weapon);
-        if(idb==NULL){
-            printc(Red,msg->db_ietidnullexceptionerror);
-            return;
-        }
-        ete->attackcd=idb->cd;
-    }else ete->attackcd=30;
+    ete->attackcd=edb->stats.atkcd;
     if(pcandodge(edb)){
         printc(White,msg->db_eetattackmiss,edb->name);
     }else{
         nat atk=edb->stats.atk;
-        if(edb->loot.weapon){
-            itemdb *idb=db_ifindwithid(edb->loot.weapon);
-            if(idb==NULL){
-                printc(Red,msg->db_iidnullexceptionerror);
-                return;
-            }
-            atk+=idb->stats.atk;
-            atk+=idb->stats.min_;
-            nat delta=idb->stats.max_-idb->stats.min_;
-            if(delta<0)delta=0-delta;
-            if(delta)atk+=genRandLong(&mtrand)%delta;
-        }
-        if(edb->loot.armor)atk+=db_ifindwithid(edb->loot.armor)->stats.atk;
+        atk*=(genRand(&mtrand)-0.5f)*0.2f+1.0f;
         nat dmg=dmgreduc(edb->stats.atk,cbp.calcstats.def);
         if(dmg)printc(Red|Bright,msg->db_eetattack,edb->name,dmg);
         else printc(White,msg->db_eetattackblocked,edb->name);
@@ -260,20 +233,6 @@ void etenemy_deathdrops(enemydb *edb,nat roomid){
             }
             etr->money+=money;
             printc(Cyan|Bright,msg->db_retmoneydrop,money);
-        }
-    }
-    { // gear drops
-        if(edb->loot.weapon){
-            if(genRandLong(&mtrand)%10000<3000){
-                etitem_push(edb->loot.weapon,1,roomid,0);
-                printc(Cyan|Bright,msg->db_retitemdrop,db_ifindwithid(edb->loot.weapon)->name);
-            }
-        }
-        if(edb->loot.armor){
-            if(genRandLong(&mtrand)%10000<3000){
-                etitem_push(edb->loot.armor,1,roomid,0);
-                printc(Cyan|Bright,msg->db_retitemdrop,db_ifindwithid(edb->loot.armor)->name);
-            }
         }
     }
 }
@@ -581,7 +540,7 @@ void et_spawnenemies(){
         for(nat j=0;roomdbs[i].table[j]!=0;j++)roomenemytablesize++;
         for(nat j=0,c=0;j<DBE_ENEMYCAP;j++){
             if(etr->etenemy[j]!=0)c++;
-            if(j==DBE_ENEMYCAP-1&&c>=roomenemytablesize)continue; // no need to spawn enemies
+            if(j==DBE_ENEMYCAP-1&&c>=roomenemytablesize)return; // no need to spawn enemies
         }
         nat enemytable[DBE_ENEMYCAP]={0};
         for(nat j=0;j<roomenemytablesize;j++){
@@ -596,15 +555,9 @@ void et_spawnenemies(){
                 }
             }
         }
-        for(nat j=0;j<roomenemytablesize;j++){
-            if(enemytable[j]==0)continue;
-            if(roomdbs[i].id==player.roomid){
-                enemydb *dbe=db_efindwithid(enemytable[j]);
-                printc(Red|Bright,msg->db_eetenterroom,dbe->name);
-            }
-            etenemy_push(enemytable[j],roomdbs[i].id);
-            break;
-        }
+                if(k==roomenemytablesize-1){
+                    etenemy_push(roomdbs[i].table[j],roomdbs[i].id);
+                }
     }
 }
 #endif

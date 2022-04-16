@@ -36,7 +36,7 @@ void launchcb(){
     initrng();
     checkendianess();
     setupentitydata();
-        et_spawnenemies();
+        et_initenemies();
     inputbuf=mallocpointer(128*sizeof(wchar_t));
     inputbufl=mallocpointer(128*sizeof(wchar_t));
     wmemset(inputbuf,0,128);

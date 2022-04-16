@@ -15,12 +15,13 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
 - **Main**
 
   - [x] implement turn-based game process
-  - [ ] implement combat
+  - [x] implement combat
   - [x] implement death & revival
   - [x] implement health regen
-  - [ ] implement enemy drops
-  - [ ] implement death punishments
+  - [x] implement enemy drops
+  - [x] implement death punishments
   - [ ] implement money loot
+  - [ ] implement stat edits
 
 - **Polish**
 
@@ -154,13 +155,26 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
 ## Version history
 ###  Demo
 
+- **0.2.2** (Apr 16, 2022)
+  - **What's new**: enemy drops
+  - enemy entity data saving/loading functions implemented.
+  - map errors fixed with CBME.
+  - enemies can respawn (currently once per 50 rounds).
+  - enemies are equipped with weapons and armors.
+    - these could be dropped on their deaths and they contribute to enemies' stats.
+  - player's and enemies' death drops implemented.
+    - on death, player loses 10% of their exp and money and one of their items.
+  - enemy stats slightly revised.
+  - player and enemies can now attack each other.
+  - functions accessing databases are revised and are more performant now.
+  - player now regenerates once per 25 rounds.
 - **0.2.1** (Apr 10, 2022)
   - **What's new**: enemy attacks
-  - item stats slightly revised
-  - implemented player death and revival (at specific spawn points)
-  - player's arrival to a new spawn point will be recorded
-  - player's hit points slowly regenerate (once per 50 turns)
-  - map remade with [Corburt Map Editor](https://github.com/EinNeuerBenutzername/Corburt-Map-Editor)
+  - item stats slightly revised.
+  - implemented player death and revival (at specific spawn points).
+  - player's arrival to a new spawn point will be recorded.
+  - player's hit points slowly regenerate (once per 50 turns).
+  - map remade with [Corburt Map Editor](https://github.com/EinNeuerBenutzername/Corburt-Map-Editor).
 - **0.2.0** (Mar 12, 2022)
   - **What's new**: turns
   - item stats slightly revised.

@@ -135,7 +135,7 @@ const wchar_t *ranks[]={
     L"Dev"
 };
 bool playerdead=false;
-void pmovesuccess();
+static void pmovesuccess();
 
 #include "dbitem.h"
 #include "cbturn.h"
@@ -146,7 +146,7 @@ static void plvlup(){
     player.stats.pts+=4;
     player.stats.pts+=player.lvl/9.429f;
     player.maxhp=10;
-    player.maxhp+=player.lvl*player.lvl/1.942f;
+    player.maxhp+=player.lvl*(player.lvl/1.942f);
     player.maxhp+=player.stats.con*player.lvl/2.85f;
     player.maxhp+=player.stats.con*player.lvl*player.lvl/32.52f;
     player.maxhp+=player.stats.con*player.stats.con*player.lvl/25972.142f;
@@ -163,6 +163,16 @@ static void paddgearstats(){
         cbp.calcstats.stl+=idb->stats.stl;
         cbp.calcstats.act+=idb->stats.act;
         cbp.calcstats.con+=idb->stats.con;
+        cbp.calcstats.regen+=idb->stats.regen;
+        cbp.calcstats.min_=idb->stats.min_;
+        cbp.calcstats.max_=idb->stats.max_;
+        cbp.calcstats.cd=idb->cd;
+        cbp.calcstats.crit=idb->crit;
+    }else{
+        cbp.calcstats.min_=1;
+        cbp.calcstats.max_=3;
+        cbp.calcstats.cd=30;
+        cbp.calcstats.crit=0;
     }
     if(inventory.armor!=0){
         struct et_item *eti=&et_items[inventory.items[inventory.armor-1]-1];
@@ -174,6 +184,7 @@ static void paddgearstats(){
         cbp.calcstats.stl+=idb->stats.stl;
         cbp.calcstats.act+=idb->stats.act;
         cbp.calcstats.con+=idb->stats.con;
+            cbp.calcstats.regen+=idb->stats.regen;
     }
     for(nat i=0;i<5;i++){
         if(inventory.accessories[i]!=0){
@@ -186,6 +197,7 @@ static void paddgearstats(){
             cbp.calcstats.stl+=idb->stats.stl;
             cbp.calcstats.act+=idb->stats.act;
             cbp.calcstats.con+=idb->stats.con;
+            cbp.calcstats.regen+=idb->stats.regen;
         }
     }
 }
@@ -223,12 +235,47 @@ void phpchange(nat num){
 }
 void pdie(){
     printc(White|Bright,msg->player_die);
-    player.roomid=player.spawn;
     // should be teleported back to the nearest spawn point
     printc(White|Bright,msg->player_die_xplost,(bat)(player.exp-(bat)player.exp*0.9f));
     player.exp*=0.9f;
     player.hp=player.maxhp*0.7f;
+    { // drop money and item
+        nat dropm=inventory.money*0.1f;
+        if(dropm>0&&inventory.money>0){
+            inventory.money-=dropm;
+            struct et_room *etr=&et_rooms[player.roomid-1];
+            if(!etr){
+                printc(Red,msg->db_retidnullexceptionerror);
+                return;
+            }
+            etr->money+=dropm;
+            printc(White|Bright,msg->db_retmoneydrop,dropm);
+        }
+        nat itemsc=0;
+        for(nat i=0;i<inventory.unlocked;i++){
+            if(inventory.items[i]!=0)itemsc++;
+        }
+        if(itemsc){
+            nat dropid=genRandLong(&mtrand)%itemsc;
+            printf("%d/%d\n",dropid,itemsc);
+            for(nat i=0,j=0;i<inventory.unlocked;i++){
+                if(inventory.items[i]==0)continue;
+                if(j==dropid){
+                    itemdb *idb=et_getitemdb(inventory.items[i]);
+                    if(idb==NULL){
+                        printc(Red|Bright,msg->db_ietidnullexceptionerror);
+                        return;
+                    }
+                    etitem_rebind(inventory.items[i],player.roomid);
+                    printc(White|Bright,msg->db_retitemdrop,idb->name);
+                    break;
+                }
+                j++;
+            }
+        }
+    }
     playerdead=true;
+    player.roomid=player.spawn;
     db_rshowdesc(player.roomid);
 }
 void pcalcstats(){
@@ -360,7 +407,7 @@ void pmove(enum direction dir){ // ready for special exits
         // special exits
     }
 }
-void pmovesuccess(){
+static void pmovesuccess(){
     db_rshowdesc(player.roomid);
     roomdb *rm=db_rfindwithid(player.roomid);
     if(rm->type==db_roomtype_birth&&player.spawn!=player.roomid){
@@ -368,7 +415,52 @@ void pmovesuccess(){
         printr(Cyan|Bright,msg->player_spawnupdate,rm->name);
     }
 }
-void pattack(){}
+void pattack(nat entityid){
+    struct et_enemy *ete=&et_enemies[entityid-1];
+    if(!ete->available){
+        printc(Red,msg->db_eetidnullexceptionerror);
+        return;
+    }
+    const enemydb *edb=et_getenemydb(entityid);
+    bool enemycandodge;
+    { // enemycandodge
+        nat edod=edb->stats.dod;
+        if(edb->loot.weapon)edod+=db_ifindwithid(edb->loot.weapon)->stats.dod;
+        if(edb->loot.armor)edod+=db_ifindwithid(edb->loot.armor)->stats.dod;
+        enemycandodge=accreduc(cbp.calcstats.acc,edod);
+    }
+    if(enemycandodge){
+        printc(White,msg->db_eetyouattackmiss,edb->name);
+    }else{
+        nat bdmg=cbp.calcstats.atk,edef=edb->stats.def;
+        { // player base damage
+            nat delta=cbp.calcstats.max_-cbp.calcstats.min_;
+            bdmg+=cbp.calcstats.min_;
+            if(delta!=0){
+                if(delta<0)delta=0-delta;
+                bdmg+=genRandLong(&mtrand)%(delta)+cbp.calcstats.min_;
+            }
+            if(genRandLong(&mtrand)%10000<cbp.calcstats.crit){
+                bdmg+=cbp.calcstats.max_;
+            }
+            if(bdmg<1)bdmg=1;
+        }
+        { // enemy defense
+            if(edb->loot.weapon){
+                edef+=db_ifindwithid(edb->loot.weapon)->stats.def;
+            }
+            if(edb->loot.armor){
+                edef+=db_ifindwithid(edb->loot.armor)->stats.def;
+            }
+        }
+        nat dmg=dmgreduc(bdmg,edef);
+        if(dmg)printc(Green|Bright,msg->db_eetyouattack,edb->name,dmg);
+        else printc(White,msg->db_eetyouattackblocked,edb->name);
+        etenemy_takedamage(entityid,dmg);
+    }
+    timepass(cbp.calcstats.cd);
+
+}
 void ptrain(){
     roomdb *rm=db_rfindwithid(player.roomid);
     if(rm==NULL){
@@ -392,9 +484,8 @@ void ptrain(){
 void peditstats(){}
 void pregen(){
     player.hp+=player.lvl;
-    player.hp+=(player.lvl)/5*player.lvl;
-    player.hp+=player.bstats.con;
-    player.hp+=player.stats.con;
+    player.hp+=cbp.calcstats.con;
+    player.hp+=cbp.calcstats.regen;
     if(player.hp>player.maxhp)player.hp=player.maxhp;
 }
 void ptakedmg(nat dmg){
@@ -406,6 +497,9 @@ void ptakedmg(nat dmg){
     }
 }
 bool pcandodge(enemydb *edb){
-    return accreduc(edb->stats.acc,cbp.calcstats.dod);
+    nat gearacc=0;
+    if(edb->loot.weapon)gearacc+=db_ifindwithid(edb->loot.weapon)->stats.acc;
+    if(edb->loot.armor)gearacc+=db_ifindwithid(edb->loot.armor)->stats.acc;
+    return accreduc(edb->stats.acc+gearacc,cbp.calcstats.dod);
 }
 #endif

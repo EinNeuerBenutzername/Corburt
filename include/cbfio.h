@@ -12,6 +12,8 @@ static void readinventory(struct inventory *inv,FILE *fp);
 static void saveinventory(struct inventory inv,FILE *fp);
 static void readet_items(FILE *fp);
 static void saveet_items(FILE *fp);
+static void readet_enemies(FILE *fp);
+static void saveet_enemies(FILE *fp);
 static void readet_rooms(FILE *fp);
 static void saveet_rooms(FILE *fp);
 static void readsavesglobaldata(FILE *fp);
@@ -150,11 +152,47 @@ static void saveet_items(FILE *fp){
         }
     }
 }
+static void readet_enemies(FILE *fp){
+    nat enemiesmax_tmp;
+    int_fast32_t_read(&enemiesmax_tmp,fp);
+//    tracelog(Cyan,L"max items: %" PRIdFAST32 ".\n",itemsmax_tmp);
+    while(enemiesmax_tmp>enemiesmax){
+        etenemy_expand();
+    }
+    for(nat i=0;i<enemiesmax_tmp;i++){
+        nat avail;
+        int_fast32_t_read(&avail,fp);
+        et_enemies[i].available=(avail==1);
+        if(avail){
+            int_fast32_t_read(&et_enemies[i].roomid,fp);
+            int_fast32_t_read(&et_enemies[i].enemyid,fp);
+            int_fast32_t_read(&et_enemies[i].hp,fp);
+            int_fast32_t_read(&et_enemies[i].attackcd,fp);
+            enemiescount++;
+        }
+    }
+    if(enemiescount)
+        tracelog(Cyan,msg->trace_loadete,enemiescount);
+}
+static void saveet_enemies(FILE *fp){
+    int_fast32_t_write(enemiesmax,fp);
+    for(nat i=0;i<enemiesmax;i++){
+        nat avail=et_enemies[i].available?1:0;
+        int_fast32_t_write(avail,fp);
+        if(et_enemies[i].available){
+            int_fast32_t_write(et_enemies[i].roomid,fp);
+            int_fast32_t_write(et_enemies[i].enemyid,fp);
+            int_fast32_t_write(et_enemies[i].hp,fp);
+            int_fast32_t_write(et_enemies[i].attackcd,fp);
+        }
+    }
+}
 static void readet_rooms(FILE *fp){
     nat roomsmax_tmp;
     int_fast32_t_read(&roomsmax_tmp,fp);
     for(nat i=0;i<roomsmax_tmp;i++){
         int_fast32_t_read(&et_rooms[i].id,fp);
+        int_fast32_t_read(&et_rooms[i].money,fp);
         for(nat j=0;j<DBE_ENEMYCAP;j++)
             int_fast32_t_read(&et_rooms[i].etenemy[j],fp);
         for(nat j=0;j<DBE_ITEMCAP;j++)
@@ -167,6 +205,7 @@ static void saveet_rooms(FILE *fp){
     int_fast32_t_write(roomsmax,fp);
     for(nat i=0;i<roomsmax;i++){
         int_fast32_t_write(et_rooms[i].id,fp);
+        int_fast32_t_write(et_rooms[i].money,fp);
         for(nat j=0;j<DBE_ENEMYCAP;j++)
             int_fast32_t_write(et_rooms[i].etenemy[j],fp);
         for(nat j=0;j<DBE_ITEMCAP;j++)
@@ -186,6 +225,7 @@ static void readsavesglobaldata(FILE *fp){
     int_fast64_t_read(&global.curround,fp);
     readet_rooms(fp);
     readet_items(fp);
+    readet_enemies(fp);
 }
 static void savesavesglobaldata(FILE *fp){
     int_fast32_t_write(CB_VERSIONNUM,fp);
@@ -193,6 +233,7 @@ static void savesavesglobaldata(FILE *fp){
     int_fast64_t_write(global.curround,fp);
     saveet_rooms(fp);
     saveet_items(fp);
+    saveet_enemies(fp);
 }
 void readsaves(){
     fio.fail=0;

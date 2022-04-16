@@ -39,6 +39,7 @@ struct msgtag{
     const wchar_t *trace_illegalfree;
     const wchar_t *trace_freealled;
     const wchar_t *trace_loadeti;
+    const wchar_t *trace_loadete;
     const wchar_t *error_cannotmalloc;
     const wchar_t *error_cannotrealloc;
     const wchar_t *error_unknown;
@@ -74,6 +75,7 @@ struct msgtag{
     const wchar_t *player_spawnupdate;
     const wchar_t *db_notinstore;
     const wchar_t *db_inosuchitem;
+    const wchar_t *db_enosuchenemy;
     const wchar_t *db_ipurchaseitemhint;
     const wchar_t *db_ipurchasemultitemhint;
     const wchar_t *db_isellitemhint;
@@ -96,6 +98,14 @@ struct msgtag{
     const wchar_t *db_eetattack;
     const wchar_t *db_eetattackmiss;
     const wchar_t *db_eetattackblocked;
+    const wchar_t *db_eetyouattack;
+    const wchar_t *db_eetyouattackmiss;
+    const wchar_t *db_eetyouattackblocked;
+    const wchar_t *db_eetdie;
+    const wchar_t *db_eetdieexp;
+    const wchar_t *db_eetenterroom;
+    const wchar_t *db_retmoneydrop;
+    const wchar_t *db_retitemdrop;
 };
 struct msgtag msg_en={
     .global_corburtversion=CB_VERSIONTEXT,
@@ -166,6 +176,7 @@ struct msgtag msg_en={
     .trace_illegalfree=L"Error: Illegal free() target\n",
     .trace_freealled=L"All pointers freed.\n",
     .trace_loadeti=L"%" PRIdFAST32 " item entities loaded.\n",
+    .trace_loadete=L"%" PRIdFAST32 " enemy entities loaded.\n",
     .error_cannotmalloc=L"Fatal error: Cannot allocate memory.",
     .error_cannotrealloc=L"Fatal error: Cannot reallocate memory.",
     .error_unknown=L"Fatal error: An unknown fatal error occurred.",
@@ -208,7 +219,7 @@ struct msgtag msg_en={
     .player_inv_wearing=L"[WEARING] ",
     .player_inv_wear=L"You put on the %ls.\n",
     .player_inv_wield=L"You wield the %ls.\n",
-    .player_inv_equip=L"You equip the %ls.\n",
+    .player_inv_equip=L"You equipp the %ls.\n",
     .player_inv_alreadyequipped=L"%ls already equipped!\n",
     .player_abl=L"-------------------------------------------------------------------\n"
     "                           Your Abilities\n"
@@ -219,6 +230,7 @@ struct msgtag msg_en={
     .player_spawnupdate=L"Your spawn point has been updated to: %ls\n",
     .db_notinstore=L"You are not in a store.\n",
     .db_inosuchitem=L"There is no such item.\n",
+    .db_enosuchenemy=L"There is no such enemy.\n",
     .db_ipurchaseitemhint=L"%ls purchased.\n",
     .db_ipurchasemultitemhint=L"%ls (x%" PRIdFAST32 ") purchased.\n",
     .db_isellitemhint=L"%ls sold.\n",
@@ -226,10 +238,10 @@ struct msgtag msg_en={
     .db_icantafford=L"You cannot afford the item. (missing $%" PRIdFAST32 ")\n",
     .db_icantaffordmult=L"You cannot afford the item. (missing $%" PRIdFAST32 ")\n",
     .db_icantcarry=L"You can't carry this much.\n",
-    .db_iettake=L"You pick up the %ls.\n",
-    .db_ietmulttake=L"You pick up the %ls (x%" PRIdFAST32 ").\n",
-    .db_ietdrop=L"You drop the %ls.\n",
-    .db_ietmultdrop=L"You drop the %ls (x%" PRIdFAST32 ").\n",
+    .db_iettake=L"You picked up the %ls.\n",
+    .db_ietmulttake=L"You picked up the %ls (x%" PRIdFAST32 ").\n",
+    .db_ietdrop=L"You dropped the %ls.\n",
+    .db_ietmultdrop=L"You dropped the %ls (x%" PRIdFAST32 ").\n",
     .db_ridnullexceptionerror=L"Null exception error: invalid room id.\n",
     .db_iidnullexceptionerror=L"Null exception error: invalid item id.\n",
     .db_eidnullexceptionerror=L"Null exception error: invalid enemy id.\n",
@@ -238,9 +250,17 @@ struct msgtag msg_en={
     .db_eetidnullexceptionerror=L"Null exception error: invalid enemy entity id.\n",
     .db_ietfull=L"%ls disappeared into the pile of objects on the ground..\n",
     .db_listitem=L"$%-10" PRIdFAST32 " | %ls\n",
-    .db_eetattack=L"%ls hits you for %" PRIdFAST32 " damage!\n",
-    .db_eetattackmiss=L"%ls swings at you but misses!\n",
-    .db_eetattackblocked=L"%ls swings at you but is blocked!\n",
+    .db_eetattack=L"%ls hit you for %" PRIdFAST32 " damage!\n",
+    .db_eetattackmiss=L"%ls swung at you but missed!\n",
+    .db_eetattackblocked=L"%ls swung at you but is blocked!\n",
+    .db_eetyouattack=L"You hit %ls for %" PRIdFAST32 " damage!\n",
+    .db_eetyouattackmiss=L"You swung at %ls but missed!\n",
+    .db_eetyouattackblocked=L"You swung at %ls but is blocked!\n",
+    .db_eetdie=L"%ls died!\n",
+    .db_eetdieexp=L"You gained %" PRIdFAST64 " exp.\n",
+    .db_eetenterroom=L"%ls entered the room!\n",
+    .db_retmoneydrop=L"$%" PRIdFAST32 " dropped to the ground.\n",
+    .db_retitemdrop=L"%ls dropped to the ground.\n",
 };
 struct msgtag *msg=&msg_en;
 #endif

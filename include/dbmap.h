@@ -548,7 +548,7 @@ void db_rshowdesc(nat roomid){
         printr(Red,msg->db_retidnullexceptionerror);
     }
     else{
-        for(nat i=0,first=1;i<DBE_ENEMYCAP;i++){
+        for(nat i=0,first=1;i<DBE_ENEMYCAP;i++){ // enemies:
             if(etr->etenemy[i]!=0){
                 enemydb *edb=et_getenemydb(etr->etenemy[i]);
                 if(first){
@@ -559,7 +559,7 @@ void db_rshowdesc(nat roomid){
                 first=0;
             }
         }
-        for(nat i=0,first=1;i<DBE_ITEMCAP;i++){
+        for(nat i=0,first=1;i<DBE_ITEMCAP;i++){ // items:
             if(etr->etitem[i]!=0){
                 struct et_item *eti=&et_items[etr->etitem[i]-1];
                 if(eti->available==false){
@@ -586,7 +586,10 @@ void db_rshowdesc(nat roomid){
                 }
                 first=0;
             }
-            if(i==DBE_ITEMCAP-1&&first==0)printf("\n");
+//            if(i==DBE_ITEMCAP-1&&first==0)printf("\n");
+        }
+        if(etr->money){ // money:
+            printc(Yellow|Bright,L"\nmoney: $%" PRIdFAST32,etr->money);
         }
     }
     printr(Default,L"\n\n");

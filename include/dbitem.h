@@ -20,7 +20,7 @@ typedef const struct{
     enum db_itemtype type;
     nat price;
     nat cd;
-    real crit;
+    nat crit;
     wchar_t *name;
     wchar_t *desc;
     struct {
@@ -70,7 +70,7 @@ itemdb itemdbs[]={
         .type=db_itemtype_weapon,
         .price=50,
         .cd=8,
-        .crit=0.05f,
+        .crit=500,
         .desc=L"Specially enhanced for your stabbing pleasure...",
         .stats={.min_=2,.max_=5,.acc=13}
     },
@@ -85,7 +85,7 @@ itemdb itemdbs[]={
         .type=db_itemtype_weapon,
         .price=40,
         .cd=32,
-        .crit=0.05,
+        .crit=500,
         .desc=L"Occasionally reveals its power.",
         .stats={.min_=1,.max_=7}
     },
@@ -271,6 +271,14 @@ itemdb itemdbs[]={
                 "    -- fishstore",
         .stats={.min_=3,.max_=9}
     },
+    {.id=38,.name=L"Bone Longsword",
+        .type=db_itemtype_weapon,
+        .price=1550,
+        .cd=53,
+        .crit=100,
+        .desc=L"Are they getting the material from themselves? Well...",
+        .stats={.min_=23,.max_=35,.acc=24,.con=1}
+    },
     {
         .id=0
 //              -------------------------------------------------------------------\n"
@@ -283,6 +291,7 @@ void consumeitem(nat itemid);
 
 
 itemdb *db_ifindwithid(nat itemid){
+    if(itemdbs[itemid-1].id==itemid)return &itemdbs[itemid-1];
     for(nat i=0;;i++){
         if(itemdbs[i].id==itemid){
             return &itemdbs[i];
