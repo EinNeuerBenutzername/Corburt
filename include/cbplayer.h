@@ -2,7 +2,7 @@
 #define Corburt_Player_h_Include_Guard
 //#define LVL_CAP 120
 #define LVL_CAP 20
-#define DMG_RATIO 0.2f
+#define DMG_RATIO 0.333f
 #include "dbmap.h"
 const bat exp2next[]={
     [0]=20,
@@ -156,7 +156,7 @@ static void paddgearstats(){
         cbp.calcstats.def+=idb->stats.def;
         cbp.calcstats.acc+=idb->stats.acc;
         cbp.calcstats.dod+=idb->stats.dod;
-        cbp.calcstats.stl+=idb->stats.stl;
+        cbp.calcstats.wis+=idb->stats.wis;
         cbp.calcstats.act+=idb->stats.act;
         cbp.calcstats.con+=idb->stats.con;
         cbp.calcstats.regen+=idb->stats.regen;
@@ -167,7 +167,7 @@ static void paddgearstats(){
     }else{
         cbp.calcstats.min_=1;
         cbp.calcstats.max_=2;
-        cbp.calcstats.cd=10;
+        cbp.calcstats.cd=30;
         cbp.calcstats.crit=0;
     }
     if(inventory.armor!=0){
@@ -177,7 +177,7 @@ static void paddgearstats(){
         cbp.calcstats.def+=idb->stats.def;
         cbp.calcstats.acc+=idb->stats.acc;
         cbp.calcstats.dod+=idb->stats.dod;
-        cbp.calcstats.stl+=idb->stats.stl;
+        cbp.calcstats.wis+=idb->stats.wis;
         cbp.calcstats.act+=idb->stats.act;
         cbp.calcstats.con+=idb->stats.con;
             cbp.calcstats.regen+=idb->stats.regen;
@@ -190,7 +190,7 @@ static void paddgearstats(){
             cbp.calcstats.def+=idb->stats.def;
             cbp.calcstats.acc+=idb->stats.acc;
             cbp.calcstats.dod+=idb->stats.dod;
-            cbp.calcstats.stl+=idb->stats.stl;
+            cbp.calcstats.wis+=idb->stats.wis;
             cbp.calcstats.act+=idb->stats.act;
             cbp.calcstats.con+=idb->stats.con;
             cbp.calcstats.regen+=idb->stats.regen;
@@ -282,27 +282,29 @@ void pcalcstats(){
         player.maxhp+=player.stats.con*player.lvl/2.85f;
         player.maxhp+=player.stats.con*player.lvl*player.lvl/32.52f;
         player.maxhp+=player.stats.con*player.stats.con*player.lvl/25972.142f;
+        if(player.maxhp<1)player.maxhp=1;
+        if(player.hp>player.maxhp)player.hp=player.maxhp;
     }
     { // stats
         if(player.stats.atk>99999)player.stats.atk=99999;
         if(player.stats.def>99999)player.stats.def=99999;
         if(player.stats.acc>99999)player.stats.acc=99999;
         if(player.stats.dod>99999)player.stats.dod=99999;
-        if(player.stats.stl>99999)player.stats.stl=99999;
+        if(player.stats.wis>99999)player.stats.wis=99999;
         if(player.stats.act>99999)player.stats.act=99999;
         if(player.stats.con>99999)player.stats.con=99999;
         if(player.bstats.atk>99999)player.bstats.atk=99999;
         if(player.bstats.def>99999)player.bstats.def=99999;
         if(player.bstats.acc>99999)player.bstats.acc=99999;
         if(player.bstats.dod>99999)player.bstats.dod=99999;
-        if(player.bstats.stl>99999)player.bstats.stl=99999;
+        if(player.bstats.wis>99999)player.bstats.wis=99999;
         if(player.bstats.act>99999)player.bstats.act=99999;
         if(player.bstats.con>99999)player.bstats.con=99999;
         cbp.calcstats.atk=player.stats.atk+player.bstats.atk;
         cbp.calcstats.def=player.stats.def+player.bstats.def;
         cbp.calcstats.acc=player.stats.acc+player.bstats.acc;
         cbp.calcstats.dod=player.stats.dod+player.bstats.dod;
-        cbp.calcstats.stl=player.stats.stl+player.bstats.stl;
+        cbp.calcstats.wis=player.stats.wis+player.bstats.wis;
         cbp.calcstats.act=player.stats.act+player.bstats.act;
         cbp.calcstats.con=player.stats.con+player.bstats.con;
         paddgearstats();
@@ -318,7 +320,7 @@ void pshowstats(){
         player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]),
         cbp.calcstats.atk,cbp.calcstats.def,
         cbp.calcstats.acc,cbp.calcstats.dod,
-        cbp.calcstats.stl,cbp.calcstats.act,
+        cbp.calcstats.wis,cbp.calcstats.act,
         cbp.calcstats.con,player.stats.pts
     );
 }
@@ -374,11 +376,13 @@ void pmove(enum direction dir){ // ready for special exits
     if(!rm->exits[dir]){printr(Default,msg->player_walkno);return;}
     if(db_rfindwithid(rm->exits[dir])==NULL){printr(Default,msg->player_walkno);return;}
     if(!rm->exitsid[dir]){
+#ifndef CB_REALTIME
         timepass(30);
         if(cbp.playerdead){
             cbp.playerdead=false;
             return;
         }
+#endif
         player.roomid=rm->exits[dir];
         switch(dir){
         case dir_East:
@@ -422,6 +426,10 @@ static void pmovesuccess(){
     }
 }
 void pattack(nat entityid){
+    if(cbp.attackcd>0){
+        printr(Default,msg->player_cantattack);
+        return;
+    }
     struct et_enemy *ete=&et_enemies[entityid-1];
     if(!ete->available){
         printc(Red,msg->db_eetidnullexceptionerror);
@@ -464,8 +472,11 @@ void pattack(nat entityid){
         else printc(White,msg->db_eetyouattackblocked,edb->name);
         etenemy_takedamage(entityid,dmg);
     }
+#ifndef CB_REALTIME
     timepass(cbp.calcstats.cd);
-
+#else
+    cbp.attackcd=cbp.calcstats.cd;
+#endif
 }
 void ptrain(){
     roomdb *rm=db_rfindwithid(player.roomid);
@@ -498,13 +509,13 @@ void peditstats(){
         printc(Default,msg->player_points,
             player.stats.atk,player.stats.def,
             player.stats.acc,player.stats.dod,
-            player.stats.stl,player.stats.act,
+            player.stats.wis,player.stats.act,
             player.stats.con,player.stats.pts);
     }else{
         printc(Default,msg->player_points,
             player.stats.atk,player.stats.def,
             player.stats.acc,player.stats.dod,
-            player.stats.stl,player.stats.act,
+            player.stats.wis,player.stats.act,
             player.stats.con,player.stats.pts);
         printc(Default,msg->player_editstatsnopoints);
     }

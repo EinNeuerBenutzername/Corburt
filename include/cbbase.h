@@ -1,9 +1,12 @@
 #ifndef Corburt_Base_h_Include_Guard
 #define Corburt_Base_h_Include_Guard
 #define DISPLAY_WIDTH 68
-#define CB_VERSIONNUM 230
+#define CB_VERSIONNUM 240
 #define CB_VERSIONCHECK 1
-#define CB_VERSIONTEXT L"v0.2.3"
+#define CB_VERSIONTEXT L"v0.2.4"
+#ifndef Corburt_Pointer_Trace_Level
+    #define Corburt_Pointer_Trace_Level 0
+#endif
 #if __STDC_VERSION__<199901L
     #error Please use a C99 compiler.
 #endif
@@ -43,7 +46,7 @@ struct player{
         nat def;
         nat acc;
         nat dod;
-        nat stl;
+        nat wis;
         nat act;
         nat con;
         nat pts;
@@ -53,7 +56,7 @@ struct player{
         nat def;
         nat acc;
         nat dod;
-        nat stl;
+        nat wis;
         nat act;
         nat con;
         nat pts;
@@ -67,7 +70,7 @@ struct inventory{
     nat weapon;
     nat armor;
     bat money;
-} inventory={16,{0},{0},0,0,1000};
+} inventory={16,{0},{0},0,0,0};
 struct save{
     nat valid;
     struct player plr;
@@ -393,6 +396,7 @@ void freeall(){
     }
     tracelog(Green,msg->trace_freealled);
 }
+#ifndef CB_REALTIME
 void scanline(wchar_t *scan_str,int scans){
     cbc_setcolor(Yellow);
     fflush(stdout);
@@ -405,6 +409,9 @@ void scanline(wchar_t *scan_str,int scans){
 
     fflush(stdout);
 }
+#else
+void fscanline(wchar_t *scan_str,int scans);
+#endif
 void wcslower(wchar_t **target_str_pos){
     for(size_t i=0;i<wcslen(*target_str_pos);i++){
         if((*target_str_pos)[i]<=90&&(*target_str_pos)[i]>=65){
@@ -515,7 +522,7 @@ struct {
         nat def;
         nat acc;
         nat dod;
-        nat stl;
+        nat wis;
         nat act;
         nat con;
         nat pts;
@@ -527,6 +534,7 @@ struct {
     } calcstats;
     foo playerdead;
     foo editstats;
+    nat attackcd;
 } cbp={0};
 static void plvlup();
 static void paddgearstats();

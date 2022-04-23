@@ -12,6 +12,11 @@ foo match__commands(wchar_t *cmd); // template
 foo matchregularcommands(wchar_t *cmd);
 foo matcheditstatscommands(wchar_t *cmd);
 void processinput();
+#ifdef CB_REALTIME
+#include "cbsys.h"
+int cbio_matchid=0,cbio_matchidold=1,cbio_len=0;
+FILE *fpinput=NULL;
+#endif
 
 foo fullmatch(wchar_t *wcs,const wchar_t *wcs2){
     if(wcs==NULL&&wcs2==NULL)return true;
@@ -324,7 +329,7 @@ foo matchregularcommands(wchar_t *cmd){
         }
         return true;
     }
-    if(fullmatch(cmd,L"take")|| // TODO: +take money
+    if(fullmatch(cmd,L"take")||
        fullmatch(cmd,L"get")||
        fullmatch(cmd,L"g")){
         size_t startp=4;
@@ -394,6 +399,31 @@ foo matchregularcommands(wchar_t *cmd){
                 maxmatchid=etr->etitem[i];
             }
         }
+        if(maxmatch<0){
+            if(taketarget[0]==L'$'){
+                struct et_room *etr=et_findroomwithid(player.roomid);
+                if(etr==NULL){
+                    printc(Red,msg->db_retidnullexceptionerror);
+                    return true;
+                }
+
+                nat moni=0;
+                for(size_t i=1;i<wcslen(taketarget);i++){
+                    if((taketarget[i]<L'0'||taketarget[i]>L'9'))break;
+                    moni*=10;
+                    moni+=taketarget[i]-L'0';
+                }
+                if(moni>etr->money){
+                    printc(Default,msg->db_retnotthatmuchmoney);
+                }else if(moni){
+                    etr->money-=moni;
+                    inventory.money+=moni;
+                    printc(Cyan|Bright,msg->db_retplayermoneypickup,moni);
+                    freepointer(taketarget);
+                }
+                return true;
+            }
+        }
         freepointer(taketarget);
         if(maxmatch>=0){
             struct et_item *eti=&et_items[maxmatchid-1];
@@ -453,7 +483,7 @@ foo matchregularcommands(wchar_t *cmd){
         }
         return true;
     }
-    if(fullmatch(cmd,L"drop")){ // TODO: +drop money
+    if(fullmatch(cmd,L"drop")){
         struct et_room *etr=et_findroomwithid(player.roomid);
         if(etr==NULL){
             printr(Red,msg->db_retidnullexceptionerror);
@@ -511,6 +541,31 @@ foo matchregularcommands(wchar_t *cmd){
             if(curmatch>maxmatch){
                 maxmatch=curmatch;
                 maxmatchid=inventory.items[i];
+            }
+        }
+        if(maxmatch<0){
+            if(droptarget[0]==L'$'){
+                nat moni=0;
+                for(size_t i=1;i<wcslen(droptarget);i++){
+                    if((droptarget[i]<L'0'||droptarget[i]>L'9'))break;
+                    moni*=10;
+                    moni+=droptarget[i]-L'0';
+                }
+                if(moni>inventory.money){
+                    printc(Default,msg->db_retplayernotthatmuchmoney);
+                    return true;
+                }else if(moni){
+                    inventory.money-=moni;
+                    struct et_room *etr=et_findroomwithid(player.roomid);
+                    if(etr==NULL){
+                        printc(Red,msg->db_retidnullexceptionerror);
+                        return true;
+                    }
+                    etr->money+=moni;
+                    printc(Cyan|Bright,msg->db_retplayermoneydrop,moni);
+                    freepointer(droptarget);
+                    return true;
+                }
             }
         }
         freepointer(droptarget);
@@ -766,7 +821,7 @@ foo matcheditstatscommands(wchar_t *cmd){
         printc(Default,msg->player_points,
             player.stats.atk,player.stats.def,
             player.stats.acc,player.stats.dod,
-            player.stats.stl,player.stats.act,
+            player.stats.wis,player.stats.act,
             player.stats.con,player.stats.pts);
         if(player.stats.pts||player.bstats.pts){
         }else{
@@ -791,7 +846,7 @@ foo matcheditstatscommands(wchar_t *cmd){
         printc(Default,msg->player_points,
             player.stats.atk,player.stats.def,
             player.stats.acc,player.stats.dod,
-            player.stats.stl,player.stats.act,
+            player.stats.wis,player.stats.act,
             player.stats.con,player.stats.pts);
         if(player.stats.pts||player.bstats.pts){
         }else{
@@ -816,7 +871,7 @@ foo matcheditstatscommands(wchar_t *cmd){
         printc(Default,msg->player_points,
             player.stats.atk,player.stats.def,
             player.stats.acc,player.stats.dod,
-            player.stats.stl,player.stats.act,
+            player.stats.wis,player.stats.act,
             player.stats.con,player.stats.pts);
         if(player.stats.pts||player.bstats.pts){
         }else{
@@ -841,7 +896,7 @@ foo matcheditstatscommands(wchar_t *cmd){
         printc(Default,msg->player_points,
             player.stats.atk,player.stats.def,
             player.stats.acc,player.stats.dod,
-            player.stats.stl,player.stats.act,
+            player.stats.wis,player.stats.act,
             player.stats.con,player.stats.pts);
         if(player.stats.pts||player.bstats.pts){
         }else{
@@ -853,10 +908,10 @@ foo matcheditstatscommands(wchar_t *cmd){
     if(fullmatch(cmd,L"5")){
         if(player.stats.pts){
             player.stats.pts--;
-            player.stats.stl++;
+            player.stats.wis++;
         }else if(player.bstats.pts){
             player.bstats.pts--;
-            player.bstats.stl++;
+            player.bstats.wis++;
         }
         // the rest is the same
         else{
@@ -866,7 +921,7 @@ foo matcheditstatscommands(wchar_t *cmd){
         printc(Default,msg->player_points,
             player.stats.atk,player.stats.def,
             player.stats.acc,player.stats.dod,
-            player.stats.stl,player.stats.act,
+            player.stats.wis,player.stats.act,
             player.stats.con,player.stats.pts);
         if(player.stats.pts||player.bstats.pts){
         }else{
@@ -891,7 +946,7 @@ foo matcheditstatscommands(wchar_t *cmd){
         printc(Default,msg->player_points,
             player.stats.atk,player.stats.def,
             player.stats.acc,player.stats.dod,
-            player.stats.stl,player.stats.act,
+            player.stats.wis,player.stats.act,
             player.stats.con,player.stats.pts);
         if(player.stats.pts||player.bstats.pts){
         }else{
@@ -916,7 +971,7 @@ foo matcheditstatscommands(wchar_t *cmd){
         printc(Default,msg->player_points,
             player.stats.atk,player.stats.def,
             player.stats.acc,player.stats.dod,
-            player.stats.stl,player.stats.act,
+            player.stats.wis,player.stats.act,
             player.stats.con,player.stats.pts);
         if(player.stats.pts||player.bstats.pts){
         }else{
@@ -929,6 +984,7 @@ foo matcheditstatscommands(wchar_t *cmd){
     return true;
 }
 void processinput(){
+#ifndef CB_REALTIME
     if(wcslen(inputbuf)==0){
         size_t row,col;
         cbc_getcursor(&row,&col);
@@ -938,6 +994,11 @@ void processinput(){
         matchcommands(inputbufl);
         return;
     }
+#else
+    if(wcslen(inputbuf)==0){
+        return;
+    }
+#endif
     wmemset(inputbufl,0,128);
     wcscpy(inputbufl,inputbuf);
     wcslower(&inputbufl);
@@ -951,4 +1012,46 @@ void processinput(){
     return;
 }
 
+#ifdef CB_REALTIME
+void fscanline(wchar_t *scan_str,int scans){
+    wmemset(scan_str,0,scans);
+    if(!fpinput){
+        fpinput=fopen("data.dmp","r");
+        return;
+    }
+    fscanf(fpinput,"%d.%d.",&cbio_matchid,&cbio_len);
+    if(cbio_matchid==cbio_matchidold){
+        rewind(fpinput);
+        fflush(fpinput);
+        return;
+    }
+    if(cbio_len>=scans)cbio_len=scans-1;
+    fgetws(scan_str,cbio_len+1,fpinput);
+    cbio_matchidold=cbio_matchid;
+    rewind(fpinput);
+    fflush(fpinput);
+}
+void scanline(wchar_t *scan_str,int scans){
+    while(1){
+        cbtime_wait(30);
+        if(!fpinput){
+            fpinput=fopen("data.dmp","r");
+            continue;
+        }
+        fscanf(fpinput,"%d.%d.",&cbio_matchid,&cbio_len);
+        if(cbio_matchid==cbio_matchidold){
+            rewind(fpinput);
+            fflush(fpinput);
+            continue;
+        }
+        if(cbio_len>scans)cbio_len=scans-1;
+        wmemset(scan_str,0,scans);
+        fgetws(scan_str,cbio_len+1,fpinput);
+        cbio_matchidold=cbio_matchid;
+        rewind(fpinput);
+        fflush(fpinput);
+        break;
+    }
+}
+#endif
 #endif

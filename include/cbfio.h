@@ -56,7 +56,7 @@ static void readplayerstats(struct player *p,FILE *fp){
     int_fast32_t_read(&plr.stats.def,fp);
     int_fast32_t_read(&plr.stats.acc,fp);
     int_fast32_t_read(&plr.stats.dod,fp);
-    int_fast32_t_read(&plr.stats.stl,fp);
+    int_fast32_t_read(&plr.stats.wis,fp);
     int_fast32_t_read(&plr.stats.act,fp);
     int_fast32_t_read(&plr.stats.con,fp);
     int_fast32_t_read(&plr.stats.pts,fp);
@@ -64,7 +64,7 @@ static void readplayerstats(struct player *p,FILE *fp){
     int_fast32_t_read(&plr.bstats.def,fp);
     int_fast32_t_read(&plr.bstats.acc,fp);
     int_fast32_t_read(&plr.bstats.dod,fp);
-    int_fast32_t_read(&plr.bstats.stl,fp);
+    int_fast32_t_read(&plr.bstats.wis,fp);
     int_fast32_t_read(&plr.bstats.act,fp);
     int_fast32_t_read(&plr.bstats.con,fp);
     int_fast32_t_read(&plr.bstats.pts,fp);
@@ -83,7 +83,7 @@ static void saveplayerstats(struct player plr,FILE *fp){
     int_fast32_t_write(plr.stats.def,fp);
     int_fast32_t_write(plr.stats.acc,fp);
     int_fast32_t_write(plr.stats.dod,fp);
-    int_fast32_t_write(plr.stats.stl,fp);
+    int_fast32_t_write(plr.stats.wis,fp);
     int_fast32_t_write(plr.stats.act,fp);
     int_fast32_t_write(plr.stats.con,fp);
     int_fast32_t_write(plr.stats.pts,fp);
@@ -91,7 +91,7 @@ static void saveplayerstats(struct player plr,FILE *fp){
     int_fast32_t_write(plr.bstats.def,fp);
     int_fast32_t_write(plr.bstats.acc,fp);
     int_fast32_t_write(plr.bstats.dod,fp);
-    int_fast32_t_write(plr.bstats.stl,fp);
+    int_fast32_t_write(plr.bstats.wis,fp);
     int_fast32_t_write(plr.bstats.act,fp);
     int_fast32_t_write(plr.bstats.con,fp);
     int_fast32_t_write(plr.bstats.pts,fp);
@@ -225,17 +225,17 @@ static void readsavesglobaldata(FILE *fp){
     }
     int_fast32_t_read(&global.curtick,fp);
     int_fast64_t_read(&global.curround,fp);
-    readet_rooms(fp);
     readet_items(fp);
     readet_enemies(fp);
+    readet_rooms(fp);
 }
 static void savesavesglobaldata(FILE *fp){
     int_fast32_t_write(CB_VERSIONNUM,fp);
     int_fast32_t_write(global.curtick,fp);
     int_fast64_t_write(global.curround,fp);
-    saveet_rooms(fp);
     saveet_items(fp);
     saveet_enemies(fp);
+    saveet_rooms(fp);
 }
 void readsaves(){
     fio.fail=0;

@@ -31,7 +31,7 @@ typedef const struct{
         nat def;
         nat acc;
         nat dod;
-        nat stl;
+        nat wis;
         nat act;
         nat con;
         nat pts;
@@ -41,43 +41,43 @@ itemdb itemdbs[]={
     {.id=1,.name=L"Wooden Stick",
         .type=db_itemtype_weapon,
         .price=5,
-        .cd=15,
+        .cd=45,
         .desc=L"\"Now let's do it with a wooden stick!\"",
-        .stats={.min_=0,.max_=3,.acc=-5}
+        .stats={.min_=1,.max_=3,.acc=-5}
     },
     {.id=2,.name=L"Rusty Knife",
         .type=db_itemtype_weapon,
         .price=5,
-        .cd=10,
+        .cd=30,
         .desc=L"A simple rusty knife. What do you expect?",
-        .stats={.min_=1,.max_=2,.acc=3}
+        .stats={.min_=1,.max_=3,.acc=3}
     },
     {.id=3,.name=L"Stiletto",
         .type=db_itemtype_weapon,
         .price=15,
-        .cd=12,
+        .cd=42,
         .desc=L"Born for stabbing.",
-        .stats={.min_=1,.max_=4,.acc=5}
+        .stats={.min_=1,.max_=5,.acc=5}
     },
     {.id=4,.name=L"Iron Shortsword",
         .type=db_itemtype_weapon,
         .price=30,
-        .cd=24,
+        .cd=72,
         .desc=L"Classic newbie weapon.",
-        .stats={.min_=3,.max_=6,.acc=3}
+        .stats={.min_=4,.max_=6,.acc=3}
     },
     {.id=5,.name=L"Vicious Stiletto",
         .type=db_itemtype_weapon,
         .price=50,
-        .cd=8,
+        .cd=24,
         .crit=500,
         .desc=L"Specially enhanced for your stabbing pleasure...",
-        .stats={.min_=2,.max_=5,.acc=13}
+        .stats={.min_=1,.max_=7,.acc=13}
     },
     {.id=6,.name=L"Knife",
         .type=db_itemtype_weapon,
         .price=18,
-        .cd=14,
+        .cd=42,
         .desc=L"Designed to cut things, not people.",
         .stats={.min_=2,.max_=5,.acc=4}
     },
@@ -141,7 +141,7 @@ itemdb itemdbs[]={
         .type=db_itemtype_armor,
         .price=20,
         .desc=L"Basically, it's plain clothes.",
-        .stats={.dod=5,.acc=3}
+        .stats={.dod=8,.acc=5}
     },
     {.id=17,.name=L"Leather Armor",
         .type=db_itemtype_armor,
@@ -220,12 +220,12 @@ itemdb itemdbs[]={
         .price=2,
         .cd=8,
         .desc=L"For the long-forgotten glory...",
-        .stats={.min_=11,.max_=28,.def=-34,.atk=-1,.acc=35,.dod=-175,.stl=-73}
+        .stats={.min_=0,.max_=1,.def=-1,.acc=1}
     },
     {.id=30,.name=L"Fan",
         .type=db_itemtype_weapon,
         .price=5,
-        .cd=30,
+        .cd=90,
         .desc=L"Impractical.",
         .stats={.min_=-1,.max_=0}
     },
@@ -271,13 +271,13 @@ itemdb itemdbs[]={
                 "    -- fishstore",
         .stats={.min_=3,.max_=9}
     },
-    {.id=38,.name=L"Bone Longsword",
+    {.id=38,.name=L"Broken Bone Longsword",
         .type=db_itemtype_weapon,
-        .price=1550,
-        .cd=53,
-        .crit=100,
+        .price=1650,
+        .cd=153,
+        .crit=343,
         .desc=L"Are they getting the material from themselves? Well...",
-        .stats={.min_=23,.max_=35,.acc=24,.con=3}
+        .stats={.min_=22,.max_=35,.acc=20,.dod=4,.con=4}
     },
     {
         .id=0

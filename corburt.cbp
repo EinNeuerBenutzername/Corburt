@@ -8,9 +8,13 @@
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/corburt" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/Debug" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+				</Compiler>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/corburt" prefix_auto="1" extension_auto="1" />
@@ -27,7 +31,15 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-fPIC" />
+			<Add option="-m32" />
 		</Compiler>
+		<Linker>
+			<Add option="-static-libstdc++" />
+			<Add option="-static-libgcc" />
+			<Add option="-static" />
+			<Add option="-m32" />
+		</Linker>
 		<Unit filename="curburt.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -37,6 +49,7 @@
 		<Unit filename="include/cbfio_base.h" />
 		<Unit filename="include/cbio.h" />
 		<Unit filename="include/cbplayer.h" />
+		<Unit filename="include/cbsys.h" />
 		<Unit filename="include/cbturn.h" />
 		<Unit filename="include/dbbuff.h" />
 		<Unit filename="include/dbenemy.h" />

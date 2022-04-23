@@ -5,6 +5,8 @@
 // prepared for future translations. :)
 struct msgtag{
     const wchar_t *global_corburtversion;
+    const wchar_t *global_input;
+    const wchar_t *global_waitingforinput;
     const wchar_t *global_welcome;
     const wchar_t *global_splash;
     const wchar_t *global_splash2;
@@ -25,6 +27,7 @@ struct msgtag{
     const wchar_t *global_help;
     const wchar_t *global_save_incompat;
     const wchar_t *global_curtime;
+    const wchar_t *global_curtimert;
     const wchar_t *trace_savesize;
     const wchar_t *trace_endianess_le;
     const wchar_t *trace_endianess_be;
@@ -54,6 +57,7 @@ struct msgtag{
     const wchar_t *player_walkup;
     const wchar_t *player_walkdown;
     const wchar_t *player_walkno;
+    const wchar_t *player_cantattack;
     const wchar_t *player_canttrain;
     const wchar_t *player_canttrain_noexp;
     const wchar_t *player_canttrain_maxlvl;
@@ -112,9 +116,15 @@ struct msgtag{
     const wchar_t *db_eetenterroom;
     const wchar_t *db_retmoneydrop;
     const wchar_t *db_retitemdrop;
+    const wchar_t *db_retplayermoneydrop;
+    const wchar_t *db_retplayermoneypickup;
+    const wchar_t *db_retnotthatmuchmoney;
+    const wchar_t *db_retplayernotthatmuchmoney;
 };
 struct msgtag msg_en={
     .global_corburtversion=CB_VERSIONTEXT,
+    .global_input=L"This is the input interface for Corburt.\nType 'help' for help and 'quit' to end the game.\n",
+    .global_waitingforinput=L"Waiting for cbinput...\n",
     .global_welcome=L"Welcome to Corburt.\n\n",
     .global_splash=L"   @@@@                @@\n"
                     "  @@  @@               @@                  @@\n"
@@ -172,6 +182,7 @@ struct msgtag msg_en={
                 "-------------------------------------------------------------------\n",
     .global_save_incompat=L"Incompatible save version: expected %ls.\n",
     .global_curtime=L"Current time: %" PRIdFAST64 " turns, %" PRIdFAST32 " ticks.\n",
+    .global_curtimert=L"Current time: %" PRIdFAST64 " h %" PRIdFAST32 " m %" PRIdFAST32 "s, %" PRIdFAST32 " ticks.\n",
     .trace_savesize=L"Size of a save is %zu bytes.\n",
     .trace_endianess_le=L"Machine is little endian.\n",
     .trace_endianess_be=L"Machine is big endian.\n",
@@ -201,6 +212,7 @@ struct msgtag msg_en={
     .player_walkup=L"You go UP.\n",
     .player_walkdown=L"You go DOWN.\n",
     .player_walkno=L"You walk towards an impossible direction and failed.\n",
+    .player_cantattack=L"You can't attack yet.\n",
     .player_canttrain=L"This does not look like a place for training.\n",
     .player_canttrain_noexp=L"You are not experienced enough for your training.\n",
     .player_canttrain_maxlvl=L"You have reached the limit of what you can achieve with training.\n",
@@ -214,7 +226,7 @@ struct msgtag msg_en={
                 "Experience:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n\n"
                 "Strike Power:   %-08" PRIdFAST32 "            Damage Absorb:  %-08" PRIdFAST32 "\n"
                 "Accuracy:       %-08" PRIdFAST32 "            Dodging:        %-08" PRIdFAST32 "\n"
-                "Stealth:        %-08" PRIdFAST32 "            Responsiveness: %-08" PRIdFAST32 "\n"
+                "Wisdom:         %-08" PRIdFAST32 "            Responsiveness: %-08" PRIdFAST32 "\n"
                 "Constitution:   %-08" PRIdFAST32 "            Stat Points:    %-08" PRIdFAST32 "\n"
                 "-------------------------------------------------------------------\n",
     .player_exp=L"Level:         %" PRIdFAST32 "\n"
@@ -223,7 +235,7 @@ struct msgtag msg_en={
                 "                           Your Base Stats\n"
                 "1) Strike Power:   %-08" PRIdFAST32 "      2) Damage Absorb:  %-08" PRIdFAST32 "\n"
                 "3) Accuracy:       %-08" PRIdFAST32 "      4) Dodging:        %-08" PRIdFAST32 "\n"
-                "5) Stealth:        %-08" PRIdFAST32 "      6) Responsiveness: %-08" PRIdFAST32 "\n"
+                "5) Wisdom:         %-08" PRIdFAST32 "      6) Responsiveness: %-08" PRIdFAST32 "\n"
                 "7) Constitution:   %-08" PRIdFAST32 "         Stat Points:    %-08" PRIdFAST32 "\n"
                 "-------------------------------------------------------------------\n",
     .player_canteditstats=L"You can't edit your stats outside a training room.\n",
@@ -241,7 +253,7 @@ struct msgtag msg_en={
     .player_inv_wearing=L"[WEARING] ",
     .player_inv_wear=L"You put on the %ls.\n",
     .player_inv_wield=L"You wield the %ls.\n",
-    .player_inv_equip=L"You equipp the %ls.\n",
+    .player_inv_equip=L"You equip the %ls.\n",
     .player_inv_alreadyequipped=L"%ls already equipped!\n",
     .player_abl=L"-------------------------------------------------------------------\n"
     "                           Your Abilities\n"
@@ -283,6 +295,10 @@ struct msgtag msg_en={
     .db_eetenterroom=L"%ls entered the room!\n",
     .db_retmoneydrop=L"$%" PRIdFAST32 " dropped to the ground.\n",
     .db_retitemdrop=L"%ls dropped to the ground.\n",
+    .db_retplayermoneydrop=L"You dropped $%" PRIdFAST32 " to the ground.\n",
+    .db_retplayermoneypickup=L"You picked up $%" PRIdFAST32 " from the ground.\n",
+    .db_retnotthatmuchmoney=L"There isn't that much money!\n",
+    .db_retplayernotthatmuchmoney=L"You don't have that much money!\n",
 };
 struct msgtag *msg=&msg_en;
 #endif

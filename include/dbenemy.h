@@ -25,7 +25,7 @@ typedef const struct enemydb{
         nat def;
         nat acc;
         nat dod;
-        nat stl;
+        nat wis;
         nat act;
         nat con;
     } stats;

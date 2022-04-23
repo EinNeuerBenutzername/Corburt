@@ -146,7 +146,7 @@
 1650106635 g:\-guten\prog\c\proj\corburt\include\dbenemy.h
 	"cbbase.h"
 
-1649569260 source:e:\dev\corburt\curburt.c
+1650682386 source:e:\dev\corburt\curburt.c
 	<stdio.h>
 	"include/cbcurses.h"
 	"include/cbbase.h"
@@ -154,8 +154,9 @@
 	"include/cbio.h"
 	"include/cbfio.h"
 	"include/dbentity.h"
+	"include/cbsys.h"
 
-1645675138 e:\dev\corburt\include\cbcurses.h
+1650112018 e:\dev\corburt\include\cbcurses.h
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -167,7 +168,7 @@
 	<unistd.h>
 	<signal.h>
 
-1649908844 e:\dev\corburt\include\cbbase.h
+1650680054 e:\dev\corburt\include\cbbase.h
 	"msg.h"
 	"mtwister.h"
 	<limits.h>
@@ -179,52 +180,53 @@
 	<inttypes.h>
 	<math.h>
 
-1649908430 e:\dev\corburt\include\msg.h
+1650682646 e:\dev\corburt\include\msg.h
 	<inttypes.h>
 	<wchar.h>
 
-1643071532 e:\dev\corburt\include\mtwister.h
+1650112018 e:\dev\corburt\include\mtwister.h
 	<inttypes.h>
 
-1649909274 e:\dev\corburt\include\cbplayer.h
+1650680894 e:\dev\corburt\include\cbplayer.h
 	"dbmap.h"
 	"dbitem.h"
 	"cbturn.h"
 
-1649572482 e:\dev\corburt\include\dbmap.h
+1650622476 e:\dev\corburt\include\dbmap.h
 	"cbbase.h"
 	"dbentity.h"
 
-1649908596 e:\dev\corburt\include\dbentity.h
+1650623862 e:\dev\corburt\include\dbentity.h
 	"cbbase.h"
 	"dbmap.h"
 	"dbenemy.h"
 	"dbitem.h"
 
-1649909204 e:\dev\corburt\include\dbenemy.h
+1650511898 e:\dev\corburt\include\dbenemy.h
 	"cbbase.h"
 
-1649908902 e:\dev\corburt\include\dbitem.h
+1650512384 e:\dev\corburt\include\dbitem.h
 	"cbbase.h"
 	"cbplayer.h"
 
-1649908344 e:\dev\corburt\include\cbio.h
+1650680694 e:\dev\corburt\include\cbio.h
 	"cbbase.h"
 	"cbfio.h"
 	"cbplayer.h"
 	"dbmap.h"
 	"dbitem.h"
+	"cbsys.h"
 
-1649572214 e:\dev\corburt\include\cbfio.h
+1650679614 e:\dev\corburt\include\cbfio.h
 	"cbfio_base.h"
 	"cbbase.h"
 
-1649490238 e:\dev\corburt\include\cbfio_base.h
+1650112018 e:\dev\corburt\include\cbfio_base.h
 	<limits.h>
 	<stdio.h>
 	<inttypes.h>
 
-1649909370 e:\dev\corburt\include\cbturn.h
+1650682622 e:\dev\corburt\include\cbturn.h
 	"cbbase.h"
 	"cbplayer.h"
 	"dbentity.h"
@@ -233,4 +235,12 @@
 	"cbbase.h"
 	"cbplayer.h"
 	"dbentity.h"
+
+1650678176 e:\dev\corburt\include\cbsys.h
+	"cbbase.h"
+	<time.h>
+	<Windows.h>
+	<sys/time.h>
+	<unistd.h>
+	<sys/time.h>
 

@@ -1,7 +1,5 @@
 # Corburt
 
-[TOC]
-
 ## About
 
 ### General
@@ -20,13 +18,14 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
   - [x] implement health regen
   - [x] implement enemy drops
   - [x] implement death punishments
-  - [ ] implement money loot (WiP)
+  - [x] implement money loot
   - [x] implement stat edits
+  - [x] implement real-time combat
 
 - **Polish**
 
   - [ ] make balancing improvements (WiP)
-  - [ ] add new item & enemy data entries
+  - [ ] add new item & enemy data entries (WiP)
 
 - **Optional**
 
@@ -34,62 +33,54 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
 
 ## Features/Highlights
 
-- **written in plain C code** (C99).
-- **multi-platform support**: should work on Windows, Linux, MacOS and several other \*nixes.
-- **no external dependencies** (hopefully).
-- **open source**.
-- **easy to compile**: only one .c file, all other files are headers. friendly for C amateurs.
+- **Written in plain C code** (C99).
+- **Multi-platform support**: should work on Windows, Linux, MacOS and several other \*nixes.
+- **No external dependencies** (hopefully).
+- **Open source**.
+- **Easy to compile**: only two .c files, all other files are headers. friendly for C amateurs.
 
 ## Drawbacks
 
-- it's in a **very early stage of development**.
-- might **not** be finished.
-- might **not** work properly on non-Windows platforms.
-  - might not even work properly on Windows platforms other than Windows 10.
-  - for this reason, please report if you encounter any problem.
-- **not** yet C++-compatible.
+- It's in an **early stage of development**.
+- Might **not** be finished.
+- Might **not** work properly on non-Windows platforms.
+  - Might not even work properly on Windows platforms other than Windows 10.
+  - For this reason, please report if you encounter any problem.
+- **Not** yet C++-compatible.
+  - Actually, C++ compatibility is never taken into consideration.
 - I am lazy and might **not** be available for improvements and bug fixes.
 
 ## Requirements
 
-- your computer should either be **non-prehistorical Windows** or **POSIX-compliant \*nix**.
-  - this is largely because Corburt's curses library rely on platform-specific headers.
-  - Corburt uses **no** platform-specific headers **except for** those in `cbcurses.h`. Basically, the only thing limiting Corburt's cross-platform capabilities is the curses support.
-- your compiler should support **C99** with these standard C libraries:
-  - `<inttypes.h>`
-    - for `uint_fastX_t` types
-  - `<locale.h>`
-    - for Unicode support
-  - `<math.h>`
-    - for math calculation
-  - `<stdarg.h>`
-    - for I/O
-  - `<stdbool.h>`
-    - for the bool type
-  - `<stdio.h>`
-    - for I/O
-  - `<stdlib.h>`
-    - for memory management
-  - `<time.h>`
-    - for RNG
-  - `<wchar.h>`
-    - for Unicode support
-- on your computer, a byte **must** contain exactly 8 bits.
-  - it is also suggested that the size of wchar_t is exactly 16 bits. it's okay if that's not the case, though.
-  - **bit-wise endianness**, **non-ASCII interchange codes** (e.g. EBCDIC), et cetera, which are less common in my opinion, are **not** allowed, too.
-- it is recommended to use GCC compiler.
-  - it's especially recommended to use Code::Blocks to compile. I am using Code::Blocks to develop Corburt and would upload my C::B project files along with the source.
+- Your computer should either be **non-prehistorical Windows** or **POSIX-compliant \*nix**.
+  - This is largely because Corburt's curses library rely on platform-specific headers.
+- On your computer, a byte **must** contain exactly 8 bits.
+  - Tt is also suggested that the size of wchar_t is exactly 16 bits. it's okay if that's not the case, though.
+  - **Bit-wise endianness**, **non-ASCII interchange codes** (e.g. EBCDIC), et cetera, which are less common in my opinion, are **not** allowed, too.
+- It is recommended to use GCC compiler.
+  - It's especially recommended to use Code::Blocks to compile. I am using Code::Blocks to develop Corburt and would upload my C::B project files along with the source.
   - I might ignore any MSVC-exclusive issues. MSVC just has too many of them.
+
+## How to
+### Compile and launch Corburt
+- Please compile `cbinput.c` and `corburt.c` into binary/executable files. Then launch the two programs simultaneously.
+- Send your input at `cbinput` and the main Corburt program should be able to receive and process it.
+- If you encounter problems, please report.
+
+### Port Corburt to other platforms
+- It shouldn't be hard for Corburt to be ported to other platforms as long as they support C99. Currently, there are only two files that rely on OS-specific headers. One is `cbcurses.h` and the other is `cbsys.h`.
+  - However, Corburt opens and reads/writes one single file with two programs simultaneously. This might not work on certain systems.
+- Generally, Corburt is expected to work on Windows, Linux, Mac and many other *nixes. If that's not the case, please report.
 
 ## Acknowledgements
 
-- for inspiration:
+- For inspiration:
   - **Ron Penton**, author of *MUD Game Programming*
   - **Jankenpopp** and other developers of *93 Realms*
-- for libraries:
+- For libraries:
   - **JC Wang** (@jcwangxp) for [Crossline](https://github.com/jcwangxp/Crossline)
   - **Evan Sultanik** (@ESultanik) for [MTwister](https://github.com/ESultanik/mtwister)
-- for dev:
+- For dev:
   - My friend **emf** and **Jack Q** for supporting me, giving valuable advice, contributing to Corburt and testing it.
 - You, probably ;)
 
@@ -154,13 +145,21 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
 
 ## Version history
 ###  Demo
-
-- **0.2.3** (Apr 16, 2022, WiP)
+- **0.2.4** (Apr 23, 2022)
+  - **What's new**: money loot and **real-time combat**
+  - money can be taken from and dropped to the ground.
+    - for this reason, players will not start with money in their inventory in order to prevent exploitation of the mechainsm.
+  - the stealth stat changed into wisdom.
+  - weapon stats revised.
+  - combat has been made real-time!
+    - to run the game, please open both `Corburt` and `cbinput`, and type your commands at `cbinput`. `Corburt` should then be able to receive the commands.
+- **0.2.3** (Apr 16, 2022)
   - **What's new**: stat edits
   - hint message for selling items fixed.
   - counters for enemies and items fixed.
   - you can now edit stats.
     - type "editstats" at the training room to edit stats.
+    - sadly, several stats have little to no use so far.
   - calculation formulas for damage and defense revised.
   - experience mechanics revised to prevent players from leveling up too fast.
 - **0.2.2** (Apr 16, 2022)
