@@ -1,14 +1,14 @@
 #ifndef Corburt_System_h_Include_Guard
 #define Corburt_System_h_Include_Guard
-#include "cbbase.h"
+//#include "cbbase.h"
+#ifdef CB_REALTIME
 #include <time.h>
 #if defined(_WIN32)
     #include <Windows.h>
-#elif defined(__linux__) || defined(__FreeBSD__)
-    #include <sys/time.h>
 #elif defined(__APPLE__)
     #include <unistd.h>
 #else
+    #include <unistd.h>
     #include <sys/time.h>
 #endif
 double cbtime_inittime=0;
@@ -25,7 +25,17 @@ void cbtime_init(){
     cbtime_previoustime=cbtime_get();
 }
 double cbtime_get(){
-    return (double)clock()/CLOCKS_PER_SEC-cbtime_inittime;
+#ifdef WIN32
+    SYSTEMTIME systime;
+    GetSystemTime(&systime);
+    double tmdouble=systime.wMilliseconds/1000.0f+systime.wSecond*1.0f;
+    return tmdouble;
+#else
+    struct timespec tmspec;
+    clock_gettime(CLOCK_MONOTONIC,&tmspec);
+    double tmdouble=tmsp    ec.tv_nsec/1000000000.0f+tmspec.tv_sec*1.0f;
+    return tmdouble;
+#endif
 }
 void cbtime_sleep(float ms){
     if(ms<=0)return;
@@ -66,6 +76,19 @@ void cbtime_wait(float targetFPS){
 }
 void cbtime_end(){
     cbtime_previoustime=cbtime_get();
+}
+#endif
+
+int checkendianess();
+
+int checkendianess(){
+    const int i=1;
+    char c=*(char*)&i;
+    if(c==1){
+        return 1;
+    }else{
+        return 0;
+    }
 }
 
 #endif

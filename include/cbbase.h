@@ -1,17 +1,22 @@
 #ifndef Corburt_Base_h_Include_Guard
 #define Corburt_Base_h_Include_Guard
 #define DISPLAY_WIDTH 68
-#define CB_VERSIONNUM 240
-#define CB_VERSIONCHECK 1
-#define CB_VERSIONTEXT L"v0.2.4"
+#define CB_VERSIONNUM 300
+#define CB_VERSIONCHECK 0
+#define CB_VERSIONTEXT L"v0.3.0"
+//#define CB_MAXPOINTERS 32767
+#define CB_MAXPOINTERS 1024 // used: 490+
+//#define CB_MAXROOMDESC 2048
 #ifndef Corburt_Pointer_Trace_Level
-    #define Corburt_Pointer_Trace_Level 0
+    #define Corburt_Pointer_Trace_Level 0 // off
 #endif
 #if __STDC_VERSION__<199901L
     #error Please use a C99 compiler.
 #endif
 #include "msg.h"
 #include "mtwister.h"
+#include "cbcurses.h"
+#include "cbsys.h"
 #include <limits.h>
 #include <time.h>
 #include <wchar.h>
@@ -81,11 +86,14 @@ struct save saves[5]={0};
 int_fast32_t cursaveid=0;
 wchar_t *inputbuf;
 struct globaldata{
-    void *pointerpool[128];
+    void **pointerpool;
     nat pointerinuse;
+    nat dbpointer;
+    nat pointerreserve;
     nat curtick;
     bat curround;
-}global={{NULL},0,0,0};
+    nat curcolor;
+}global={NULL,0,0,100,0,0,Default};
 //basic
 enum errorenum{
     error_cannotmalloc,
@@ -105,19 +113,19 @@ void fatalerror(enum errorenum error_id);
 void *mallocpointer_(size_t bytes); // for testing
 void *mallocpointer(size_t bytes);
 void *reallocpointer(void *pointer,size_t bytes);
-void freepointer_(void *pointer); // for testing
 void freepointer(void *pointer);
 void freeall();
 void scanline(wchar_t *scan_str,int scans);
 void wcslower(wchar_t **target_str_pos);
 void printc(int color,const wchar_t *format,...){
-    if(color!=Default)cbc_setcolor(color);
-    fflush(stdout);
+    if(color!=global.curcolor)cbc_setcolor(color);
+    global.curcolor=color;
+//    fflush(stdout);
     va_list args;
     va_start(args,format);
     vwprintf(format,args);
     va_end(args);
-    if(color!=Default)cbc_setcolor(Default);
+//    if(color!=Default)cbc_setcolor(Default);
     fflush(stdout);
 }
 size_t wcwidth(const wchar_t wc){
@@ -137,8 +145,9 @@ size_t wcswidth(const wchar_t *wcs){
     wchar_t *printr_token=NULL;
     size_t pos=0;
 void printr(int color,const wchar_t *format,...){
-    if(color!=Default)cbc_setcolor(color);
-    fflush(stdout);
+    if(color!=global.curcolor)
+        cbc_setcolor(color);
+    global.curcolor=color;
     wmemset(printr_dest,0,4096);
     wmemset(printr_token,0,DISPLAY_WIDTH);
     va_list args;
@@ -186,11 +195,13 @@ void printr(int color,const wchar_t *format,...){
             }
         }
     }
-    if(color!=Default)cbc_setcolor(Default);
+//    if(color!=Default)cbc_setcolor(Default);
     fflush(stdout);
 }
 void printrp(int color,const wchar_t *linepref,const wchar_t *format,...){
-    if(color!=Default)cbc_setcolor(color);
+    if(color!=global.curcolor)
+        cbc_setcolor(color);
+    global.curcolor=color;
     fflush(stdout);
     wmemset(printr_dest,0,4096);
     wmemset(printr_token,0,DISPLAY_WIDTH);
@@ -249,18 +260,17 @@ void printrp(int color,const wchar_t *linepref,const wchar_t *format,...){
         }
     }
 
-    if(color!=Default)cbc_setcolor(Default);
+//    if(color!=Default)cbc_setcolor(Default);
     fflush(stdout);
 }
 void tracelog(int color,const wchar_t *format,...){
 #ifdef Corburt_Debug
-    if(color!=Default)cbc_setcolor(color);
-    fflush(stdout);
+    if(color!=global.curcolor)cbc_setcolor(color);
+    global.curcolor=color;
     va_list args;
     va_start(args,format);
     vwprintf(format,args);
     va_end(args);
-    if(color!=Default)cbc_setcolor(Default);
     fflush(stdout);
 #else
     return;
@@ -289,7 +299,7 @@ void fatalerror(enum errorenum error_id){
     exit(-1);
 }
 void *mallocpointer_(size_t bytes){
-    if(global.pointerinuse>128){
+    if(global.pointerinuse>CB_MAXPOINTERS||global.pointerinuse>global.dbpointer+global.pointerreserve){
         fatalerror(error_bufferpooloverflow);
     }
     void *pointer=NULL;
@@ -300,7 +310,7 @@ void *mallocpointer_(size_t bytes){
         tracelog(Green,msg->trace_malloced,bytes);
         tracelog(Green,msg->trace_pointerinuse,global.pointerinuse);
     }
-    for(nat i=0;i<128;i++){
+    for(nat i=0;i<CB_MAXPOINTERS;i++){
         if(global.pointerpool[i]==NULL){
             global.pointerpool[i]=pointer;
             break;
@@ -309,7 +319,7 @@ void *mallocpointer_(size_t bytes){
     return pointer;
 }
 void *mallocpointer(size_t bytes){
-    if(global.pointerinuse>128){
+    if(global.pointerinuse>CB_MAXPOINTERS||global.pointerinuse>global.dbpointer+global.pointerreserve){
         fatalerror(error_bufferpooloverflow);
     }
     void *pointer=NULL;
@@ -320,7 +330,7 @@ void *mallocpointer(size_t bytes){
         tracelog(Green,msg->trace_malloced,bytes);
         tracelog(Green,msg->trace_pointerinuse,global.pointerinuse);
     }
-    for(nat i=0;i<128;i++){
+    for(nat i=0;i<CB_MAXPOINTERS;i++){
         if(global.pointerpool[i]==NULL){
             global.pointerpool[i]=pointer;
             break;
@@ -329,12 +339,12 @@ void *mallocpointer(size_t bytes){
     return pointer;
 }
 void *reallocpointer(void *pointer,size_t bytes){
-    for(nat i=0,found=0;i<128;i++){
+    for(nat i=0,found=0;i<CB_MAXPOINTERS;i++){
         if(global.pointerpool[i]==pointer){
             found=1;
             break;
         }
-        if(i==127&&found==0){
+        if(i==CB_MAXPOINTERS-1&&found==0){
             printc(Red,msg->trace_illegalrealloc);
             return NULL;
         }
@@ -346,34 +356,14 @@ void *reallocpointer(void *pointer,size_t bytes){
     }
     return pointer;
 }
-void freepointer_(void *pointer){
-    if(pointer==NULL)return;
-    for(nat i=0;i<128;i++){
-        if(global.pointerpool[i]==pointer){
-            global.pointerpool[i]=NULL;
-            break;
-        }
-        if(i==127){
-            printc(Red,msg->trace_illegalfree);
-            return;
-        }
-    }
-    free(pointer);
-    global.pointerinuse--;
-    if(Corburt_Pointer_Trace_Level>0){
-        tracelog(Green,msg->trace_freed);
-        tracelog(Green,msg->trace_pointerinuse,global.pointerinuse);
-    }
-    pointer=NULL;
-}
 void freepointer(void *pointer){
     if(pointer==NULL)return;
-    for(nat i=0;i<128;i++){
+    for(nat i=0;i<CB_MAXPOINTERS;i++){
         if(global.pointerpool[i]==pointer){
             global.pointerpool[i]=NULL;
             break;
         }
-        if(i==127){
+        if(i==CB_MAXPOINTERS-1){
             printc(Red,msg->trace_illegalfree);
             return;
         }
@@ -388,7 +378,7 @@ void freepointer(void *pointer){
 }
 void freeall(){
     tracelog(Green,msg->trace_pointerinuse,global.pointerinuse);
-    for(nat i=0;i<128&&global.pointerinuse>0;i++){
+    for(nat i=0;i<CB_MAXPOINTERS&&global.pointerinuse>0;i++){
         if(global.pointerpool[i]!=NULL){
             free(global.pointerpool[i]);
             global.pointerinuse--;
@@ -424,7 +414,6 @@ void launchcb();
 void endcb();
 void assertcheck();
 nat match(const wchar_t *sub_str,const wchar_t *main_str);
-void checkendianess();
 void initrng();
 void assertcheck(){
     if(CHAR_BIT!=8)fatalerror(error_badcharbit);
@@ -455,17 +444,6 @@ nat match(const wchar_t *sub_str,const wchar_t *main_str){
             freepointer(str2l);
             return -1;
         }
-    }
-}
-void checkendianess(){
-    const int i=1;
-    char c=*(char*)&i;
-    if(c==1){
-        tracelog(Green,msg->trace_endianess_le);
-        isle=true;
-    }else{
-        tracelog(Green,msg->trace_endianess_be);
-        isle=false;
     }
 }
 void initrng(){
@@ -506,15 +484,116 @@ bool accreduc(nat acc,nat dod){
 enum direction{
     dir_East,dir_West,dir_North,dir_South,dir_Up,dir_Down
 };
-// dbe
+// db
+#define ENEMY_MAXDROPS 16
 enum db_enemytype {
     db_enemytype_plain,
     db_enemytype_sentinel,
     db_enemytype_assassin,
     db_enemytype_boss
 };
-struct enemydb;
-typedef const struct enemydb enemydb;
+typedef struct enemydb{
+    nat id;
+    nat type;
+    wchar_t *name;
+//    wchar_t *desc;
+    bat exp;
+    struct {
+        nat moneymin;
+        nat moneymax;
+        nat weapon;
+        nat armor;
+        struct drops {
+            nat itemid;
+            nat rate;
+        } drops[ENEMY_MAXDROPS];
+    } loot;
+    struct {
+        nat hpmax;
+        nat atkcd;
+        nat atk;
+        nat def;
+        nat acc;
+        nat dod;
+        nat wis;
+        nat act;
+        nat con;
+    } stats;
+} enemydb;
+
+enum db_itemtype{
+    db_itemtype_stackable_mask=16,
+    db_itemtype_weapon=0,
+    db_itemtype_armor=2,
+    db_itemtype_accessory=3,
+    db_itemtype_key=4,
+    db_itemtype_consume=0|db_itemtype_stackable_mask, // stackable
+    db_itemtype_collect=1|db_itemtype_stackable_mask, // stackable
+    db_itemtype_misc=2|db_itemtype_stackable_mask, // stackable
+};
+typedef struct itemdb{
+    nat id;
+    nat type;
+    nat price;
+    nat cd;
+    nat crit;
+    wchar_t *name;
+    wchar_t *desc;
+    struct {
+        nat min_;
+        nat max_;
+        nat regen;
+        nat atk;
+        nat def;
+        nat acc;
+        nat dod;
+        nat wis;
+        nat act;
+        nat con;
+        nat pts;
+    } stats;
+} itemdb;
+itemdb *db_ifindwithid(nat itemid);
+void getitemname(nat id,wchar_t *itemname);
+void consumeitem(nat itemid);
+
+enum db_roomtype{
+    db_roomtype_plain,
+    db_roomtype_birth,
+    db_roomtype_store,
+    db_roomtype_shop=db_roomtype_store,
+    db_roomtype_train,
+    db_roomtype_gate
+};
+enum db_roomregion{
+    db_roomregion_nlcity, // nameless city
+    db_roomregion_forest, // forests of wrath
+};
+typedef struct roomdb{
+    nat id;
+    nat x;
+    nat y;
+    nat region;
+    wchar_t *name;
+#ifdef CB_MAXROOMDESC
+    wchar_t desc[CB_MAXROOMDESC];
+#else
+    wchar_t *desc;
+#endif
+    nat type;
+    nat exits[6];
+    nat table[32];
+    nat buff[4];
+} roomdb;
+
+#ifndef DBFIO_DATA_EXPORT
+nat itemdbsize=0;
+itemdb *itemdbs=NULL;
+nat enemydbsize=0;
+enemydb *enemydbs=NULL;
+nat roomdbsize=0;
+roomdb *roomdbs=NULL;
+#endif
 // cbp
 struct {
     struct calcstats{
@@ -536,8 +615,6 @@ struct {
     foo editstats;
     nat attackcd;
 } cbp={0};
-static void plvlup();
-static void paddgearstats();
 void paddexp(nat add);
 void phpchange(nat num);
 void pdie();

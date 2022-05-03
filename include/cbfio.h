@@ -2,6 +2,7 @@
 #define Corburt_FIO_h_Include_Guard
 #include "cbfio_base.h"
 #include "cbbase.h"
+#include <stdlib.h>
 static void readsave(nat saveid,FILE *fp);
 static void savesave(nat saveid,FILE *fp);
 static void save_overwrite(nat saveid);
@@ -192,6 +193,12 @@ static void saveet_enemies(FILE *fp){
 static void readet_rooms(FILE *fp){
     nat roomsmax_tmp;
     int_fast32_t_read(&roomsmax_tmp,fp);
+    if(roomdbsize<roomsmax_tmp){
+        printc(Red,msg->global_invalidroomcount);
+        exit(-1);
+    }else if(roomdbsize>roomsmax_tmp){
+        printc(Cyan,msg->global_roomcountfewer);
+    }
     for(nat i=0;i<roomsmax_tmp;i++){
         int_fast32_t_read(&et_rooms[i].id,fp);
         int_fast32_t_read(&et_rooms[i].money,fp);
@@ -204,8 +211,8 @@ static void readet_rooms(FILE *fp){
     }
 }
 static void saveet_rooms(FILE *fp){
-    int_fast32_t_write(roomsmax,fp);
-    for(nat i=0;i<roomsmax;i++){
+    int_fast32_t_write(roomdbsize,fp);
+    for(nat i=0;i<roomdbsize;i++){
         int_fast32_t_write(et_rooms[i].id,fp);
         int_fast32_t_write(et_rooms[i].money,fp);
         for(nat j=0;j<DBE_ENEMYCAP;j++)
@@ -228,6 +235,21 @@ static void readsavesglobaldata(FILE *fp){
     readet_items(fp);
     readet_enemies(fp);
     readet_rooms(fp);
+    if(version!=CB_VERSIONNUM){
+        printc(Cyan,msg->global_resetenemydata);
+        struct et_enemy ete={0};
+        for(nat i=0;i<enemiesmax;i++){
+            et_enemies[i]=ete;
+            et_enemies[i].available=false;
+        }
+        enemiescount=0;
+        for(nat i=0;i<roomdbsize;i++){
+            for(nat j=0;j<DBE_ENEMYCAP;j++){
+                et_rooms[i].etenemy[j]=0;
+            }
+        }
+        et_initenemies();
+    }
 }
 static void savesavesglobaldata(FILE *fp){
     int_fast32_t_write(CB_VERSIONNUM,fp);
@@ -244,6 +266,7 @@ void readsaves(){
     fio_getfilesize("save.txt");
     fp_save=fopen("save.txt","rb");
     if(fp_save==NULL){
+        et_initenemies();
         printr(Cyan,msg->global_nosave);
     }else{
         printr(Cyan,msg->global_scansave);

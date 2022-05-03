@@ -401,8 +401,8 @@ foo matchregularcommands(wchar_t *cmd){
         }
         if(maxmatch<0){
             if(taketarget[0]==L'$'){
-                struct et_room *etr=et_findroomwithid(player.roomid);
-                if(etr==NULL){
+                struct et_room *etrp=et_findroomwithid(player.roomid);
+                if(etrp==NULL){
                     printc(Red,msg->db_retidnullexceptionerror);
                     return true;
                 }
@@ -413,10 +413,10 @@ foo matchregularcommands(wchar_t *cmd){
                     moni*=10;
                     moni+=taketarget[i]-L'0';
                 }
-                if(moni>etr->money){
+                if(moni>etrp->money){
                     printc(Default,msg->db_retnotthatmuchmoney);
                 }else if(moni){
-                    etr->money-=moni;
+                    etrp->money-=moni;
                     inventory.money+=moni;
                     printc(Cyan|Bright,msg->db_retplayermoneypickup,moni);
                     freepointer(taketarget);
@@ -556,12 +556,12 @@ foo matchregularcommands(wchar_t *cmd){
                     return true;
                 }else if(moni){
                     inventory.money-=moni;
-                    struct et_room *etr=et_findroomwithid(player.roomid);
-                    if(etr==NULL){
+                    struct et_room *etrp=et_findroomwithid(player.roomid);
+                    if(etrp==NULL){
                         printc(Red,msg->db_retidnullexceptionerror);
                         return true;
                     }
-                    etr->money+=moni;
+                    etrp->money+=moni;
                     printc(Cyan|Bright,msg->db_retplayermoneydrop,moni);
                     freepointer(droptarget);
                     return true;
@@ -1033,7 +1033,7 @@ void fscanline(wchar_t *scan_str,int scans){
 }
 void scanline(wchar_t *scan_str,int scans){
     while(1){
-        cbtime_wait(30);
+        cbtime_sleep(30);
         if(!fpinput){
             fpinput=fopen("data.dmp","r");
             continue;

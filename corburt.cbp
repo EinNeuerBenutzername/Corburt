@@ -15,6 +15,9 @@
 				<Compiler>
 					<Add option="-O3" />
 				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/corburt" prefix_auto="1" extension_auto="1" />
@@ -31,7 +34,6 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add option="-fPIC" />
 			<Add option="-m32" />
 		</Compiler>
 		<Linker>
@@ -40,7 +42,7 @@
 			<Add option="-static" />
 			<Add option="-m32" />
 		</Linker>
-		<Unit filename="curburt.c">
+		<Unit filename="corburt.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="include/cbbase.h" />
@@ -55,6 +57,7 @@
 		<Unit filename="include/dbenemy.h" />
 		<Unit filename="include/dbentity.h" />
 		<Unit filename="include/dbfio_.h" />
+		<Unit filename="include/dbinteract.h" />
 		<Unit filename="include/dbitem.h" />
 		<Unit filename="include/dbmap.h" />
 		<Unit filename="include/msg.h" />

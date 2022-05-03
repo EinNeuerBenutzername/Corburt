@@ -6,125 +6,125 @@
 #include "dbmap.h"
 const bat exp2next[]={
     [0]=20,
-    [1]=60,
-    [2]=130,
-    [3]=250,
-    [4]=430,
-    [5]=700,
-    [6]=1090,
-    [7]=1640,
-    [8]=2400,
-    [9]=3430,
-    [10]=4790,
-    [11]=6570,
-    [12]=8870,
-    [13]=11810,
-    [14]=15530,
-    [15]=20190,
-    [16]=25980,
-    [17]=33130,
-    [18]=41890,
-    [19]=52550,
-    [20]=65450,
-    [21]=80980,
-    [22]=99580,
-    [23]=121760,
-    [24]=148080,
-    [25]=179190,
-    [26]=215820,
-    [27]=258790,
-    [28]=309020,
-    [29]=367540,
-    [30]=435510,
-    [31]=514220,
-    [32]=605120,
-    [33]=709810,
-    [34]=830070,
-    [35]=967880,
-    [36]=1125430,
-    [37]=1305150,
-    [38]=1509710,
-    [39]=1742070,
-    [40]=2005490,
-    [41]=2303540,
-    [42]=2640160,
-    [43]=3019670,
-    [44]=3446810,
-    [45]=3926760,
-    [46]=4465190,
-    [47]=5068300,
-    [48]=5742860,
-    [49]=6496250,
-    [50]=7336510,
-    [51]=8272390,
-    [52]=9313400,
-    [53]=10469890,
-    [54]=11753090,
-    [55]=13175180,
-    [56]=14749360,
-    [57]=16489920,
-    [58]=18412340,
-    [59]=20533340,
-    [60]=22871010,
-    [61]=25444860,
-    [62]=28275960,
-    [63]=31387020,
-    [64]=34802510,
-    [65]=38548790,
-    [66]=42654230,
-    [67]=47149330,
-    [68]=52066880,
-    [69]=57442110,
-    [70]=63312830,
-    [71]=69719620,
-    [72]=76706000,
-    [73]=84318600,
-    [74]=92607390,
-    [75]=101625850,
-    [76]=111431230,
-    [77]=122084750,
-    [78]=133651860,
-    [79]=146202500,
-    [80]=159811360,
-    [81]=174558170,
-    [82]=190528000,
-    [83]=207811590,
-    [84]=226505670,
-    [85]=246713320,
-    [86]=268544320,
-    [87]=292115560,
-    [88]=317551440,
-    [89]=344984290,
-    [90]=374554850,
-    [91]=406412690,
-    [92]=440716770,
-    [93]=477635900,
-    [94]=517349330,
-    [95]=560047310,
-    [96]=605931680,
-    [97]=655216530,
-    [98]=708128820,
-    [99]=764909110,
-    [100]=825812270,
-    [101]=891108230,
-    [102]=961082810,
-    [103]=1036038520,
-    [104]=1116295450,
-    [105]=1202192180,
-    [106]=1294086730,
-    [107]=1392357580,
-    [108]=1497404700,
-    [109]=1609650630,
-    [110]=1729541670,
-    [111]=1857549020,
-    [112]=1994170080,
-    [113]=2139929710,
-    [114]=2295381630,
-    [115]=2461109820,
-    [116]=2637730020,
-    [117]=2825891280,
-    [118]=3026277580,
-    [119]=3239609520,
+    [1]=50,
+    [2]=100,
+    [3]=180,
+    [4]=320,
+    [5]=550,
+    [6]=930,
+    [7]=1560,
+    [8]=2580,
+    [9]=4210,
+    [10]=6790,
+    [11]=10820,
+    [12]=17060,
+    [13]=26610,
+    [14]=41110,
+    [15]=62940,
+    [16]=95560,
+    [17]=143960,
+    [18]=215300,
+    [19]=319840,
+    [20]=472170,
+    [21]=693000,
+    [22]=1011580,
+    [23]=1469100,
+    [24]=2123370,
+    [25]=3055260,
+    [26]=4377580,
+    [27]=6247230,
+    [28]=8881850,
+    [29]=12582570,
+    [30]=17765020,
+    [31]=25001520,
+    [32]=35078390,
+    [33]=49073650,
+    [34]=68462230,
+    [35]=95258090,
+    [36]=132206010,
+    [37]=183040000,
+    [38]=252830860,
+    [39]=348453140,
+    [40]=479211520,
+    [41]=657680010,
+    [42]=900824820,
+    [43]=1231504830,
+    [44]=1680474360,
+    [45]=2289053170,
+    [46]=3112681870,
+    [47]=4225651290,
+    [48]=5727386440,
+    [49]=7750787530,
+    [50]=10473290040,
+    [51]=14131515660,
+    [52]=19040661260,
+    [53]=25620133860,
+    [54]=34427412730,
+    [55]=46202738750,
+    [56]=61928041610,
+    [57]=82904574550,
+    [58]=110855110580,
+    [59]=148058361250,
+    [60]=197525637170,
+    [61]=263232844450,
+    [62]=350424918630,
+    [63]=466015016510,
+    [64]=619107579400,
+    [65]=821683217910,
+    [66]=1089494856100,
+    [67]=1443239499750,
+    [68]=1910089376800,
+    [69]=2525691355680,
+    [70]=3336776180940,
+    [71]=4404561375000,
+    [72]=5809186479970,
+    [73]=7655490320460,
+    [74]=10080531886780,
+    [75]=13263375368040,
+    [76]=17437813668880,
+    [77]=22908903553730,
+    [78]=30074442426800,
+    [79]=39452848474640,
+    [80]=51719334088760,
+    [81]=67752814959510,
+    [82]=88696709747780,
+    [83]=116037703762530,
+    [84]=151707733656440,
+    [85]=198215974649950,
+    [86]=258819574590240,
+    [87]=337744405230360,
+    [88]=440470350823080,
+    [89]=574099833108710,
+    [90]=747833643678330,
+    [91]=973585057394660,
+    [92]=1266772066924590,
+    [93]=1647338962864590,
+    [94]=2141073096189500,
+    [95]=2781301408224130,
+    [96]=3611075360267130,
+    [97]=4685983726923080,
+    [98]=6077772234838240,
+    [99]=7878999661420960,
+    [100]=10209024860775340,
+    [101]=13221702222301660,
+    [102]=17115269355757360,
+    [103]=22145046800764630,
+    [104]=28639743530967650,
+    [105]=37022384492415310,
+    [106]=47837160812769560,
+    [107]=61783866769111510,
+    [108]=79762051940935950,
+    [109]=102927610027851320,
+    [110]=132765283033245310,
+    [111]=171181526067665320,
+    [112]=220623411420454270,
+    [113]=284230824004160180,
+    [114]=366031206985228980,
+    [115]=471188674958973280,
+    [116]=606322573259283920,
+    [117]=779914717769851030,
+    [118]=1002829843867296280,
+    [119]=1288980535973807190,
 };
 const wchar_t *ranks[]={
     L"The Condemned",
@@ -132,7 +132,6 @@ const wchar_t *ranks[]={
     L"King",
     L"God",
     L"Void",
-    L"Admin",
     L"Dev"
 };
 static void pmovesuccess();
@@ -208,7 +207,7 @@ void phpchange(nat num){
         if(player.hp==player.maxhp)return;
         if(player.hp+num<player.maxhp)player.hp+=num;
         else player.hp=player.maxhp;
-        putc('[',stdout);
+        printc(Default,L"[");
         nat color;
         if(player.hp<player.maxhp*0.3333333f)color=Red|Bright;
         else if(player.hp<player.maxhp*0.6666667f)color=Yellow|Bright;
@@ -219,7 +218,7 @@ void phpchange(nat num){
     else{
         if(player.hp+num>0){
             player.hp+=num;
-            printf("[");
+            printc(Default,L"[");
             nat color;
             if(player.hp<player.maxhp*0.3333333f)color=Red|Bright;
             else if(player.hp<player.maxhp*0.6666667f)color=Yellow|Bright;
@@ -335,7 +334,7 @@ void pshowinv(){
         inventory.money,
         invitemscount,inventory.unlocked
     );
-    if(invitemscount==0)printr(Default,L"(none)");
+    if(invitemscount==0)printr(Default,msg->player_inv_none);
     else{
         for(nat i=0,j=0;i<64;i++){
             if(inventory.items[i]!=0){
@@ -343,13 +342,13 @@ void pshowinv(){
                 itemdb *idb=db_ifindwithid(eti->itemid);
                 if(j>0)printr(Default,L"\n               ");
                 if(inventory.weapon==i+1){
-                    printr(Magenta|Bright,msg->player_inv_wielding);
+                    printr(Cyan|Bright,msg->player_inv_wielding);
                 }
                 if(inventory.armor==i+1){
-                    printr(Magenta|Bright,msg->player_inv_wearing);
+                    printr(Cyan|Bright,msg->player_inv_wearing);
                 }
                 for(nat k=0;k<5;k++)if(inventory.accessories[k]==i+1){
-                    printr(Magenta|Bright,msg->player_inv_equipping);
+                    printr(Cyan|Bright,msg->player_inv_equipping);
                     break;
                 }
                 printrp(Default,L"                ",L"%ls ",idb->name);
@@ -375,51 +374,54 @@ void pmove(enum direction dir){ // ready for special exits
     }
     if(!rm->exits[dir]){printr(Default,msg->player_walkno);return;}
     if(db_rfindwithid(rm->exits[dir])==NULL){printr(Default,msg->player_walkno);return;}
-    if(!rm->exitsid[dir]){
 #ifndef CB_REALTIME
-        timepass(30);
-        if(cbp.playerdead){
-            cbp.playerdead=false;
-            return;
-        }
-#endif
-        player.roomid=rm->exits[dir];
-        switch(dir){
-        case dir_East:
-            printr(Green,msg->player_walkeast);
-            pmovesuccess();
-            return;
-        case dir_West:
-            printr(Green,msg->player_walkwest);
-            pmovesuccess();
-            return;
-        case dir_North:
-            printr(Green,msg->player_walknorth);
-            pmovesuccess();
-            return;
-        case dir_South:
-            printr(Green,msg->player_walksouth);
-            pmovesuccess();
-            return;
-        case dir_Up:
-            printr(Green,msg->player_walkup);
-            pmovesuccess();
-            return;
-        case dir_Down:
-            printr(Green,msg->player_walkdown);
-            pmovesuccess();
-            return;
-        default:
-            break;
-        }
-        printr(Default,msg->player_walkno);
-    }else{
-        // special exits
+    timepass(30);
+    if(cbp.playerdead){
+        cbp.playerdead=false;
+        return;
     }
+#endif
+    player.roomid=rm->exits[dir];
+    switch(dir){
+    case dir_East:
+        printr(Green,msg->player_walkeast);
+        pmovesuccess();
+        return;
+    case dir_West:
+        printr(Green,msg->player_walkwest);
+        pmovesuccess();
+        return;
+    case dir_North:
+        printr(Green,msg->player_walknorth);
+        pmovesuccess();
+        return;
+    case dir_South:
+        printr(Green,msg->player_walksouth);
+        pmovesuccess();
+        return;
+    case dir_Up:
+        printr(Green,msg->player_walkup);
+        pmovesuccess();
+        return;
+    case dir_Down:
+        printr(Green,msg->player_walkdown);
+        pmovesuccess();
+        return;
+    default:
+        break;
+    }
+    printr(Default,msg->player_walkno);
 }
 static void pmovesuccess(){
     db_rshowdesc(player.roomid);
     roomdb *rm=db_rfindwithid(player.roomid);
+    { // enemies are waiting
+        struct et_room *etr=et_findroomwithid(player.roomid);
+        for(nat i=0;i<DBE_ENEMYCAP;i++){
+            struct et_enemy *ete=&et_enemies[etr->etenemy[i]-1];
+            if(ete->attackcd<=1)ete->attackcd+=genRandLong(&mtrand)%5+1;
+        }
+    }
     if(rm->type==db_roomtype_birth&&player.spawn!=player.roomid){
         player.spawn=player.roomid;
         printr(Cyan|Bright,msg->player_spawnupdate,rm->name);
@@ -428,6 +430,7 @@ static void pmovesuccess(){
 void pattack(nat entityid){
     if(cbp.attackcd>0){
         printr(Default,msg->player_cantattack);
+        cbp.attackcd=cbp.calcstats.cd;
         return;
     }
     struct et_enemy *ete=&et_enemies[entityid-1];
@@ -535,14 +538,7 @@ void pregen(){
 void ptakedmg(nat dmg){
     if(dmg<=0)return;
     if(player.hp-dmg>0){
-        player.hp-=dmg;
-        printf("[");
-        nat color;
-        if(player.hp<player.maxhp*0.3333333f)color=Red|Bright;
-        else if(player.hp<player.maxhp*0.6666667f)color=Yellow|Bright;
-        else color=Green|Bright;
-        printc(color,L"%" PRIdFAST64,player.hp);
-        printc(Default,L"/%" PRIdFAST64 "]\n",player.maxhp);
+        phpchange(0-dmg);
     }
     else{
         player.hp=0;

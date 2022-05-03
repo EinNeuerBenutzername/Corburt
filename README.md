@@ -8,33 +8,24 @@ Corburt is a pretty simple text-based RPG game developed based on the ideas of *
 
 Inspirations come from a game called [93 Realms](http://windows93.net:8083/), which my friends and I had a great time playing in 2021.
 
-### Plans for Corburt v0.2
+### Roadmap for v0.3.0
+- **Major changes**
+  - [x] Remove game database from source code.
+  - [ ] Add the new region: Forest of Wrath. **WiP.**
 
-- **Main**
-
-  - [x] implement turn-based game process
-  - [x] implement combat
-  - [x] implement death & revival
-  - [x] implement health regen
-  - [x] implement enemy drops
-  - [x] implement death punishments
-  - [x] implement money loot
-  - [x] implement stat edits
-  - [x] implement real-time combat
-
-- **Polish**
-
-  - [ ] make balancing improvements (WiP)
-  - [ ] add new item & enemy data entries (WiP)
+- **Mechanisms**
+  - [ ] Implement sentinel enemies.
+  - [ ] Implement special exits.
+  - [ ] Implement interactibles and NPCs.
 
 - **Optional**
-
-  - [ ] add the new region
+  - [ ] Add the new region: Southwest Coasts.
+  - [ ] Implement events.
 
 ## Features/Highlights
 
 - **Written in plain C code** (C99).
-- **Multi-platform support**: should work on Windows, Linux, MacOS and several other \*nixes.
+- **Multi-platform support**: expected to work properly on Windows, Linux, MacOS and several other \*nixes.
 - **No external dependencies** (hopefully).
 - **Open source**.
 - **Easy to compile**: only two .c files, all other files are headers. friendly for C amateurs.
@@ -56,21 +47,24 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
   - This is largely because Corburt's curses library rely on platform-specific headers.
 - On your computer, a byte **must** contain exactly 8 bits.
   - Tt is also suggested that the size of wchar_t is exactly 16 bits. it's okay if that's not the case, though.
-  - **Bit-wise endianness**, **non-ASCII interchange codes** (e.g. EBCDIC), et cetera, which are less common in my opinion, are **not** allowed, too.
+  - **Bit-wise endianness**, **non-ASCII interchange codes** (e.g. EBCDIC), et cetera, are **not** allowed.
 - It is recommended to use GCC compiler.
   - It's especially recommended to use Code::Blocks to compile. I am using Code::Blocks to develop Corburt and would upload my C::B project files along with the source.
   - I might ignore any MSVC-exclusive issues. MSVC just has too many of them.
 
 ## How to
 ### Compile and launch Corburt
-- Please compile `cbinput.c` and `corburt.c` into binary/executable files. Then launch the two programs simultaneously.
+- Please compile `cbinput.c` and `corburt.c` separately into 2 binary/executable files.
+  - `cb.dat`,  `cbinput` and `corburt` should all be under the same directory. 
+- Then launch the two programs simultaneously.
 - Send your input at `cbinput` and the main Corburt program should be able to receive and process it.
+- Please do not run two or more instances of `corburt`  simultaneously. That might cause unwanted consequences, i.e. destroy your save file.
 - If you encounter problems, please report.
 
 ### Port Corburt to other platforms
 - It shouldn't be hard for Corburt to be ported to other platforms as long as they support C99. Currently, there are only two files that rely on OS-specific headers. One is `cbcurses.h` and the other is `cbsys.h`.
   - However, Corburt opens and reads/writes one single file with two programs simultaneously. This might not work on certain systems.
-- Generally, Corburt is expected to work on Windows, Linux, Mac and many other *nixes. If that's not the case, please report.
+- Generally, Corburt is expected to work on Windows, Linux, Mac and many other \*nixes. If that's not the case, please report.s
 
 ## Acknowledgements
 
@@ -102,9 +96,10 @@ Will your report be seen? Very probably... Anyway,
 - what's the version of Corburt?
   - if it is not the latest version, test on the latest version.
 - if you compiled Corburt yourself, what compiler are you using?
-  - if you're using compilers that don't actually support C99, I might just ignore you.
+  - if you're using compilers that don't support C99, I might just ignore you.
   - btw, GCC doesn't actually **totally** support C99.
 - what had you done before the bug occurred?
+  - you can copy & paste your input history from the `cbinput` window.
 - were there any error messages?
 - were any error log files generated?
 - did the game crash?
@@ -115,7 +110,7 @@ Will your report be seen? Very probably... Anyway,
 
 ### Balancing feedback
 
-If you find an unbalanced design in **the latest version of Corburt** and **a) it's not a malicious joke or a trap**, and **b) it's adversely affecting gameplay**, please report it.
+If you find an unbalanced design in **the latest version of Corburt** and **a) it's not a joke or a trap**, and **b) it's adversely affecting gameplay**, please report it.
 
 If you wish to add new content, see "**Suggestions**".
 
@@ -144,6 +139,17 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - any web-related content
 
 ## Version history
+###  Post-demo
+- **0.3.0** (May 3, 2022)
+  - **What's new**: **forest**
+  - fixed the bug that enemies' hit points overflow.
+  - database is now generated as a file.
+  - fixed the bug that Corburt runs a busy loop when waiting for input.
+  - minor improvements on `cbinput`.
+  - fixed the bug that the last character of loaded strings aren't initialized and might therefore produce corrupt strings.
+  - console output is now fully buffered for faster output.
+  - attacking before the cooldown is over would cause cooldown time to reset.
+  - the new region "Forest of Wrath" is in development, and half of its rooms are done and accessible by now.
 ###  Demo
 - **0.2.4** (Apr 23, 2022)
   - **What's new**: money loot and **real-time combat**
@@ -153,6 +159,7 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - weapon stats revised.
   - combat has been made real-time!
     - to run the game, please open both `Corburt` and `cbinput`, and type your commands at `cbinput`. `Corburt` should then be able to receive the commands.
+  - player hit points regenerate once per 30 seconds and enemies respawn every two minutes.
 - **0.2.3** (Apr 16, 2022)
   - **What's new**: stat edits
   - hint message for selling items fixed.

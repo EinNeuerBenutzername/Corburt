@@ -55,7 +55,9 @@ void turnfunc(){
             if(!et_enemies[i].available)continue;
             j++;
             enemydb *edb=et_getenemydb(i+1);
+            if(et_enemies[i].hp==edb->stats.hpmax)continue;
             et_enemies[i].hp+=edb->stats.con;
+            if(et_enemies[i].hp>edb->stats.hpmax)et_enemies[i].hp=edb->stats.hpmax;
         }
     }
     if(global.curround%120==0){

@@ -1,14 +1,14 @@
 #ifndef Corburt_Database_Entity_h_Include_Guard
 #define Corburt_Database_Entity_h_Include_Guard
 #include "cbbase.h"
+#include "dbitem.h"
 #include "dbmap.h"
 #include "dbenemy.h"
-#include "dbitem.h"
 #define DBE_ENEMYCAP 64
 #define DBE_ITEMCAP 32
 #define DBE_INTCAP 16
 #define DBE_EXPANDSTEP 64
-#define DBE_TRACELOG 0
+#define DBE_TRACELOG 1
 struct et_room{
     nat id;
     nat money;
@@ -17,7 +17,6 @@ struct et_room{
     nat etinteract[DBE_INTCAP];
 };
 struct et_room *et_rooms=NULL;
-const nat roomsmax=sizeof(roomdbs)/sizeof(roomdb)-1;
 struct et_enemy{
     foo available;
     nat roomid;
@@ -60,10 +59,10 @@ void et_spawnenemies();
 
 void setupentitydata(){
     if(DBE_TRACELOG)tracelog(Green,L"Setting up entity data...\n");
-    if(DBE_TRACELOG)tracelog(Green,L"Rooms count: %" PRIdFAST32 "\n",roomsmax);
-    et_rooms=mallocpointer(roomsmax*sizeof(struct et_room));
+    if(DBE_TRACELOG)tracelog(Green,L"Rooms count: %" PRIdFAST32 "\n",roomdbsize);
+    et_rooms=mallocpointer(roomdbsize*sizeof(struct et_room));
     struct et_room etr={0};
-    for(nat i=0;i<roomsmax;i++){
+    for(nat i=0;i<roomdbsize;i++){
         et_rooms[i]=etr;
         et_rooms[i].id=roomdbs[i].id;
     }
@@ -84,7 +83,7 @@ void setupentitydata(){
 
 }
 struct et_room *et_findroomwithid(nat roomid){
-    for(nat i=0;i<roomsmax;i++){
+    for(nat i=0;i<roomdbsize;i++){
         if(et_rooms[i].id==roomid)return &et_rooms[i];
     }
     return NULL;
@@ -103,7 +102,7 @@ void etenemy_push(nat enemyid,nat roomid){
     enemydb *edb=NULL;
     nat enemyreferenceindex=-1, // spawn in etr->etenemy[index]
         enemyentityindex=-1; // spawn in et_enemies[index]
-    for(nat i=0;i<roomsmax;i++){
+    for(nat i=0;i<roomdbsize;i++){
         if(et_rooms[i].id==roomid){
             etr=&et_rooms[i];
             break;
@@ -164,13 +163,13 @@ void etenemy_attack(nat etid,struct et_room *etr){
         return;
     }
     if(ete->attackcd>0)return;
-    const enemydb *edb=et_getenemydb(etid);
+    enemydb *edb=et_getenemydb(etid);
     if(edb==NULL){
         printc(Red,msg->db_eetidnullexceptionerror);
         return;
     }
     if(edb->loot.weapon){
-        const itemdb *idb=db_ifindwithid(edb->loot.weapon);
+        itemdb *idb=db_ifindwithid(edb->loot.weapon);
         if(idb==NULL){
             printc(Red,msg->db_ietidnullexceptionerror);
             return;
@@ -372,7 +371,7 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
     nat itemreferenceindex=-1, // spawn in etr->etitem[index]
         itementityindex=-1; // spawn in et_items[index]
     if(roomid!=0){
-        for(nat i=0;i<roomsmax;i++){
+        for(nat i=0;i<roomdbsize;i++){
             if(et_rooms[i].id==roomid){
                 etr=&et_rooms[i];
                 break;
@@ -569,7 +568,7 @@ itemdb *et_getitemdb(nat itementityid){
     return idb;
 }
 void et_initenemies(){
-    for(nat i=0;roomdbs[i].id!=0;i++){
+    for(nat i=0;i<roomdbsize;i++){
         if(roomdbs[i].type!=db_roomtype_plain)continue;
         if(roomdbs[i].table[0]==0)continue;
         struct et_room *etr=et_findroomwithid(roomdbs[i].id);
@@ -585,7 +584,7 @@ void et_initenemies(){
     }
 }
 void et_spawnenemies(){
-    for(nat i=0;roomdbs[i].id!=0;i++){
+    for(nat i=0;i<roomdbsize;i++){
         if(roomdbs[i].type!=db_roomtype_plain)continue;
         if(roomdbs[i].table[0]==0)continue;
         struct et_room *etr=et_findroomwithid(roomdbs[i].id);

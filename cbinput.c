@@ -5,48 +5,46 @@
 #include "include/cbbase.h"
 #include "include/msg.h"
 FILE *fp;
-void exitfunc(){
-    if(fp!=NULL){
-        fclose(fp);
-    }
-    remove("data.dmp");
-}
+void exitfunc();
 int main(){
+    cbc_init();
     cbc_setwindowtitle("cbinput");
+    cbc_setcolor(Default);
+    cbc_clearscreen();
     remove("data.dmp");
     atexit(exitfunc);
-    long matchid=0;
+    int matchid=0;
     fp=fopen("data.dmp","w");
-    wchar_t input[1024];
+    wchar_t inputcur[1024];
     wchar_t inputlast[1024];
     cbc_setcolor(Cyan|Bright);
     printc(Cyan|Bright,msg->global_input);
     cbc_setcolor(Default);
     while(1){
         matchid++;
-        matchid=matchid%10000000;
+        matchid=matchid%10000;
         printf(">>");
         cbc_setcolor(Yellow);
         fflush(stdout);
-        wmemset(input,0,1024);
-        fgetws(input,1024,stdin);
+        wmemset(inputcur,0,1024);
+        fgetws(inputcur,1024,stdin);
         fflush(stdin);
-        if(input[wcslen(input)-1]==L'\n'){
-            input[wcslen(input)-1]=0;
+        if(inputcur[wcslen(inputcur)-1]==L'\n'){
+            inputcur[wcslen(inputcur)-1]=0;
         }
         cbc_setcolor(Default);
-        if(!wcslen(input)){
+        if(!wcslen(inputcur)){
             fprintf(fp,"%d.%d.%ls",matchid,wcslen(inputlast),inputlast);
         }else{
             fclose(fp);
             fp=fopen("data.dmp","w");
-            fprintf(fp,"%d.%d.%ls",matchid,wcslen(input),input);
+            fprintf(fp,"%d.%d.%ls",matchid,wcslen(inputcur),inputcur);
             wmemset(inputlast,0,1024);
-            wcscpy(inputlast,input);
+            wcscpy(inputlast,inputcur);
         }
         rewind(fp);
         fflush(fp);
-        if(wcsncmp(input,L"quit",4)==0){
+        if(wcsncmp(inputcur,L"quit",4)==0){
             fflush(fp);
             fclose(fp);
             fp=NULL;
@@ -57,4 +55,9 @@ int main(){
     fp=NULL;
     return 0;
 }
-
+void exitfunc(){
+    if(fp!=NULL){
+        fclose(fp);
+    }
+    remove("data.dmp");
+}

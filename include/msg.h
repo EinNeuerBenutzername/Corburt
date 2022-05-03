@@ -5,8 +5,11 @@
 // prepared for future translations. :)
 struct msgtag{
     const wchar_t *global_corburtversion;
+    const wchar_t *global_dataloaded;
     const wchar_t *global_input;
     const wchar_t *global_waitingforinput;
+    const wchar_t *global_invalidroomcount;
+    const wchar_t *global_roomcountfewer;
     const wchar_t *global_welcome;
     const wchar_t *global_splash;
     const wchar_t *global_splash2;
@@ -28,6 +31,9 @@ struct msgtag{
     const wchar_t *global_save_incompat;
     const wchar_t *global_curtime;
     const wchar_t *global_curtimert;
+    const wchar_t *global_roomdbsize;
+    const wchar_t *global_dbsize;
+    const wchar_t *global_resetenemydata;
     const wchar_t *trace_savesize;
     const wchar_t *trace_endianess_le;
     const wchar_t *trace_endianess_be;
@@ -71,6 +77,7 @@ struct msgtag{
     const wchar_t *player_editstatsunknown;
     const wchar_t *player_editstatsend;
     const wchar_t *player_inv;
+    const wchar_t *player_inv_none;
     const wchar_t *player_inv_wielding;
     const wchar_t *player_inv_equipping;
     const wchar_t *player_inv_wearing;
@@ -98,6 +105,7 @@ struct msgtag{
     const wchar_t *db_ietdrop;
     const wchar_t *db_ietmultdrop;
     const wchar_t *db_ridnullexceptionerror;
+    const wchar_t *db_rgidnullexceptionerror;
     const wchar_t *db_iidnullexceptionerror;
     const wchar_t *db_eidnullexceptionerror;
     const wchar_t *db_retidnullexceptionerror;
@@ -123,8 +131,11 @@ struct msgtag{
 };
 struct msgtag msg_en={
     .global_corburtversion=CB_VERSIONTEXT,
+    .global_dataloaded=L"Game data loaded.\n",
     .global_input=L"This is the input interface for Corburt.\nType 'help' for help and 'quit' to end the game.\n",
     .global_waitingforinput=L"Waiting for cbinput...\n",
+    .global_invalidroomcount=L"Fatal error:Invalid room number.\n",
+    .global_roomcountfewer=L"Number of rooms in this save file is fewer than expected.\nThe save file might be outdated.\n",
     .global_welcome=L"Welcome to Corburt.\n\n",
     .global_splash=L"   @@@@                @@\n"
                     "  @@  @@               @@                  @@\n"
@@ -183,6 +194,9 @@ struct msgtag msg_en={
     .global_save_incompat=L"Incompatible save version: expected %ls.\n",
     .global_curtime=L"Current time: %" PRIdFAST64 " turns, %" PRIdFAST32 " ticks.\n",
     .global_curtimert=L"Current time: %" PRIdFAST64 " h %" PRIdFAST32 " m %" PRIdFAST32 "s, %" PRIdFAST32 " ticks.\n",
+    .global_roomdbsize=L"Size of map database: %" PRIdFAST32 " KB.\n",
+    .global_dbsize=L"Size of database: %.2f MB.\n",
+    .global_resetenemydata=L"Resetting enemy data...\n",
     .trace_savesize=L"Size of a save is %zu bytes.\n",
     .trace_endianess_le=L"Machine is little endian.\n",
     .trace_endianess_be=L"Machine is big endian.\n",
@@ -248,6 +262,7 @@ struct msgtag msg_en={
                 "Money:         $%-08" PRIdFAST64 "\n"
                 "Capacity:      %" PRIdFAST32 "/%" PRIdFAST32 "\n"
                 "Items:         ",
+    .player_inv_none=L"(none)",
     .player_inv_wielding=L"[WIELDING] ",
     .player_inv_equipping=L"[EQUIPPING] ",
     .player_inv_wearing=L"[WEARING] ",
@@ -277,6 +292,7 @@ struct msgtag msg_en={
     .db_ietdrop=L"You dropped the %ls.\n",
     .db_ietmultdrop=L"You dropped the %ls (x%" PRIdFAST32 ").\n",
     .db_ridnullexceptionerror=L"Null exception error: invalid room id.\n",
+    .db_rgidnullexceptionerror=L"Null exception error: invalid region id.\n",
     .db_iidnullexceptionerror=L"Null exception error: invalid item id.\n",
     .db_eidnullexceptionerror=L"Null exception error: invalid enemy id.\n",
     .db_retidnullexceptionerror=L"Null exception error: invalid room entity id.\n",
