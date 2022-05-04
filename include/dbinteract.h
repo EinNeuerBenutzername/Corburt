@@ -1,10 +1,13 @@
 #ifndef Corburt_Database_Interact_h_Include_Guard
 #define Corburt_Database_Interact_h_Include_Guard
-#include "cbbase.h"s
-typedef struct interactdb {
+#include "cbbase.h"
+enum db_intertype {
+    db_intertype_door
+};
+typedef struct interdb {
     int id;
     int initroom;
-    int interacttype;
+    int intertype;
     int status;
-} interact;
+} interdb;
 #endif

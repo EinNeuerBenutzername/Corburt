@@ -206,7 +206,7 @@ static void readet_rooms(FILE *fp){
             int_fast32_t_read(&et_rooms[i].etenemy[j],fp);
         for(nat j=0;j<DBE_ITEMCAP;j++)
             int_fast32_t_read(&et_rooms[i].etitem[j],fp);
-        for(nat j=0;j<DBE_INTCAP;j++)
+        for(nat j=0;j<DBE_INTERCAP;j++)
             int_fast32_t_read(&et_rooms[i].etinteract[j],fp);
     }
 }
@@ -219,7 +219,7 @@ static void saveet_rooms(FILE *fp){
             int_fast32_t_write(et_rooms[i].etenemy[j],fp);
         for(nat j=0;j<DBE_ITEMCAP;j++)
             int_fast32_t_write(et_rooms[i].etitem[j],fp);
-        for(nat j=0;j<DBE_INTCAP;j++)
+        for(nat j=0;j<DBE_INTERCAP;j++)
             int_fast32_t_write(et_rooms[i].etinteract[j],fp);
     }
 }

@@ -113,10 +113,14 @@ struct msgtag{
     const wchar_t *db_eetidnullexceptionerror;
     const wchar_t *db_ietfull;
     const wchar_t *db_listitem;
-    const wchar_t *db_eetattack;
+    const wchar_t *db_eetattack1;
+    const wchar_t *db_eetattack2;
+    const wchar_t *db_eetattack3;
     const wchar_t *db_eetattackmiss;
     const wchar_t *db_eetattackblocked;
-    const wchar_t *db_eetyouattack;
+    const wchar_t *db_eetyouattack1;
+    const wchar_t *db_eetyouattack2;
+    const wchar_t *db_eetyouattack3;
     const wchar_t *db_eetyouattackmiss;
     const wchar_t *db_eetyouattackblocked;
     const wchar_t *db_eetdie;
@@ -300,10 +304,14 @@ struct msgtag msg_en={
     .db_eetidnullexceptionerror=L"Null exception error: invalid enemy entity id.\n",
     .db_ietfull=L"%ls disappeared into the pile of objects on the ground..\n",
     .db_listitem=L"$%-10" PRIdFAST32 " | %ls\n",
-    .db_eetattack=L"%ls hit you for %" PRIdFAST32 " damage!\n",
+    .db_eetattack1=L"%ls hit you for ",
+    .db_eetattack2=L"%" PRIdFAST32,
+    .db_eetattack3=L" damage!\n",
     .db_eetattackmiss=L"%ls swung at you but missed!\n",
     .db_eetattackblocked=L"%ls swung at you but is blocked!\n",
-    .db_eetyouattack=L"You hit %ls for %" PRIdFAST32 " damage!\n",
+    .db_eetyouattack1=L"You hit %ls for ",
+    .db_eetyouattack2=L"%" PRIdFAST32,
+    .db_eetyouattack3=L" damage!\n",
     .db_eetyouattackmiss=L"You swung at %ls but missed!\n",
     .db_eetyouattackblocked=L"You swung at %ls but is blocked!\n",
     .db_eetdie=L"%ls died!\n",

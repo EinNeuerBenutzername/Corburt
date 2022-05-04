@@ -6,7 +6,7 @@
 #include "dbenemy.h"
 #define DBE_ENEMYCAP 64
 #define DBE_ITEMCAP 32
-#define DBE_INTCAP 16
+#define DBE_INTERCAP 16
 #define DBE_EXPANDSTEP 64
 #define DBE_TRACELOG 1
 struct et_room{
@@ -14,7 +14,7 @@ struct et_room{
     nat money;
     nat etenemy[DBE_ENEMYCAP];
     nat etitem[DBE_ITEMCAP];
-    nat etinteract[DBE_INTCAP];
+    nat etinteract[DBE_INTERCAP];
 };
 struct et_room *et_rooms=NULL;
 struct et_enemy{
@@ -149,7 +149,7 @@ void etenemy_push(nat enemyid,nat roomid){
         .roomid=roomid,
         .enemyid=enemyid,
         .hp=edb->stats.hpmax,
-        .attackcd=0
+        .attackcd=genRandLong(&mtrand)%8+1,
     };
     et_enemies[enemyentityindex]=ete;
     etr->etenemy[enemyreferenceindex]=enemyentityindex+1;
@@ -178,8 +178,10 @@ void etenemy_attack(nat etid,struct et_room *etr){
     }else ete->attackcd=30;
     if(pcandodge(edb)){
         printc(White,msg->db_eetattackmiss,edb->name);
-    }else{
+    }
+    else{
         nat atk=edb->stats.atk;
+        nat dmgcolor=Default;
         if(edb->loot.armor)atk+=db_ifindwithid(edb->loot.armor)->stats.atk;
         if(edb->loot.weapon){
             itemdb *idb=db_ifindwithid(edb->loot.weapon);
@@ -188,14 +190,20 @@ void etenemy_attack(nat etid,struct et_room *etr){
                 return;
             }
             atk+=idb->stats.atk;
+            nat atk2=atk;
             atk*=DMG_RATIO;
             atk+=idb->stats.min_;
             nat delta=idb->stats.max_-idb->stats.min_;
             if(delta<0)delta=0-delta;
             if(delta)atk+=genRandLong(&mtrand)%delta;
+            atk+=critdmg(idb->crit,atk2,idb->stats.max_,&dmgcolor);
         }
         nat dmg=dmgreduc(atk,cbp.calcstats.def*DMG_RATIO);
-        if(dmg)printc(Red|Bright,msg->db_eetattack,edb->name,dmg);
+        if(dmg){
+            printc(Red|Bright,msg->db_eetattack1,edb->name);
+            printc(dmgcolor,msg->db_eetattack2,dmg);
+            printc(Red|Bright,msg->db_eetattack3);
+        }
         else printc(White,msg->db_eetattackblocked,edb->name);
         ptakedmg(dmg);
     }
@@ -265,20 +273,20 @@ void etenemy_deathdrops(enemydb *edb,nat roomid){
         }
     }
     { // gear drops
-        if(edb->loot.weapon){
-            if(genRandLong(&mtrand)%10000<300){
-                etitem_push(edb->loot.weapon,1,roomid,0);
-                printc(Cyan|Bright,msg->db_retitemdrop,db_ifindwithid(edb->loot.weapon)->name);
-            }
-        }
-        if(edb->loot.armor){
-            if(genRandLong(&mtrand)%10000<300){
-                etitem_push(edb->loot.armor,1,roomid,0);
-                printc(Cyan|Bright,msg->db_retitemdrop,db_ifindwithid(edb->loot.armor)->name);
-            }
-        }
+//        if(edb->loot.weapon){
+//            if(genRandLong(&mtrand)%10000<300){
+//                etitem_push(edb->loot.weapon,1,roomid,0);
+//                printc(Cyan|Bright,msg->db_retitemdrop,db_ifindwithid(edb->loot.weapon)->name);
+//            }
+//        }
+//        if(edb->loot.armor){
+//            if(genRandLong(&mtrand)%10000<300){
+//                etitem_push(edb->loot.armor,1,roomid,0);
+//                printc(Cyan|Bright,msg->db_retitemdrop,db_ifindwithid(edb->loot.armor)->name);
+//            }
+//        }
     }
-    if(edb->loot.drops[0].itemid){ // special items
+    if(edb->loot.drops[0].itemid){ // item drops
         for(nat i=0;i<ENEMY_MAXDROPS;i++){
             if(edb->loot.drops[i].itemid==0)break;
             if(genRandLong(&mtrand)%10000<edb->loot.drops[i].rate){

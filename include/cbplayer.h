@@ -2,7 +2,7 @@
 #define Corburt_Player_h_Include_Guard
 //#define LVL_CAP 120
 #define LVL_CAP 20
-#define DMG_RATIO 0.333f
+#define DMG_RATIO 0.334f
 #include "dbmap.h"
 const bat exp2next[]={
     [0]=20,
@@ -131,8 +131,7 @@ const wchar_t *ranks[]={
     L"Regular",
     L"King",
     L"God",
-    L"Void",
-    L"Dev"
+    L"Void"
 };
 static void pmovesuccess();
 
@@ -278,27 +277,30 @@ void pcalcstats(){
     { // hp
         player.maxhp=10;
         player.maxhp+=player.lvl*(player.lvl/1.942f);
-        player.maxhp+=player.stats.con*player.lvl/2.85f;
-        player.maxhp+=player.stats.con*player.lvl*player.lvl/32.52f;
-        player.maxhp+=player.stats.con*player.stats.con*player.lvl/25972.142f;
+        player.maxhp+=player.stats.con*pow(player.lvl,0.7)/2.85f;
+        player.maxhp+=player.stats.con*pow(player.lvl,1.5)/32.52f;
+        player.maxhp+=player.stats.con*player.stats.con*pow(player.lvl,0.7)/25972.142f;
         if(player.maxhp<1)player.maxhp=1;
         if(player.hp>player.maxhp)player.hp=player.maxhp;
     }
     { // stats
-        if(player.stats.atk>99999)player.stats.atk=99999;
-        if(player.stats.def>99999)player.stats.def=99999;
-        if(player.stats.acc>99999)player.stats.acc=99999;
-        if(player.stats.dod>99999)player.stats.dod=99999;
-        if(player.stats.wis>99999)player.stats.wis=99999;
-        if(player.stats.act>99999)player.stats.act=99999;
-        if(player.stats.con>99999)player.stats.con=99999;
-        if(player.bstats.atk>99999)player.bstats.atk=99999;
-        if(player.bstats.def>99999)player.bstats.def=99999;
-        if(player.bstats.acc>99999)player.bstats.acc=99999;
-        if(player.bstats.dod>99999)player.bstats.dod=99999;
-        if(player.bstats.wis>99999)player.bstats.wis=99999;
-        if(player.bstats.act>99999)player.bstats.act=99999;
-        if(player.bstats.con>99999)player.bstats.con=99999;
+        int statcap=99999;
+        if(player.stats.atk>statcap)player.stats.atk=statcap;
+        if(player.stats.def>statcap)player.stats.def=statcap;
+        if(player.stats.acc>statcap)player.stats.acc=statcap;
+        if(player.stats.dod>statcap)player.stats.dod=statcap;
+        if(player.stats.wis>statcap)player.stats.wis=statcap;
+        if(player.stats.act>statcap)player.stats.act=statcap;
+        if(player.stats.con>statcap)player.stats.con=statcap;
+        if(player.stats.pts>statcap)player.stats.pts=statcap;
+        if(player.bstats.atk>statcap)player.bstats.atk=statcap;
+        if(player.bstats.def>statcap)player.bstats.def=statcap;
+        if(player.bstats.acc>statcap)player.bstats.acc=statcap;
+        if(player.bstats.dod>statcap)player.bstats.dod=statcap;
+        if(player.bstats.wis>statcap)player.bstats.wis=statcap;
+        if(player.bstats.act>statcap)player.bstats.act=statcap;
+        if(player.bstats.con>statcap)player.bstats.con=statcap;
+        if(player.bstats.pts>statcap)player.bstats.pts=statcap;
         cbp.calcstats.atk=player.stats.atk+player.bstats.atk;
         cbp.calcstats.def=player.stats.def+player.bstats.def;
         cbp.calcstats.acc=player.stats.acc+player.bstats.acc;
@@ -306,6 +308,7 @@ void pcalcstats(){
         cbp.calcstats.wis=player.stats.wis+player.bstats.wis;
         cbp.calcstats.act=player.stats.act+player.bstats.act;
         cbp.calcstats.con=player.stats.con+player.bstats.con;
+        cbp.calcstats.regen=0;
         paddgearstats();
     }
 }
@@ -419,7 +422,7 @@ static void pmovesuccess(){
         struct et_room *etr=et_findroomwithid(player.roomid);
         for(nat i=0;i<DBE_ENEMYCAP;i++){
             struct et_enemy *ete=&et_enemies[etr->etenemy[i]-1];
-            if(ete->attackcd<=1)ete->attackcd+=genRandLong(&mtrand)%5+1;
+            if(ete->attackcd<=1)ete->attackcd+=genRandLong(&mtrand)%8+1;
         }
     }
     if(rm->type==db_roomtype_birth&&player.spawn!=player.roomid){
@@ -450,6 +453,7 @@ void pattack(nat entityid){
         printc(White,msg->db_eetyouattackmiss,edb->name);
     }else{
         nat bdmg=cbp.calcstats.atk*DMG_RATIO,edef=edb->stats.def;
+        nat dmgcolor=0;
         { // player base damage
             nat delta=cbp.calcstats.max_-cbp.calcstats.min_;
             bdmg+=cbp.calcstats.min_;
@@ -457,9 +461,7 @@ void pattack(nat entityid){
                 if(delta<0)delta=0-delta;
                 bdmg+=genRandLong(&mtrand)%(delta)+cbp.calcstats.min_;
             }
-            if(genRandLong(&mtrand)%10000<cbp.calcstats.crit){
-                bdmg+=cbp.calcstats.max_;
-            }
+            bdmg+=critdmg(cbp.calcstats.crit,cbp.calcstats.atk,cbp.calcstats.max_,&dmgcolor);
             if(bdmg<1)bdmg=1;
         }
         { // enemy defense
@@ -471,7 +473,11 @@ void pattack(nat entityid){
             }
         }
         nat dmg=dmgreduc(bdmg,edef*DMG_RATIO);
-        if(dmg)printc(Green|Bright,msg->db_eetyouattack,edb->name,dmg);
+        if(dmg){
+            printc(Green|Bright,msg->db_eetyouattack1,edb->name);
+            printc(dmgcolor,msg->db_eetyouattack2,dmg);
+            printc(Green|Bright,msg->db_eetyouattack3);
+        }
         else printc(White,msg->db_eetyouattackblocked,edb->name);
         etenemy_takedamage(entityid,dmg);
     }
@@ -532,7 +538,7 @@ void pregen(){
     nat regennum=player.lvl;
     regennum+=cbp.calcstats.con;
     regennum+=cbp.calcstats.regen;
-//    printc(Cyan,"Regen: +%d (extra +%d)\n",regennum,cbp.calcstats.regen);
+//    printc(Cyan,L"Regen: +%d (extra +%d)\n",regennum,cbp.calcstats.regen);
     phpchange(regennum);
 }
 void ptakedmg(nat dmg){

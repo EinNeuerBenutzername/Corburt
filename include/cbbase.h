@@ -5,7 +5,7 @@
 #define CB_VERSIONCHECK 0
 #define CB_VERSIONTEXT L"v0.3.0"
 //#define CB_MAXPOINTERS 32767
-#define CB_MAXPOINTERS 1024 // used: 490+
+#define CB_MAXPOINTERS 4096 // used: 490+
 //#define CB_MAXROOMDESC 2048
 #ifndef Corburt_Pointer_Trace_Level
     #define Corburt_Pointer_Trace_Level 0 // off
@@ -456,6 +456,7 @@ void initrng(){
 //misc2
 nat dmgreduc(nat dmg,nat def);
 bool accreduc(nat acc,nat dod);
+nat critdmg(nat critchance,nat strike,nat basemax,nat *color);
 nat dmgreduc(nat dmg,nat def){
     if(dmg<1&&dmg+def<1)return 0;
     nat dmg2=dmg;
@@ -476,9 +477,22 @@ nat dmgreduc(nat dmg,nat def){
 bool accreduc(nat acc,nat dod){
     real hitrate=genRand(&mtrand);
     nat delta=dod-acc;
-    real sigmoid=1.0f/(1.0f+pow(1.783f,delta/50.0f));
+    real sigmoid=1.0f/(1.0f+pow(1.783f,delta/20.0f));
     if(hitrate>sigmoid)return true;
     else return false;
+}
+nat critdmg(nat critchance,nat strike,nat basemax,nat *color){
+    int critdmg=0,crittier=0;
+    for(;critchance>=10000;critchance-=10000)crittier++;
+    if(genRandLong(&mtrand)%10000<critchance)crittier++;
+    for(int i=0;i<crittier;i++){
+        critdmg+=pow(1.4,i)*(float)basemax;
+    }
+    critdmg+=(pow(1.3,crittier-1)-1.0f)*(float)(crittier*strike*1.0f);
+    if(crittier==0)*color=Default;
+    else if(crittier==1)*color=Yellow|Bright;
+    else *color=Red|Bright;
+    return critdmg;
 }
 // cbm
 enum direction{

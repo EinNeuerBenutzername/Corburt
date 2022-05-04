@@ -111,55 +111,55 @@ itemdb itemdbs[]={
         .type=db_itemtype_armor,
         .price=40,
         .desc=L"Pig skin, stronger than most people's.",
-        .stats={.def=2,.dod=4,.acc=5}
+        .stats={.def=3,.dod=4,.acc=5}
     },
     {.id=18,.name=L"Chain Shirt",
         .type=db_itemtype_armor,
         .price=75,
         .desc=L"Do you feel chained?",
-        .stats={.def=5,.dod=2,.acc=9}
+        .stats={.def=6,.dod=2,.acc=9}
     },
     {.id=19,.name=L"Hide",
         .type=db_itemtype_armor,
         .price=35,
         .desc=L"Pig skin, stronger than most pigs'.",
-        .stats={.def=4,.acc=2}
+        .stats={.def=5,.acc=2}
     },
     {.id=20,.name=L"Scalemail Armor",
         .type=db_itemtype_armor,
         .price=85,
         .desc=L"They're like flappy wings!",
-        .stats={.def=7,.dod=-1,.acc=5}
+        .stats={.def=9,.dod=-1,.acc=5}
     },
     {.id=21,.name=L"Chainmail Armor",
         .type=db_itemtype_armor,
         .price=185,
         .desc=L"\"The more you tank\"",
-        .stats={.def=10,.dod=-3,.acc=8}
+        .stats={.def=12,.dod=-3,.acc=8}
     },
     {.id=22,.name=L"Breastplate Armor",
         .type=db_itemtype_armor,
         .price=290,
         .desc=L"\"The less you dodge\"",
-        .stats={.def=12,.dod=-4,.acc=11}
+        .stats={.def=15,.dod=-6,.acc=11}
     },
     {.id=23,.name=L"Platemail Armor",
         .type=db_itemtype_armor,
         .price=400,
         .desc=L"Only the weak dodges.",
-        .stats={.def=15,.dod=-7,.acc=15}
+        .stats={.def=18,.dod=-10,.acc=15}
     },
     {.id=24,.name=L"Full Platemail Armor",
         .type=db_itemtype_armor,
         .price=650,
         .desc=L"Dodging? What's that?",
-        .stats={.def=20,.dod=-10,.acc=23}
+        .stats={.def=21,.dod=-15,.acc=23}
     },
     {.id=25,.name=L"Necklace of Slight Regeneration",
         .type=db_itemtype_accessory,
         .price=75,
         .desc=L"It's... Blue?",
-        .stats={.regen=1}
+        .stats={.regen=2}
     },
     {.id=26,.name=L"Minor Healing Potion",
         .type=db_itemtype_consume,
@@ -177,7 +177,7 @@ itemdb itemdbs[]={
         .type=db_itemtype_accessory,
         .price=405,
         .desc=L"Why aren't necklaces of regeneration red?",
-        .stats={.regen=3,.def=1,.dod=3}
+        .stats={.regen=5,.def=1,.dod=5}
     },
     {.id=29,.name=L"Paper",
         .type=db_itemtype_weapon,
@@ -239,7 +239,7 @@ itemdb itemdbs[]={
         .type=db_itemtype_weapon,
         .price=2650,
         .cd=120,
-        .crit=343,
+        .crit=500,
         .desc=L"Are they getting the material from themselves? Well...",
         .stats={.min_=22,.max_=35,.acc=30,.dod=14,.con=4}
     },
@@ -257,109 +257,181 @@ itemdb itemdbs[]={
         .desc=L"Your optimal choice for close combat.",
         .stats={.min_=12,.max_=16}
     },
+    {.id=41,.name=L"Apathetic Weapon",
+        .type=db_itemtype_weapon,
+        .price=120,
+        .cd=150,
+        .desc=L"The weapon of ultimate apathy...",
+        .stats={.min_=1,.max_=2}
+    },
+    {.id=42,.name=L"Slow Weapon",
+        .type=db_itemtype_weapon,
+        .price=120,
+        .cd=45,
+        .desc=L"A weapon.",
+        .stats={.min_=1,.max_=3}
+    },
+    {.id=43,.name=L"Regular Weapon",
+        .type=db_itemtype_weapon,
+        .price=120,
+        .cd=32,
+        .desc=L"A weapon.",
+        .stats={.min_=1,.max_=2}
+    },
+    {.id=44,.name=L"Fast Weapon",
+        .type=db_itemtype_weapon,
+        .price=120,
+        .cd=22,
+        .desc=L"Faster than what you'd have expected...",
+        .stats={.min_=1,.max_=2}
+    },
 };
 enemydb enemydbs[]={
     {.id=1,.name=L"Vagrant",
         .type=db_enemytype_plain,
 //        .desc=L"They have no homes. Just like you...",
         .exp=12,
-        .loot={.moneymin=0,.moneymax=2,.weapon=2},
+        .loot={
+            .moneymin=0,.moneymax=2,.weapon=2,
+            .drops[0]={2,700},
+        },
         .stats={.hpmax=8,.atk=1,.def=0,.acc=15,.dod=-25,.con=1}
     },
     {.id=2,.name=L"Thug",
         .type=db_enemytype_plain,
 //        .desc=L"Avocation: killing cute animals.",
         .exp=20,
-        .loot={.moneymin=0,.moneymax=4,.weapon=6},
+        .loot={
+            .moneymin=0,.moneymax=4,.weapon=6,
+            .drops[0]={6,500},
+        },
         .stats={.hpmax=15,.atk=3,.def=1,.acc=12,.dod=-15,.con=1}
     },
     {.id=3,.name=L"Gang Member",
         .type=db_enemytype_plain,
 //        .desc=L"Yo, come on and be a gangster!",
         .exp=80,
-        .loot={.moneymin=2,.moneymax=9,.weapon=3,.armor=16},
+        .loot={
+            .moneymin=2,.moneymax=9,.weapon=3,.armor=16,
+            .drops[0]={3,500},.drops[1]={16,300},
+        },
         .stats={.hpmax=40,.atk=12,.def=12,.acc=27,.dod=-9,.con=3}
     },
     {.id=4,.name=L"Gang Leader",
         .type=db_enemytype_plain,
 //        .desc=L"Do you wanna be a gang-star?",
         .exp=135,
-        .loot={.moneymin=16,.moneymax=35,.weapon=4,.armor=17},
-        .stats={.hpmax=62,.atk=17,.def=25,.acc=45,.dod=8,.con=5}
+        .loot={
+            .moneymin=26,.moneymax=39,.weapon=4,.armor=17,
+            .drops[0]={4,600},.drops[1]={17,300},.drops[2]={36,500},
+        },
+        .stats={.hpmax=84,.atk=17,.def=25,.acc=45,.dod=8,.con=6}
     },
     {.id=5,.name=L"Robber",
         .type=db_enemytype_plain,
 //        .desc=L"\"Show me what you've got...\"",
         .exp=110,
-        .loot={.moneymin=3,.moneymax=18,.weapon=5,.armor=16},
-        .stats={.hpmax=50,.atk=17,.def=8,.acc=47,.dod=65,.con=4}
+        .loot={
+            .moneymin=13,.moneymax=28,.weapon=5,.armor=16,
+            .drops[0]={5,500},.drops[1]={16,300},.drops[2]={26,1000},
+        },
+        .stats={.hpmax=50,.atk=17,.def=11,.acc=53,.dod=65,.con=7}
     },
     {.id=6,.name=L"Skeleton",
         .type=db_enemytype_plain,
 //        .desc=L"Do not disturb the peace of the dead... Well... Too late...",
-        .exp=3580,
-        .loot={.moneymin=53,.moneymax=78,.weapon=38},
-        .stats={.hpmax=489,.atk=63,.def=45,.acc=156,.dod=97,.con=39}
+        .exp=4580,
+        .loot={
+            .moneymin=53,.moneymax=780,.weapon=38,
+            .drops[0]={38,1000},
+        },
+        .stats={.hpmax=689,.atk=65,.def=95,.acc=186,.dod=117,.con=43}
     },
     {.id=7,.name=L"Bird",
         .type=db_enemytype_plain,
 //        .desc=L"Let's just call it \"a bird\".",
-        .exp=1,
-        .loot={.moneymin=0,.moneymax=1},
-        .stats={.hpmax=1,.atk=1,.def=0,.acc=35,.dod=25,.con=0}
+        .exp=2,
+        .loot={
+            .moneymin=0,.moneymax=1,.weapon=42,
+        },
+        .stats={.hpmax=1,.atk=1,.def=0,.acc=35,.dod=35,.con=0}
     },
     {.id=8,.name=L"Ant",
         .type=db_enemytype_plain,
         .exp=1,
-        .loot={.moneymin=0,.moneymax=0},
+        .loot={
+            .moneymin=0,.moneymax=0,.weapon=44,
+        },
         .stats={.hpmax=2,.atk=1,.def=0,.acc=1,.dod=55,.con=1}
     },
     {.id=9,.name=L"Sheep",
         .type=db_enemytype_plain,
         .exp=1,
-        .loot={.moneymin=0,.moneymax=0,.drops[0]={36,1000}},
+        .loot={
+            .moneymin=0,.moneymax=0,.weapon=42,
+            .drops[0]={36,1000}
+        },
         .stats={.hpmax=25,.atk=1,.def=0,.acc=10,.dod=-50,.con=1}
     },
     {.id=10,.name=L"Cow",
         .type=db_enemytype_plain,
         .exp=1,
-        .loot={.moneymin=0,.moneymax=0,.drops[0]={36,1000}},
+        .loot={
+            .moneymin=0,.moneymax=0,.weapon=42,
+            .drops[0]={36,1500}
+        },
         .stats={.hpmax=35,.atk=1,.def=0,.acc=10,.dod=-70,.con=1}
     },
     {.id=11,.name=L"Grasshopper",
         .type=db_enemytype_plain,
         .exp=3,
-        .loot={.moneymin=0,.moneymax=0},
-        .stats={.hpmax=1,.atk=2,.def=0,.acc=5,.dod=120,.con=1}
+        .loot={
+            .moneymin=0,.moneymax=0,.weapon=43,
+        },
+        .stats={.hpmax=1,.atk=2,.def=0,.acc=5,.dod=120,.con=0}
     },
     {.id=12,.name=L"Mantis",
         .type=db_enemytype_plain,
         .exp=5,
-        .loot={.moneymin=0,.moneymax=0},
-        .stats={.hpmax=1,.atk=5,.def=1,.acc=80,.dod=20,.con=1}
+        .loot={
+            .moneymin=0,.moneymax=0,.weapon=44,
+        },
+        .stats={.hpmax=2,.atk=5,.def=1,.acc=80,.dod=30,.con=1}
     },
     {.id=13,.name=L"Furious Squirrel",
         .type=db_enemytype_plain,
         .exp=15,
-        .loot={.moneymin=0,.moneymax=2},
+        .loot={
+            .moneymin=0,.moneymax=2,.weapon=43,
+            .drops[0]={34,800},
+        },
         .stats={.hpmax=8,.atk=2,.def=0,.acc=45,.dod=25,.con=1}
     },
     {.id=14,.name=L"Deer",
         .type=db_enemytype_plain,
         .exp=30,
-        .loot={.moneymin=0,.moneymax=0,.drops[0]={36,1000}},
+        .loot={
+            .moneymin=0,.moneymax=0,.weapon=42,
+            .drops[0]={36,1000},
+        },
         .stats={.hpmax=40,.atk=5,.def=6,.acc=34,.dod=40,.con=3}
     },
     {.id=15,.name=L"Wolf",
         .type=db_enemytype_plain,
         .exp=75,
-        .loot={.moneymin=0,.moneymax=5,.weapon=39},
+        .loot={
+            .moneymin=0,.moneymax=5,.weapon=39,
+            .drops[0]={39,550},.drops[1]={36,400},
+        },
         .stats={.hpmax=60,.atk=12,.def=8,.acc=34,.dod=70,.con=4}
     },
     {.id=16,.name=L"Bandit",
         .type=db_enemytype_plain,
         .exp=120,
-        .loot={.moneymin=5,.moneymax=40,.weapon=3,.armor=20},
+        .loot={
+            .moneymin=5,.moneymax=40,.weapon=3,.armor=20,
+            .drops[0]={3,640},.drops[1]={20,320},
+        },
         .stats={.hpmax=40,.atk=12,.def=12,.acc=27,.dod=-9,.con=3}
     }
 };

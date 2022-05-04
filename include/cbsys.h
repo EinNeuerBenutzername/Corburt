@@ -82,13 +82,26 @@ void cbtime_end(){
 int checkendianess();
 
 int checkendianess(){
-    const int i=1;
-    char c=*(char*)&i;
-    if(c==1){
-        return 1;
-    }else{
-        return 0;
+//    const int i=1;
+//    char c=*(char*)&i;
+//    if(c==1){
+//        return 1; // is le
+//    }else{
+//        return 0;
+//    }
+    uint8_t buffer[4];
+    buffer[0]=0x00;
+    buffer[0]=0x01;
+    buffer[0]=0x02;
+    buffer[0]=0x03;
+    switch((*(uint32_t*)buffer)){
+    case 0x00010203: return 0;
+    case 0x03020100: return 1;
+    case 0x02030001: break; // BIG WORD
+    case 0x01000302: break; // LITTLE WORD
+    default: break; // UNKNOWN
     }
+    return 2; // shit.
 }
 
 #endif

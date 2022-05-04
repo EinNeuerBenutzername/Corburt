@@ -140,6 +140,11 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
 
 ## Version history
 ###  Post-demo
+- **0.3.1 dev** (WiP)
+  - **This is an emergency update of the unfinished Corburt v0.3.1.**
+  - made balancing improvements.
+  - the new critical damage calculation formula implemented.
+  - fixed the bug that player's health regen value increases on each regen.
 - **0.3.0** (May 3, 2022)
   - **What's new**: **forest**
   - fixed the bug that enemies' hit points overflow.
