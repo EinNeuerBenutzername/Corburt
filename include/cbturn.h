@@ -46,7 +46,10 @@ void tickfunc(struct et_room *etr){
             if(et_enemies[i].attackcd<0)et_enemies[i].attackcd=0;
         }
     }
-    if(cbp.attackcd>0)cbp.attackcd--;
+    {/// process player
+        if(cbp.attackcd>0)cbp.attackcd--;
+        preadying();
+    }
 }
 void turnfunc(){
     if(global.curround%30==0){

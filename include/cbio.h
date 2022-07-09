@@ -791,6 +791,10 @@ foo matchregularcommands(wchar_t *cmd){
         }
         return true;
     }
+    if(fullmatch(cmd,L"ready")||
+       fullmatch(cmd,L"r")){
+        pready();
+    }
     return false;
 }
 foo matcheditstatscommands(wchar_t *cmd){

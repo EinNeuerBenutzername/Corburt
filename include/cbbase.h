@@ -1,11 +1,11 @@
 #ifndef Corburt_Base_h_Include_Guard
 #define Corburt_Base_h_Include_Guard
 #define DISPLAY_WIDTH 68
-#define CB_VERSIONNUM 300
+#define CB_VERSIONNUM 310
 #define CB_VERSIONCHECK 0
-#define CB_VERSIONTEXT L"v0.3.0"
+#define CB_VERSIONTEXT L"v0.3.1"
 //#define CB_MAXPOINTERS 32767
-#define CB_MAXPOINTERS 4096 // used: 490+
+#define CB_MAXPOINTERS 4096 // used: 500~600
 //#define CB_MAXROOMDESC 2048
 #ifndef Corburt_Pointer_Trace_Level
     #define Corburt_Pointer_Trace_Level 0 // off
@@ -549,6 +549,7 @@ typedef struct itemdb{
     nat id;
     nat type;
     nat price;
+    nat prep;
     nat cd;
     nat crit;
     wchar_t *name;
@@ -600,6 +601,64 @@ typedef struct roomdb{
     nat buff[4];
 } roomdb;
 
+enum db_intertype {
+    db_intertype_door,
+    db_intertype_switch,
+    db_intertype_chest,
+    db_intertype_trap,
+    db_intertype_tp,
+    db_intertype_npc,
+    db_intertype_hazard
+};
+typedef struct interdb {
+    nat id;
+    nat initroom;
+    nat intertype;
+    void *interdata;
+} interdb;
+struct intdat_door {
+    struct intdat_door_open_requisites {
+        struct keyset {
+            nat keyid1;
+            nat keyid2;
+            nat keyid3;
+            nat keyid4;
+            nat keyid5;
+        } keyset;
+        struct password {
+            wchar_t *hint;
+            wchar_t *keyword;
+        } password;
+        nat payamount;
+    } open;
+    struct intdat_door_open_requisites unlock;
+};
+struct intdat_switch {
+    nat doorid;
+};
+struct intdat_chest {
+    nat capacity;
+    wchar_t *name;
+    nat initgold;
+    nat inititems[16];
+};
+struct intdat_trap {};
+struct intdat_tp {
+    nat dest;
+};
+struct intdat_npc {
+    wchar_t *name;
+    nat dialogcount;
+    struct intdat_npc_dialog {
+        wchar_t *keyword;
+        wchar_t *response;
+    } *dialog;
+};
+struct intdat_hazard {
+    wchar_t *name;
+    nat debuff[4];
+};
+
 #ifndef DBFIO_DATA_EXPORT
 nat itemdbsize=0;
 itemdb *itemdbs=NULL;
@@ -607,6 +666,8 @@ nat enemydbsize=0;
 enemydb *enemydbs=NULL;
 nat roomdbsize=0;
 roomdb *roomdbs=NULL;
+nat interdbsize=0;
+interdb *interdbs=NULL;
 #endif
 // cbp
 struct {
@@ -622,11 +683,15 @@ struct {
         nat regen;
         nat min_;
         nat max_;
+        nat prep;
         nat cd;
         nat crit;
     } calcstats;
     foo playerdead;
     foo editstats;
+    bool readying;
+    bool isready;
+    nat readyframe;
     nat attackcd;
 } cbp={0};
 void paddexp(nat add);
@@ -638,6 +703,8 @@ void pshowabl();
 void pshowinv();
 void pshowexp();
 void pmove(enum direction dir);
+void pready();
+void preadying();
 void pattack(nat entityid);
 void ptrain();
 void peditstats();

@@ -23,6 +23,7 @@ struct et_enemy{
     nat enemyid;
     nat hp;
     nat attackcd;
+
 };
 nat enemiescount=0;
 nat enemiesmax=0;

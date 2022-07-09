@@ -9,6 +9,7 @@ void savedb_map(FILE *fp);
 void savedb_reg(FILE *fp);
 void savedb_item(FILE *fp);
 void savedb_enemy(FILE *fp);
+void savedb_inter(FILE *fp);
 #else
 struct dbfio_ {
     nat dbsize;
@@ -18,6 +19,7 @@ void loadalldb();
 void loaddb_map(FILE *fp);
 void loaddb_item(FILE *fp);
 void loaddb_enemy(FILE *fp);
+void loaddb_inter(FILE *fp);
 #endif
 
 #ifdef DBFIO_DATA_EXPORT
@@ -26,6 +28,7 @@ void savealldb(){
     savedb_enemy(fp);
     savedb_item(fp);
     savedb_map(fp);
+    savedb_inter(fp);
     fclose(fp);
 }
 void savedb_map(FILE *fp){
@@ -54,6 +57,7 @@ void savedb_item(FILE *fp){
         int_fast32_t_write(itemdbs[i].id,fp);
         int_fast32_t_write(itemdbs[i].type,fp);
         int_fast32_t_write(itemdbs[i].price,fp);
+        int_fast32_t_write(itemdbs[i].prep,fp);
         int_fast32_t_write(itemdbs[i].cd,fp);
         int_fast32_t_write(itemdbs[i].crit,fp);
         int_fast32_t_write(wcslen(itemdbs[i].name),fp);
@@ -102,6 +106,7 @@ void savedb_enemy(FILE *fp){
         int_fast32_t_write(enemydbs[i].stats.con,fp);
     }
 }
+void savedb_inter(FILE *fp){}
 #else
 void loadalldb(){
     fio_getfilesize("cb.dat");
@@ -111,6 +116,7 @@ void loadalldb(){
     loaddb_enemy(fp);
     loaddb_item(fp);
     loaddb_map(fp);
+    loaddb_inter(fp);
     fclose(fp);
     tracelog(Green,msg->global_dbsize,dbfio_.dbsize/1048576.0f);
     tracelog(Green,msg->trace_pointerinuse,global.pointerinuse);
@@ -158,6 +164,7 @@ void loaddb_item(FILE *fp){
         int_fast32_t_read(&itemdbs[i].id,fp);
         int_fast32_t_read(&itemdbs[i].type,fp);
         int_fast32_t_read(&itemdbs[i].price,fp);
+        int_fast32_t_read(&itemdbs[i].prep,fp);
         int_fast32_t_read(&itemdbs[i].cd,fp);
         int_fast32_t_read(&itemdbs[i].crit,fp);
         nat len;
@@ -224,5 +231,6 @@ void loaddb_enemy(FILE *fp){
         dbfio_.dbsize+=sizeof(enemydb);
     }
 }
+void loaddb_inter(FILE *fp){}
 #endif
 #endif

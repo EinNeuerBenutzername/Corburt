@@ -90,6 +90,7 @@ struct msgtag{
     const wchar_t *player_die;
     const wchar_t *player_die_xplost;
     const wchar_t *player_spawnupdate;
+    const wchar_t *player_isready;
     const wchar_t *db_notinstore;
     const wchar_t *db_inosuchitem;
     const wchar_t *db_enosuchenemy;
@@ -281,6 +282,7 @@ struct msgtag msg_en={
     .player_die=L"You died!\n",
     .player_die_xplost=L"You lost %" PRIdFAST64 " exp.\n",
     .player_spawnupdate=L"Your spawn point has been updated to: %ls\n",
+    .player_isready=L"You are ready for your attack.\n",
     .db_notinstore=L"You are not in a store.\n",
     .db_inosuchitem=L"There is no such item.\n",
     .db_enosuchenemy=L"There is no such enemy.\n",
