@@ -1,5 +1,5 @@
-//#define Corburt_Debug
-//#define Corburt_Pointer_Trace_Level 1 // partially on
+#define Corburt_Debug
+#define Corburt_Pointer_Trace_Level 1 // partially on
 #define CB_REALTIME
 #include <stdio.h>
 #include <stdlib.h>

@@ -6,21 +6,55 @@
 
 Corburt is a pretty simple text-based RPG game developed based on the ideas of *SimpleMUD*. The original codebase for SimpleMUD was written in C++ by Ron Penton, the author of MUD Game Programming book.
 
-Inspirations come from a game called [93 Realms](http://windows93.net:8083/), which my friends and I had a great time playing in 2021.
+Inspirations come from a game called [93 Realms](https://windows93.net:8083/), which my friends and I had a great time playing.
 
-### Roadmap for v0.3.0
-- **Major changes**
+### Dev Roadmap
+
+**Important notes**: Corburt will undergo a huge overhaul in these versions, so a lot of the original content will be removed. Currently, there are no enemies or items in game, but please do not worry. They will be added back when their update is complete.
+
+- **Code & data**
   - [x] Remove game database from source code.
-  - [ ] Add the new region: Forest of Wrath. **WiP.**
+  - [ ] Remake Nameless City:
+    - [x] Map revision
+    - [ ] Instances revision
+    - [ ] *Secret Areas*
+  - [ ] Enemy database reworks.
+  - [ ] Item database reworks.
+  - [ ] Add regions:
+    - [ ] Forests of Wrath
+    - [ ] Southwest Coast
+    - [ ] [SPOILER ALERT] and [SPOILER ALERT]
+    - [ ] [SPOILER ALERT]'s Surface
 
 - **Mechanisms**
-  - [ ] Implement sentinel enemies.
-  - [ ] Implement special exits.
-  - [ ] Implement interactibles and NPCs.
+  - [ ] Implement bosses.
+  - [ ] Implement new battle mechanisms:
+    - [ ] Breach
+    - [ ] Break / Counter
+    - [ ] Abilities
+    - [ ] Skills
+    - [ ] *Spells*
+    - [ ] *Enemy AI*
+  - [ ] Rework formulas:
+    - [x] EXP formula
+    - [ ] Stat formula
+  - [ ] Implement interactables:
+    - [ ] Events
+    - [ ] NPCs
+    - [ ] Doors
+    - [ ] Chests
+    - [ ] Inter-region passages & special exits
+    - [ ] Traps
+    - [ ] Teleporters
+  - [ ] Implement miscellaneous items:
+    - [ ] Debuffs
+    - [ ] *Curses*
+    - [ ] Standard boosts
+    - [ ] Item affixes
+    - [ ] *Gameplay modifiers*
+- [ ] **Might or might not**
+  - [ ] Implement achievements.
 
-- **Optional**
-  - [ ] Add the new region: Southwest Coasts.
-  - [ ] Implement events.
 
 ## Features/Highlights
 
@@ -43,6 +77,8 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
 
 ## Requirements
 
+### Compiling
+
 - Your computer should either be **non-prehistorical Windows** or **POSIX-compliant \*nix**.
   - This is largely because Corburt's curses library rely on platform-specific headers.
 - On your computer, a byte **must** contain exactly 8 bits.
@@ -52,8 +88,17 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
   - It's especially recommended to use Code::Blocks to compile. I am using Code::Blocks to develop Corburt and would upload my C::B project files along with the source.
   - I might ignore any MSVC-exclusive issues. MSVC just has too many of them.
 
+### Performance
+
+- **System Resources**
+  - Naturally, Corburt is a lightweight and lightspeed game. On a regular modern PC, Corburt's memory and CPU power usage should be negligible and lags should not present unless disk I/O is blocked by other programs.
+    - \*Please note that Corburt is a game that heavily relies on disk I/O. Running Corburt while you are compressing or decompressing files, for example, is not recommended because it is likely to ruin your game experience.
+- **Graphics**
+  - Corburt is designed to run in PC's console terminals with 68 or more columns. Word wrapping is handled by Corburt, but fixed-width-character output (which should be the case on most terminals) is necessary, otherwise the game would look "broken".
+  - The character limit for the word wrap could be changed in the code. It is not recommended to set it into a number that is too big because it makes it harder for gamers to rapidly glance down lines.
+
 ## How to
-### Compile and launch Corburt
+### Compile and Launch Corburt
 - Please compile `cbinput.c` and `corburt.c` separately into 2 binary/executable files.
   - `cb.dat`,  `cbinput` and `corburt` should all be under the same directory. 
 - Then launch the two programs simultaneously.
@@ -61,10 +106,10 @@ Inspirations come from a game called [93 Realms](http://windows93.net:8083/), wh
 - Please do not run two or more instances of `corburt`  simultaneously. That might cause unwanted consequences, i.e. destroy your save file.
 - If you encounter problems, please report.
 
-### Port Corburt to other platforms
+### Port Corburt to Other Platforms
 - It shouldn't be hard for Corburt to be ported to other platforms as long as they support C99. Currently, there are only two files that rely on OS-specific headers. One is `cbcurses.h` and the other is `cbsys.h`.
   - However, Corburt opens and reads/writes one single file with two programs simultaneously. This might not work on certain systems.
-- Generally, Corburt is expected to work on Windows, Linux, Mac and many other \*nixes. If that's not the case, please report.s
+- Generally, Corburt is expected to work on Windows, Linux, Mac and many other \*nixes. If that's not the case, please report.
 
 ## Acknowledgements
 
@@ -89,7 +134,7 @@ Will your report be seen? Very probably... Anyway,
 - Even if I like your suggestion a lot, I might not be able to implement it if it's too difficult to implement due to my very limited programming ability.
 - Since I'm busy, if I can't or don't plan to implement a suggestion, I'll probably just ignore it or close it.
 
-### Bug report
+### Bug Report
 
 **When reporting bugs (if you came across any), please clarify:**
 
@@ -104,11 +149,11 @@ Will your report be seen? Very probably... Anyway,
 - were any error log files generated?
 - did the game crash?
 
-### Typo report
+### Typo Report
 
 **Please report if you find typos or grammar mistakes.**
 
-### Balancing feedback
+### Balancing Feedback
 
 If you find an unbalanced design in **the latest version of Corburt** and **a) it's not a joke or a trap**, and **b) it's adversely affecting gameplay**, please report it.
 
@@ -118,11 +163,11 @@ If you wish to add new content, see "**Suggestions**".
   - make sure you are very familiar with what you are proposing to modify.
   - make sure that what you propose to amend will not be offensive to others.
   - explain what you think is bad in the original design.
-    - e.g. "The difficulty of the new area does not match with the stated threat level."
+    - e.g. *"The difficulty of the new area does not match with the stated threat level."*
   - [optional, but suggested] explain how you think it would improve the game experience.
-    - e.g. "It will ease the difficulty curve."
+    - e.g. *"It will ease the difficulty curve."*
   - provide detailed alternatives or suggested modifications.
-    - e.g. "$400 is a little too much, make it $250."
+    - e.g. *"$400 is a little too much, make it $250."*
 - **Examples of what you are welcome to suggest include:**
   - increase the cost of items to prevent abuse.
   - increase enemy experience drops when leveling up is unnecessarily difficult.
@@ -138,15 +183,17 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - local multiplayer mode
   - any web-related content
 
-## Version history
+## Version History
 ###  Post-demo
-- **0.3.1 dev** (WiP)
-  - **This is an emergency update of the unfinished Corburt v0.3.1.**
+- **0.3.1** (Jul 9, 2022)
+  - **Important notes**: Corburt will undergo a huge overhaul in these versions, so a lot of the original content will be removed. Currently, there are no enemies or items in game, but please do not worry. They will be added back when their update is complete.
+  - **What's new**: **new map**
   - made balancing improvements.
   - the new critical damage calculation formula implemented.
   - fixed the bug that player's health regen value increases on each regen.
+  - the whole map of the Nameless City completely remade.
 - **0.3.0** (May 3, 2022)
-  - **What's new**: **forest**
+  - **What's new**: **forest** (removed in v0.3.1)
   - fixed the bug that enemies' hit points overflow.
   - database is now generated as a file.
   - fixed the bug that Corburt runs a busy loop when waiting for input.
@@ -156,10 +203,11 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - attacking before the cooldown is over would cause cooldown time to reset.
   - the new region "Forest of Wrath" is in development, and half of its rooms are done and accessible by now.
 ###  Demo
+
 - **0.2.4** (Apr 23, 2022)
   - **What's new**: money loot and **real-time combat**
   - money can be taken from and dropped to the ground.
-    - for this reason, players will not start with money in their inventory in order to prevent exploitation of the mechainsm.
+    - for this reason, players will not start with money in their inventory in order to prevent exploitation of the mechanism.
   - the stealth stat changed into wisdom.
   - weapon stats revised.
   - combat has been made real-time!
@@ -182,7 +230,7 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - enemies are equipped with weapons and armors.
     - these could be dropped on their deaths and they contribute to enemies' stats.
   - player's and enemies' death drops implemented.
-    - on death, player loses 10% of their exp and money and one of their items.
+    - on death, player loses 10% of their experience and money and one of their items.
   - enemy stats slightly revised.
   - player and enemies can now attack each other.
   - functions accessing databases are revised and are more performant now.
