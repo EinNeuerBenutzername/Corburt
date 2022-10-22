@@ -1,5 +1,7 @@
 # Corburt
 
+***IMPORTANT: At present, the development of CB is temporarily put on hold due to my academic reasons. According to the plan, I will restart the update by next July.***
+
 ## About
 
 ### General
