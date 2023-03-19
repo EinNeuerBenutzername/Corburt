@@ -1,6 +1,8 @@
 # Corburt
 
-***IMPORTANT: At present, the development of CB is temporarily put on hold due to my academic reasons. According to the plan, I will restart the update by next July.***
+**IMPORTANT**
+
+* **For academic reasons, Corburt's update has been suspended. Development will resume in June this year. According to the plan, I will probably release Corburt Lite in August.**
 
 ## About
 
@@ -14,48 +16,67 @@ Inspirations come from a game called [93 Realms](https://windows93.net:8083/), w
 
 **Important notes**: Corburt will undergo a huge overhaul in these versions, so a lot of the original content will be removed. Currently, there are no enemies or items in game, but please do not worry. They will be added back when their update is complete.
 
+Items marked by "🔸" are implemented but untested.
+
+**DEV ROADMAP TO CORBURT LITE**
+
+Corburt Lite includes 3 or 4 major regions with 2 questlines. Corburt is not quest-driven, so there is no "main quest" in Corburt Lite. It should introduce most of the mechanisms planned in the official release, but the amount of data will be about *one-tenth (a very unreliable estimation)* of it.
+
 - **Code & data**
-  - [x] Remove game database from source code.
+  - [ ] ***REMOVE WCHAR DEPENDENCY!!!***
+    - *(Should've used UTF-8 at the first place)*
+  - [x] Remove game database from source code to make hot updates easier.
   - [ ] Remake Nameless City:
     - [x] Map revision
     - [ ] Instances revision
     - [ ] *Secret Areas*
   - [ ] Enemy database reworks.
   - [ ] Item database reworks.
+  - [ ] Implement interactable database.
   - [ ] Add regions:
     - [ ] Forests of Wrath
     - [ ] Southwest Coast
-    - [ ] [SPOILER ALERT] and [SPOILER ALERT]
-    - [ ] [SPOILER ALERT]'s Surface
+    - [ ] **[SPOILER ALERT]**
+    - [ ] **[VERY HEAVY SPOILER ALERT]**
 
 - **Mechanisms**
   - [ ] Implement bosses.
+  - [ ] **Reimplement stats!!!**
   - [ ] Implement new battle mechanisms:
-    - [ ] Breach
+    - [x] 🔸Ready
+    - [ ] Breach stun
     - [ ] Break / Counter
+    - [ ] Dodge
+    - [ ] Parry
+    - [ ] Sight
     - [ ] Abilities
-    - [ ] Skills
-    - [ ] *Spells*
+      - [ ] Talents
+      - [ ] Skills
+      - [ ] Spells
     - [ ] *Enemy AI*
+    - [ ] *Combos*
   - [ ] Rework formulas:
     - [x] EXP formula
     - [ ] Stat formula
+    - [ ] Skill / Spell scaling formula
+  - [ ] Implement events.
   - [ ] Implement interactables:
-    - [ ] Events
     - [ ] NPCs
     - [ ] Doors
-    - [ ] Chests
-    - [ ] Inter-region passages & special exits
-    - [ ] Traps
-    - [ ] Teleporters
+    - [ ] Mobility
+    - [ ] Containers
+    - [ ] Hazards
+    - [ ] Mechanisms
+    - [ ] Switches
   - [ ] Implement miscellaneous items:
+    - [ ] Rank
     - [ ] Debuffs
-    - [ ] *Curses*
+    - [ ] Blessings & Curses
     - [ ] Standard boosts
-    - [ ] Item affixes
-    - [ ] *Gameplay modifiers*
+    - [ ] Item affixes and power sources
+    - [ ] *Gameplay modifiers?*
 - [ ] **Might or might not**
-  - [ ] Implement achievements.
+  - [ ] *Implement achievements.*
 
 
 ## Features/Highlights
@@ -66,16 +87,16 @@ Inspirations come from a game called [93 Realms](https://windows93.net:8083/), w
 - **Open source**.
 - **Easy to compile**: only two .c files, all other files are headers. friendly for C amateurs.
 
-## Drawbacks
+## Please might that Corburt...
 
-- It's in an **early stage of development**.
-- Might **not** be finished.
-- Might **not** work properly on non-Windows platforms.
+- is in an **early stage of development**.
+- might **not** be finished.
+- might **not** work properly on non-Windows platforms.
   - Might not even work properly on Windows platforms other than Windows 10.
   - For this reason, please report if you encounter any problem.
-- **Not** yet C++-compatible.
+- not** yet C++-compatible.
   - Actually, C++ compatibility is never taken into consideration.
-- I am lazy and might **not** be available for improvements and bug fixes.
+- **won't** receive updates frequently enough to implement all improvements and bug fixes. 
 
 ## Requirements
 
@@ -140,20 +161,20 @@ Will your report be seen? Very probably... Anyway,
 
 **When reporting bugs (if you came across any), please clarify:**
 
-- what's the version of Corburt?
-  - if it is not the latest version, test on the latest version.
-- if you compiled Corburt yourself, what compiler are you using?
-  - if you're using compilers that don't support C99, I might just ignore you.
-  - btw, GCC doesn't actually **totally** support C99.
-- what had you done before the bug occurred?
-  - you can copy & paste your input history from the `cbinput` window.
-- were there any error messages?
-- were any error log files generated?
-- did the game crash?
+- What's the version of Corburt?
+  - If it is not the latest version, test on the latest version.
+- If you compiled Corburt yourself, what compiler are you using?
+  - If you're using compilers that don't support C99, I might just ignore you.
+  - Btw, GCC doesn't actually **totally** support C99.
+- What had you done before the bug occurred?
+  - You can copy & paste your input history from the `cbinput` window.
+- Were there any error messages?
+- Were any error log files generated?
+- Did the game crash?
 
 ### Typo Report
 
-**Please report if you find typos or grammar mistakes.**
+**Please report if you find typos or grammar mistakes** in game or in this document.
 
 ### Balancing Feedback
 
@@ -180,13 +201,14 @@ If you wish to add new content, see "**Suggestions**".
 This mainly refers to suggestions for new content. If it is an adjustment to existing content, see "**Balancing feedback**".
 
 - What you should think carefully before suggesting include:
-  - major changes to the map
-  - new mechanism
-  - local multiplayer mode
-  - any web-related content
+  - Major changes to the map
+  - New mechanisms
+  - Any web- or multiplayer-related content
 
 ## Version History
-###  Post-demo
+###  Lite Dev
+- **0.3.2** (??, 2023)
+  - **What's new**: ???
 - **0.3.1** (Jul 9, 2022)
   - **Important notes**: Corburt will undergo a huge overhaul in these versions, so a lot of the original content will be removed. Currently, there are no enemies or items in game, but please do not worry. They will be added back when their update is complete.
   - **What's new**: **new map**
