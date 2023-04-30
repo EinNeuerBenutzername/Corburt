@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <wchar.h>
+#include <string.h>
 #include "include/cbcurses.h"
 #include "include/cbbase.h"
 #include "include/msg.h"
@@ -12,11 +12,16 @@ int main(){
     cbc_setcolor(Default);
     cbc_clearscreen();
     remove("data.dmp");
+    fp=fopen("data.dmp","r");
+    if(fp!=NULL){
+        return 1;
+    }
+    fclose(fp);
     atexit(exitfunc);
     int matchid=0;
     fp=fopen("data.dmp","w");
-    wchar_t inputcur[1024];
-    wchar_t inputlast[1024];
+    char inputcur[1024];
+    char inputlast[1024];
     cbc_setcolor(Cyan|Bright);
     printc(Cyan|Bright,msg->global_input);
     cbc_setcolor(Default);
@@ -26,25 +31,25 @@ int main(){
         printf(">>");
         cbc_setcolor(Yellow);
         fflush(stdout);
-        wmemset(inputcur,0,1024);
-        fgetws(inputcur,1024,stdin);
+        memset(inputcur,0,1024);
+        fgets(inputcur,1024,stdin);
         fflush(stdin);
-        if(inputcur[wcslen(inputcur)-1]==L'\n'){
-            inputcur[wcslen(inputcur)-1]=0;
+        if(inputcur[strlen(inputcur)-1]==L'\n'){
+            inputcur[strlen(inputcur)-1]=0;
         }
         cbc_setcolor(Default);
-        if(!wcslen(inputcur)){
-            fprintf(fp,"%d.%d.%ls",matchid,wcslen(inputlast),inputlast);
+        if(!strlen(inputcur)){
+            fprintf(fp,"%d.%d.%s",matchid,strlen(inputlast),inputlast);
         }else{
             fclose(fp);
             fp=fopen("data.dmp","w");
-            fprintf(fp,"%d.%d.%ls",matchid,wcslen(inputcur),inputcur);
-            wmemset(inputlast,0,1024);
-            wcscpy(inputlast,inputcur);
+            fprintf(fp,"%d.%d.%s",matchid,strlen(inputcur),inputcur);
+            memset(inputlast,0,1024);
+            strcpy(inputlast,inputcur);
         }
         rewind(fp);
         fflush(fp);
-        if(wcsncmp(inputcur,L"quit",4)==0){
+        if(strncmp(inputcur,"quit",4)==0){
             fflush(fp);
             fclose(fp);
             fp=NULL;

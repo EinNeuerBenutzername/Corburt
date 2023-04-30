@@ -1,7 +1,6 @@
 #ifndef Corburt_Player_h_Include_Guard
 #define Corburt_Player_h_Include_Guard
-//#define LVL_CAP 120
-#define LVL_CAP 20
+#define PLAYER_LVL_CAP 20 // for Lite
 #define DMG_RATIO 0.334f
 #include "dbmap.h"
 const bat exp2next[]={
@@ -126,40 +125,63 @@ const bat exp2next[]={
     [118]=7391243090000,
     [119]=8557240942000
 };
-const wchar_t *ranks[]={
-    L"The Condemned",
-    L"Regular",
-    L"King",
-    L"God",
-    L"Void"
+const char *ranks[]={
+    "Golem","Kin","Regular",
+    "Lesser Unfading","Unfading","Knight","Higher Kin",
+    "Demigod","King","Sage",
+    "God","True Sage","Carnage King",
+    "Supreme"
+};
+const nat ranklvlcap[]={
+    40,40,40,
+    60,75,75,75,
+    100,110,100,
+    135,120,150,
+    99999
 };
 static void pmovesuccess();
 static void paddgearstats();
 static void plvlup();
+static void pchangerank(nat targetrank);
 static void pbreakready();
 
 #include "dbitem.h"
 #include "cbturn.h"
 
+// br: breaks the "ready" state
 static void plvlup(){
-    if(player.lvl>=LVL_CAP)return;
+    if(player.lvl>=ranklvlcap[player.rnk])return;
+    if(player.lvl>=120)return;
     player.lvl++;
     player.stats.pts+=4;
     player.stats.pts+=player.lvl/9.429f;
     pcalcstats();
     printr(Green|Bright,msg->player_trainsuccess,player.lvl);
 }
+static void pchangerank(nat targetrank){}
 static void paddgearstats(){ // prep'ed
     if(inventory.weapon!=0){
         struct et_item *eti=&et_items[inventory.items[inventory.weapon-1]-1];
         itemdb *idb=db_ifindwithid(eti->itemid);
-        cbp.calcstats.atk+=idb->stats.atk;
-        cbp.calcstats.def+=idb->stats.def;
+        cbp.calcstats.agi+=idb->stats.agi;
         cbp.calcstats.acc+=idb->stats.acc;
         cbp.calcstats.dod+=idb->stats.dod;
-        cbp.calcstats.wis+=idb->stats.wis;
-        cbp.calcstats.act+=idb->stats.act;
         cbp.calcstats.con+=idb->stats.con;
+        cbp.calcstats.def+=idb->stats.def;
+        cbp.calcstats.vit+=idb->stats.vit;
+        cbp.calcstats.res+=idb->stats.res;
+        cbp.calcstats.rfl+=idb->stats.rfl;
+        cbp.calcstats.foc+=idb->stats.foc;
+        cbp.calcstats.str+=idb->stats.str;
+        cbp.calcstats.atk+=idb->stats.atk;
+        cbp.calcstats.stm+=idb->stats.stm;
+        cbp.calcstats.wil+=idb->stats.wil;
+        cbp.calcstats.san+=idb->stats.san;
+        cbp.calcstats.sat+=idb->stats.sat;
+        cbp.calcstats.wis+=idb->stats.wis;
+        cbp.calcstats.mag+=idb->stats.mag;
+        cbp.calcstats.mat+=idb->stats.mat;
+        cbp.calcstats.luck+=idb->stats.luck;
         cbp.calcstats.regen+=idb->stats.regen;
         cbp.calcstats.min_=idb->stats.min_;
         cbp.calcstats.max_=idb->stats.max_;
@@ -176,26 +198,50 @@ static void paddgearstats(){ // prep'ed
     if(inventory.armor!=0){
         struct et_item *eti=&et_items[inventory.items[inventory.armor-1]-1];
         itemdb *idb=db_ifindwithid(eti->itemid);
-        cbp.calcstats.atk+=idb->stats.atk;
-        cbp.calcstats.def+=idb->stats.def;
+        cbp.calcstats.agi+=idb->stats.agi;
         cbp.calcstats.acc+=idb->stats.acc;
         cbp.calcstats.dod+=idb->stats.dod;
-        cbp.calcstats.wis+=idb->stats.wis;
-        cbp.calcstats.act+=idb->stats.act;
         cbp.calcstats.con+=idb->stats.con;
-            cbp.calcstats.regen+=idb->stats.regen;
+        cbp.calcstats.def+=idb->stats.def;
+        cbp.calcstats.vit+=idb->stats.vit;
+        cbp.calcstats.res+=idb->stats.res;
+        cbp.calcstats.rfl+=idb->stats.rfl;
+        cbp.calcstats.foc+=idb->stats.foc;
+        cbp.calcstats.str+=idb->stats.str;
+        cbp.calcstats.atk+=idb->stats.atk;
+        cbp.calcstats.stm+=idb->stats.stm;
+        cbp.calcstats.wil+=idb->stats.wil;
+        cbp.calcstats.san+=idb->stats.san;
+        cbp.calcstats.sat+=idb->stats.sat;
+        cbp.calcstats.wis+=idb->stats.wis;
+        cbp.calcstats.mag+=idb->stats.mag;
+        cbp.calcstats.mat+=idb->stats.mat;
+        cbp.calcstats.luck+=idb->stats.luck;
+        cbp.calcstats.regen+=idb->stats.regen;
     }
     for(nat i=0;i<5;i++){
         if(inventory.accessories[i]!=0){
             struct et_item *eti=&et_items[inventory.items[inventory.accessories[i]-1]-1];
             itemdb *idb=db_ifindwithid(eti->itemid);
-            cbp.calcstats.atk+=idb->stats.atk;
-            cbp.calcstats.def+=idb->stats.def;
+            cbp.calcstats.agi+=idb->stats.agi;
             cbp.calcstats.acc+=idb->stats.acc;
             cbp.calcstats.dod+=idb->stats.dod;
-            cbp.calcstats.wis+=idb->stats.wis;
-            cbp.calcstats.act+=idb->stats.act;
             cbp.calcstats.con+=idb->stats.con;
+            cbp.calcstats.def+=idb->stats.def;
+            cbp.calcstats.vit+=idb->stats.vit;
+            cbp.calcstats.res+=idb->stats.res;
+            cbp.calcstats.rfl+=idb->stats.rfl;
+            cbp.calcstats.foc+=idb->stats.foc;
+            cbp.calcstats.str+=idb->stats.str;
+            cbp.calcstats.atk+=idb->stats.atk;
+            cbp.calcstats.stm+=idb->stats.stm;
+            cbp.calcstats.wil+=idb->stats.wil;
+            cbp.calcstats.san+=idb->stats.san;
+            cbp.calcstats.sat+=idb->stats.sat;
+            cbp.calcstats.wis+=idb->stats.wis;
+            cbp.calcstats.mag+=idb->stats.mag;
+            cbp.calcstats.mat+=idb->stats.mat;
+            cbp.calcstats.luck+=idb->stats.luck;
             cbp.calcstats.regen+=idb->stats.regen;
         }
     }
@@ -203,7 +249,7 @@ static void paddgearstats(){ // prep'ed
 void paddexp(nat add){
     if(add>0)player.exp+=add;
     else if(add<0&&player.exp+add>0)player.exp+=add;
-    if(player.exp>exp2next[LVL_CAP-1])player.exp=exp2next[LVL_CAP-1];
+    if(player.exp>exp2next[PLAYER_LVL_CAP-1])player.exp=exp2next[PLAYER_LVL_CAP-1];
 }
 void phpchange(nat num){
     if(num==0)return;
@@ -211,24 +257,24 @@ void phpchange(nat num){
         if(player.hp==player.maxhp)return;
         if(player.hp+num<player.maxhp)player.hp+=num;
         else player.hp=player.maxhp;
-        printc(Default,L"[");
+        printc(Default,"[");
         nat color;
         if(player.hp<player.maxhp*0.3333333f)color=Red|Bright;
         else if(player.hp<player.maxhp*0.6666667f)color=Yellow|Bright;
         else color=Green|Bright;
-        printc(color,L"%" PRIdFAST64,player.hp);
-        printc(Default,L"/%" PRIdFAST64 "]\n",player.maxhp);
+        printc(color,"%" PRIdFAST64,player.hp);
+        printc(Default,"/%" PRIdFAST64 "]\n",player.maxhp);
     }
     else{
         if(player.hp+num>0){
             player.hp+=num;
-            printc(Default,L"[");
+            printc(Default,"[");
             nat color;
             if(player.hp<player.maxhp*0.3333333f)color=Red|Bright;
             else if(player.hp<player.maxhp*0.6666667f)color=Yellow|Bright;
             else color=Green|Bright;
-            printc(color,L"%" PRIdFAST64,player.hp);
-            printc(Default,L"/%" PRIdFAST64 "]\n",player.maxhp);
+            printc(color,"%" PRIdFAST64,player.hp);
+            printc(Default,"/%" PRIdFAST64 "]\n",player.maxhp);
         }
         else pdie();
     }
@@ -291,45 +337,67 @@ void pcalcstats(){
     }
     { // stats
         int statcap=99999;
-        if(player.stats.atk>statcap)player.stats.atk=statcap;
-        if(player.stats.def>statcap)player.stats.def=statcap;
-        if(player.stats.acc>statcap)player.stats.acc=statcap;
-        if(player.stats.dod>statcap)player.stats.dod=statcap;
-        if(player.stats.wis>statcap)player.stats.wis=statcap;
-        if(player.stats.act>statcap)player.stats.act=statcap;
+        if(player.stats.agi>statcap)player.stats.agi=statcap;
         if(player.stats.con>statcap)player.stats.con=statcap;
+        if(player.stats.res>statcap)player.stats.res=statcap;
+        if(player.stats.str>statcap)player.stats.str=statcap;
+        if(player.stats.wil>statcap)player.stats.wil=statcap;
+        if(player.stats.wis>statcap)player.stats.wis=statcap;
+        if(player.stats.luck>statcap)player.stats.luck=statcap;
         if(player.stats.pts>statcap)player.stats.pts=statcap;
-        if(player.bstats.atk>statcap)player.bstats.atk=statcap;
-        if(player.bstats.def>statcap)player.bstats.def=statcap;
-        if(player.bstats.acc>statcap)player.bstats.acc=statcap;
-        if(player.bstats.dod>statcap)player.bstats.dod=statcap;
-        if(player.bstats.wis>statcap)player.bstats.wis=statcap;
-        if(player.bstats.act>statcap)player.bstats.act=statcap;
+        if(player.bstats.agi>statcap)player.bstats.agi=statcap;
         if(player.bstats.con>statcap)player.bstats.con=statcap;
-        if(player.bstats.pts>statcap)player.bstats.pts=statcap;
-        cbp.calcstats.atk=player.stats.atk+player.bstats.atk;
-        cbp.calcstats.def=player.stats.def+player.bstats.def;
-        cbp.calcstats.acc=player.stats.acc+player.bstats.acc;
-        cbp.calcstats.dod=player.stats.dod+player.bstats.dod;
-        cbp.calcstats.wis=player.stats.wis+player.bstats.wis;
-        cbp.calcstats.act=player.stats.act+player.bstats.act;
+        if(player.bstats.res>statcap)player.bstats.res=statcap;
+        if(player.bstats.str>statcap)player.bstats.str=statcap;
+        if(player.bstats.wil>statcap)player.bstats.wil=statcap;
+        if(player.bstats.wis>statcap)player.bstats.wis=statcap;
+        if(player.bstats.luck>statcap)player.bstats.luck=statcap;
+        cbp.calcstats.agi=player.stats.agi+player.bstats.agi;
         cbp.calcstats.con=player.stats.con+player.bstats.con;
+        cbp.calcstats.res=player.stats.res+player.bstats.res;
+        cbp.calcstats.str=player.stats.str+player.bstats.str;
+        cbp.calcstats.wil=player.stats.wil+player.bstats.wil;
+        cbp.calcstats.wis=player.stats.wis+player.bstats.wis;
+        cbp.calcstats.luck=player.stats.luck+player.bstats.luck;
         cbp.calcstats.regen=0;
         paddgearstats();
     }
 }
-void pshowstats(){
+void pshowinfo(){
+
+}
+void pshowstatsbrief(){
     pcalcstats();
     printr(Default,
-        msg->player_info,
+        msg->player_stats_brief,
         player.name,
         ranks[player.rnk],
         player.hp,player.maxhp,(player.hp*100.0f/player.maxhp),
         player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]),
-        cbp.calcstats.atk,cbp.calcstats.def,
+        cbp.calcstats.agi,cbp.calcstats.con,
+        cbp.calcstats.res,cbp.calcstats.str,
+        cbp.calcstats.wil,cbp.calcstats.wis,
+        player.stats.pts
+    );
+}
+void pshowstats(){
+    pcalcstats();
+    printr(Default,
+        msg->player_stats,
+        player.name,
+        ranks[player.rnk],
+        player.hp,player.maxhp,(player.hp*100.0f/player.maxhp),
+        player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]),
+        cbp.calcstats.agi,cbp.calcstats.con,
+        cbp.calcstats.res,cbp.calcstats.str,
+        cbp.calcstats.wil,cbp.calcstats.wis,
         cbp.calcstats.acc,cbp.calcstats.dod,
-        cbp.calcstats.wis,cbp.calcstats.act,
-        cbp.calcstats.con,player.stats.pts
+        cbp.calcstats.def,cbp.calcstats.vit,
+        cbp.calcstats.rfl,cbp.calcstats.foc,
+        cbp.calcstats.atk,cbp.calcstats.stm,
+        cbp.calcstats.san,cbp.calcstats.sat,
+        cbp.calcstats.mag,cbp.calcstats.mat,
+        player.stats.pts
     );
 }
 void pshowabl(){printr(Default,msg->player_abl);}
@@ -349,7 +417,7 @@ void pshowinv(){
             if(inventory.items[i]!=0){
                 struct et_item *eti=&et_items[inventory.items[i]-1];
                 itemdb *idb=db_ifindwithid(eti->itemid);
-                if(j>0)printr(Default,L"\n               ");
+                if(j>0)printr(Default,"\n               ");
                 if(inventory.weapon==i+1){
                     printr(Cyan|Bright,msg->player_inv_wielding);
                 }
@@ -360,9 +428,9 @@ void pshowinv(){
                     printr(Cyan|Bright,msg->player_inv_equipping);
                     break;
                 }
-                printrp(Default,L"                ",L"%ls ",idb->name);
+                printrp(Default,"                ","%s ",idb->name);
                 if(idb->type&db_itemtype_stackable_mask&&eti->qnty>1){
-                    printrp(Default,L"                ",L"(x%" PRIdFAST32 ")",eti->qnty);
+                    printrp(Default,"                ","(x%" PRIdFAST32 ")",eti->qnty);
                 }
                 invitemscount--;
                 j++;
@@ -370,10 +438,19 @@ void pshowinv(){
             }
         }
     }
-    printr(Default,L"\n%ls",msg->line);
+    printr(Default,"\n%s",msg->line);
 }
 void pshowexp(){
     printr(Default,msg->player_exp,player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]));
+}
+void pteleport(nat roomid){
+    roomdb *rm=db_rfindwithid(roomid);
+    if(rm==NULL){
+        printr(Red,msg->db_ridnullexceptionerror);
+        return;
+    }
+    player.roomid=roomid;
+    db_rshowdesc(roomid);
 }
 void pmove(enum direction dir){ // br
     pbreakready();
@@ -441,7 +518,7 @@ void pready(){
     cbp.readying=true;
     if(cbp.readyframe<0)cbp.readyframe=0;
     if(cbp.isready){
-        printc(Default,msg->player_isready);
+        printc(Default,msg->player_isalready);
     }
 }
 void preadying(){
@@ -459,10 +536,10 @@ static void pbreakready(){
     cbp.readyframe=0;
 }
 void pattack(nat entityid){ // br
-    if(cbp.attackcd>0){
-        printr(Default,msg->player_cantattack);
-        return;
-    }
+//    if(cbp.attackcd>0){
+//        printr(Default,msg->player_cantattack);
+//        return;
+//    }
     struct et_enemy *ete=&et_enemies[entityid-1];
     if(!ete->available){
         printc(Red,msg->db_eetidnullexceptionerror);
@@ -526,7 +603,11 @@ void ptrain(){ // br
         printr(Default,msg->player_canttrain);
         return;
     }
-    if(player.lvl==LVL_CAP){
+    if(player.lvl==PLAYER_LVL_CAP){
+        printr(Default,msg->player_canttrain_maxlvl);
+        return;
+    }
+    if(player.lvl==ranklvlcap[player.rnk]){
         printr(Default,msg->player_canttrain_maxlvl);
         return;
     }
@@ -542,20 +623,20 @@ void peditstats(){ // br
         printc(Default,msg->player_canteditstats);
         return;
     }
-    if(player.stats.pts||player.bstats.pts){
+    if(player.stats.pts){
         cbp.editstats=true;
         printr(Default,msg->player_editstatshint);
         printc(Default,msg->player_points,
-            player.stats.atk,player.stats.def,
-            player.stats.acc,player.stats.dod,
-            player.stats.wis,player.stats.act,
-            player.stats.con,player.stats.pts);
+            player.stats.agi,player.stats.con,
+            player.stats.res,player.stats.str,
+            player.stats.wil,player.stats.wis,
+            player.stats.pts);
     }else{
         printc(Default,msg->player_points,
-            player.stats.atk,player.stats.def,
-            player.stats.acc,player.stats.dod,
-            player.stats.wis,player.stats.act,
-            player.stats.con,player.stats.pts);
+            player.stats.agi,player.stats.con,
+            player.stats.res,player.stats.str,
+            player.stats.wil,player.stats.wis,
+            player.stats.pts);
         printc(Default,msg->player_editstatsnopoints);
     }
 }
@@ -568,7 +649,7 @@ void pregen(){
     nat regennum=player.lvl;
     regennum+=cbp.calcstats.con;
     regennum+=cbp.calcstats.regen;
-//    printc(Cyan,L"Regen: +%d (extra +%d)\n",regennum,cbp.calcstats.regen);
+//    printc(Cyan,"Regen: +%d (extra +%d)\n",regennum,cbp.calcstats.regen);
     phpchange(regennum);
 }
 void ptakedmg(nat dmg){

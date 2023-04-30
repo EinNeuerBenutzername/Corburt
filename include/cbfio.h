@@ -24,7 +24,7 @@ void savesaves();
 
 static void readsave(nat saveid,FILE *fp){
     int_fast32_t_read(&saves[saveid].valid,fp);
-    //tracelog(Green,L"Valid: %" PRIuFAST32 "\n",saves[saveid].valid);
+    //tracelog(Green,"Valid: %" PRIuFAST32 "\n",saves[saveid].valid);
     if(!saves[saveid].valid)return;
     readplayerstats(&saves[saveid].plr,fp);
     readinventory(&saves[saveid].inv,fp);
@@ -46,56 +46,79 @@ static void save_overwritten(nat saveid){
 }
 static void readplayerstats(struct player *p,FILE *fp){
     struct player plr={0};
-    wcs_read(plr.name,32,fp);
+    str_read(plr.name,32,fp);
     int_fast32_t_read(&plr.spawn,fp);
     int_fast32_t_read(&plr.rnk,fp);
     int_fast32_t_read(&plr.lvl,fp);
     int_fast64_t_read(&plr.exp,fp);
     int_fast64_t_read(&plr.maxhp,fp);
     int_fast64_t_read(&plr.hp,fp);
-    int_fast32_t_read(&plr.stats.atk,fp);
-    int_fast32_t_read(&plr.stats.def,fp);
-    int_fast32_t_read(&plr.stats.acc,fp);
-    int_fast32_t_read(&plr.stats.dod,fp);
-    int_fast32_t_read(&plr.stats.wis,fp);
-    int_fast32_t_read(&plr.stats.act,fp);
+    int_fast32_t_read(&plr.stats.agi,fp);
     int_fast32_t_read(&plr.stats.con,fp);
+    int_fast32_t_read(&plr.stats.res,fp);
+    int_fast32_t_read(&plr.stats.str,fp);
+    int_fast32_t_read(&plr.stats.wil,fp);
+    int_fast32_t_read(&plr.stats.wis,fp);
+    int_fast32_t_read(&plr.stats.luck,fp);
     int_fast32_t_read(&plr.stats.pts,fp);
-    int_fast32_t_read(&plr.bstats.atk,fp);
-    int_fast32_t_read(&plr.bstats.def,fp);
-    int_fast32_t_read(&plr.bstats.acc,fp);
-    int_fast32_t_read(&plr.bstats.dod,fp);
-    int_fast32_t_read(&plr.bstats.wis,fp);
-    int_fast32_t_read(&plr.bstats.act,fp);
+
+    int_fast32_t_read(&plr.bstats.agi,fp);
+        int_fast32_t_read(&plr.bstats.acc,fp);
+        int_fast32_t_read(&plr.bstats.dod,fp);
     int_fast32_t_read(&plr.bstats.con,fp);
-    int_fast32_t_read(&plr.bstats.pts,fp);
+        int_fast32_t_read(&plr.bstats.def,fp);
+        int_fast32_t_read(&plr.bstats.vit,fp);
+    int_fast32_t_read(&plr.bstats.res,fp);
+        int_fast32_t_read(&plr.bstats.rfl,fp);
+        int_fast32_t_read(&plr.bstats.foc,fp);
+    int_fast32_t_read(&plr.bstats.str,fp);
+        int_fast32_t_read(&plr.bstats.atk,fp);
+        int_fast32_t_read(&plr.bstats.stm,fp);
+    int_fast32_t_read(&plr.bstats.wil,fp);
+        int_fast32_t_read(&plr.bstats.san,fp);
+        int_fast32_t_read(&plr.bstats.sat,fp);
+    int_fast32_t_read(&plr.bstats.wis,fp);
+        int_fast32_t_read(&plr.bstats.mag,fp);
+        int_fast32_t_read(&plr.bstats.mat,fp);
+    int_fast32_t_read(&plr.bstats.luck,fp);
     int_fast32_t_read(&plr.roomid,fp);
     *p=plr;
 }
 static void saveplayerstats(struct player plr,FILE *fp){
-    wcs_write(plr.name,32,fp);
+    str_write(plr.name,32,fp);
     int_fast32_t_write(plr.spawn,fp);
     int_fast32_t_write(plr.rnk,fp);
     int_fast32_t_write(plr.lvl,fp);
     int_fast64_t_write(plr.exp,fp);
     int_fast64_t_write(plr.maxhp,fp);
     int_fast64_t_write(plr.hp,fp);
-    int_fast32_t_write(plr.stats.atk,fp);
-    int_fast32_t_write(plr.stats.def,fp);
-    int_fast32_t_write(plr.stats.acc,fp);
-    int_fast32_t_write(plr.stats.dod,fp);
-    int_fast32_t_write(plr.stats.wis,fp);
-    int_fast32_t_write(plr.stats.act,fp);
+    int_fast32_t_write(plr.stats.agi,fp);
     int_fast32_t_write(plr.stats.con,fp);
+    int_fast32_t_write(plr.stats.res,fp);
+    int_fast32_t_write(plr.stats.str,fp);
+    int_fast32_t_write(plr.stats.wil,fp);
+    int_fast32_t_write(plr.stats.wis,fp);
+    int_fast32_t_write(plr.stats.luck,fp);
     int_fast32_t_write(plr.stats.pts,fp);
-    int_fast32_t_write(plr.bstats.atk,fp);
-    int_fast32_t_write(plr.bstats.def,fp);
-    int_fast32_t_write(plr.bstats.acc,fp);
-    int_fast32_t_write(plr.bstats.dod,fp);
-    int_fast32_t_write(plr.bstats.wis,fp);
-    int_fast32_t_write(plr.bstats.act,fp);
+    int_fast32_t_write(plr.bstats.agi,fp);
+        int_fast32_t_write(plr.bstats.acc,fp);
+        int_fast32_t_write(plr.bstats.dod,fp);
     int_fast32_t_write(plr.bstats.con,fp);
-    int_fast32_t_write(plr.bstats.pts,fp);
+        int_fast32_t_write(plr.bstats.def,fp);
+        int_fast32_t_write(plr.bstats.vit,fp);
+    int_fast32_t_write(plr.bstats.res,fp);
+        int_fast32_t_write(plr.bstats.rfl,fp);
+        int_fast32_t_write(plr.bstats.foc,fp);
+    int_fast32_t_write(plr.bstats.str,fp);
+        int_fast32_t_write(plr.bstats.atk,fp);
+        int_fast32_t_write(plr.bstats.stm,fp);
+    int_fast32_t_write(plr.bstats.wil,fp);
+        int_fast32_t_write(plr.bstats.san,fp);
+        int_fast32_t_write(plr.bstats.sat,fp);
+    int_fast32_t_write(plr.bstats.wis,fp);
+        int_fast32_t_write(plr.bstats.mag,fp);
+        int_fast32_t_write(plr.bstats.mat,fp);
+    int_fast32_t_write(plr.bstats.luck,fp);
     int_fast32_t_write(plr.roomid,fp);
 }
 static void readinventory(struct inventory *inv,FILE *fp){
@@ -123,7 +146,7 @@ static void saveinventory(struct inventory inv,FILE *fp){
 static void readet_items(FILE *fp){
     nat itemsmax_tmp;
     int_fast32_t_read(&itemsmax_tmp,fp);
-//    tracelog(Cyan,L"max items: %" PRIdFAST32 ".\n",itemsmax_tmp);
+//    tracelog(Cyan,"max items: %" PRIdFAST32 ".\n",itemsmax_tmp);
     while(itemsmax_tmp>itemsmax){
         etitem_expand();
     }
@@ -157,7 +180,7 @@ static void saveet_items(FILE *fp){
 static void readet_enemies(FILE *fp){
     nat enemiesmax_tmp;
     int_fast32_t_read(&enemiesmax_tmp,fp);
-//    tracelog(Cyan,L"max enemies: %" PRIdFAST32 ".\n",enemiesmax_tmp);
+//    tracelog(Cyan,"max enemies: %" PRIdFAST32 ".\n",enemiesmax_tmp);
     enemiescount=0;
     while(enemiesmax_tmp>enemiesmax){
         etenemy_expand();
@@ -171,6 +194,7 @@ static void readet_enemies(FILE *fp){
             int_fast32_t_read(&et_enemies[i].enemyid,fp);
             int_fast32_t_read(&et_enemies[i].hp,fp);
             int_fast32_t_read(&et_enemies[i].attackcd,fp);
+            int_fast32_t_read(&et_enemies[i].breach,fp);
             enemiescount++;
         }
     }
@@ -187,6 +211,7 @@ static void saveet_enemies(FILE *fp){
             int_fast32_t_write(et_enemies[i].enemyid,fp);
             int_fast32_t_write(et_enemies[i].hp,fp);
             int_fast32_t_write(et_enemies[i].attackcd,fp);
+            int_fast32_t_write(et_enemies[i].breach,fp);
         }
     }
 }
@@ -279,26 +304,26 @@ void readsaves(){
         if(foundsaves==0)printr(Cyan|Bright,msg->global_saveempty);
         else if(foundsaves==1){
             printr(Cyan|Bright,msg->global_savecount,foundsaves);
-            printr(Cyan|Bright,L"%ls\n",saves[0].plr.name);
+            printr(Cyan|Bright,"%s\n",saves[0].plr.name);
         }
         else{
             printr(Cyan|Bright,msg->global_savecounts,foundsaves);
-            printr(Cyan|Bright,L"%ls",saves[0].plr.name);
-            for(nat i=1;i<foundsaves;i++)printr(Cyan|Bright,L", %ls",saves[i].plr.name);
-            printr(Cyan|Bright,L"\n");
+            printr(Cyan|Bright,"%s",saves[0].plr.name);
+            for(nat i=1;i<foundsaves;i++)printr(Cyan|Bright,", %s",saves[i].plr.name);
+            printr(Cyan|Bright,"\n");
         }
     }
     while(true){
         printr(White|Bright,msg->global_enteryourname);
-        wchar_t readsave_newname[32];
+        char readsave_newname[32];
         scanline(readsave_newname,32);
-        if(wcslen(readsave_newname)<2){
+        if(strlen(readsave_newname)<2){
             printr(White|Bright,msg->global_nametooshort,readsave_newname);
             continue;
         }else{
             nat saveid=-1;
             for(nat i=0;i<savescount;i++){
-                if(wcscmp(saves[i].plr.name,readsave_newname)==0){
+                if(strcmp(saves[i].plr.name,readsave_newname)==0){
                     saveid=i;
                     break;
                 }
@@ -309,21 +334,21 @@ void readsaves(){
                     continue;
                 }
                 printr(White|Bright,msg->global_confirmyourname,readsave_newname);
-                wchar_t yes[2];
+                char yes[2];
                 scanline(yes,2);
-                if(yes[0]==L'Y'||yes[0]==L'y'){
+                if(yes[0]=='Y'||yes[0]=='y'){
                     cursaveid=foundsaves;
                     saves[foundsaves].valid=1;
-                    wcscpy(player.name,readsave_newname);
+                    strcpy(player.name,readsave_newname);
                     printr(Green|Bright,msg->global_welcomeplayer,readsave_newname);
                     break;
                 }
             }
             else{
                 printr(White|Bright,msg->global_confirmchoice,saves[saveid].plr.name);
-                wchar_t yes[2];
+                char yes[2];
                 scanline(yes,2);
-                if(yes[0]==L'Y'||yes[0]==L'y'){
+                if(yes[0]=='Y'||yes[0]=='y'){
                     cursaveid=saveid;
                     save_overwrite(saveid);
                     printr(Green|Bright,msg->global_welcomeplayer2,readsave_newname);

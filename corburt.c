@@ -14,20 +14,20 @@ int main(){
     launchcb();
 #ifdef CB_REALTIME
     scanline(inputbuf,127);
-    wmemset(inputbuf,0,128);
+    memset(inputbuf,0,128);
     cbc_hidecursor();
 #endif
-    printr(Green|Bright,L"%ls",msg->global_welcome);
+    printr(Green|Bright,"%s",msg->global_welcome);
     printr(White,msg->global_splash);
     printr(Yellow,msg->global_splash2);
-    printr(White,L"%50ls\n",msg->global_corburtversion);
+    printr(White,"%50s\n",msg->global_corburtversion);
     readsaves();
     db_rshowdesc(player.roomid);
 #ifdef CB_REALTIME
     cbtime_init();
 #endif
 	while(!quit_game){
-        wmemset(inputbuf,0,128);
+        memset(inputbuf,0,128);
 #ifdef CB_REALTIME
         fscanline(inputbuf,127);
 #else
@@ -48,8 +48,8 @@ void launchcb(){
     atexit(endcb);
     global.pointerpool=malloc(CB_MAXPOINTERS*sizeof(void *));
     for(nat i=0;i<CB_MAXPOINTERS;i++)global.pointerpool[i]=NULL;
-    printr_dest=mallocpointer(4096*sizeof(wchar_t));
-    printr_token=mallocpointer(DISPLAY_WIDTH*sizeof(wchar_t));
+    printr_dest=mallocpointer(4096*sizeof(char));
+    printr_token=mallocpointer(DISPLAY_WIDTH*sizeof(char));
     assertcheck();
     cbc_init();
     cbc_setwindowtitle("Corburt");
@@ -64,10 +64,10 @@ void launchcb(){
     }
     loadalldb();
     setupentitydata();
-    inputbuf=mallocpointer(128*sizeof(wchar_t));
-    inputbufl=mallocpointer(128*sizeof(wchar_t));
-    wmemset(inputbuf,0,128);
-    wmemset(inputbufl,0,128);
+    inputbuf=mallocpointer(128*sizeof(char));
+    inputbufl=mallocpointer(128*sizeof(char));
+    memset(inputbuf,0,128);
+    memset(inputbufl,0,128);
     setvbuf(stdout,NULL,_IOFBF,0);
 #ifdef CB_REALTIME
     fpinput=fopen("data.dmp","r");

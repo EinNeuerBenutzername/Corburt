@@ -8,14 +8,13 @@
 	"include/cbfio.h"
 	"include/dbentity.h"
 
-1656815488 g:\-guten\prog\c\proj\corburt\include\cbbase.h
+1682854126 g:\-guten\prog\c\proj\corburt\include\cbbase.h
 	"msg.h"
 	"mtwister.h"
 	"cbcurses.h"
 	"cbsys.h"
 	<limits.h>
 	<time.h>
-	<wchar.h>
 	<stdarg.h>
 	<stdlib.h>
 	<stdbool.h>
@@ -28,9 +27,8 @@
 	<io.h>
 	<unistd.h>
 
-1656814782 g:\-guten\prog\c\proj\corburt\include\msg.h
+1682854067 g:\-guten\prog\c\proj\corburt\include\msg.h
 	<inttypes.h>
-	<wchar.h>
 
 1650112018 g:\-guten\prog\c\proj\corburt\include\mtwister.h
 	<inttypes.h>
@@ -65,12 +63,12 @@
 	<signal.h>
 	<sys/ioctl.h>
 
-1656914471 g:\-guten\prog\c\proj\corburt\include\cbplayer.h
+1682851333 g:\-guten\prog\c\proj\corburt\include\cbplayer.h
 	"dbmap.h"
 	"dbitem.h"
 	"cbturn.h"
 
-1656814338 g:\-guten\prog\c\proj\corburt\include\cbio.h
+1682757056 g:\-guten\prog\c\proj\corburt\include\cbio.h
 	"cbbase.h"
 	"cbfio.h"
 	"cbplayer.h"
@@ -119,31 +117,31 @@
 	<unistd.h>
 	<signal.h>
 
-1651542304 g:\-guten\prog\c\proj\corburt\include\cbfio.h
+1682757058 g:\-guten\prog\c\proj\corburt\include\cbfio.h
 	"cbfio_base.h"
 	"cbbase.h"
 	<stdlib.h>
 
-1650695328 g:\-guten\prog\c\proj\corburt\include\dbitem.h
+1682686453 g:\-guten\prog\c\proj\corburt\include\dbitem.h
 	"cbbase.h"
 	"cbplayer.h"
 
-1650112018 g:\-guten\prog\c\proj\corburt\include\cbfio_base.h
+1682757463 g:\-guten\prog\c\proj\corburt\include\cbfio_base.h
 	<limits.h>
 	<stdio.h>
 	<inttypes.h>
 
-1651399640 g:\-guten\prog\c\proj\corburt\include\dbmap.h
+1682757058 g:\-guten\prog\c\proj\corburt\include\dbmap.h
 	"cbbase.h"
 	"dbentity.h"
 
-1656813566 g:\-guten\prog\c\proj\corburt\include\dbfio_.h
+1682756189 g:\-guten\prog\c\proj\corburt\include\dbfio_.h
 	"cbfio_base.h"
 	<stdlib.h>
-	"dbdata.h"
+	"../tools/dxport/dbdata.h"
 	"cbbase.h"
 
-1656813688 g:\-guten\prog\c\proj\corburt\include\dbentity.h
+1682757057 g:\-guten\prog\c\proj\corburt\include\dbentity.h
 	"cbbase.h"
 	"dbitem.h"
 	"dbmap.h"
@@ -240,7 +238,7 @@
 	"cbplayer.h"
 	"dbentity.h"
 
-1656815024 g:\-guten\prog\c\proj\corburt\include\cbturn.h
+1682761485 g:\-guten\prog\c\proj\corburt\include\cbturn.h
 	"cbbase.h"
 	"cbplayer.h"
 	"dbentity.h"
@@ -274,7 +272,7 @@
 1651118566 e:\dev\corburt\include\dbdata.h
 	"cbbase.h"
 
-1656914505 source:g:\-guten\prog\c\proj\corburt\corburt.c
+1682757120 source:g:\-guten\prog\c\proj\corburt\corburt.c
 	<stdio.h>
 	<stdlib.h>
 	"include/cbcurses.h"
@@ -294,4 +292,7 @@
 
 1657200990 g:\-guten\prog\c\proj\corburt\include\dbdata.h
 	"cbbase.h"
+
+1682756586 g:\-guten\prog\c\proj\corburt\tools\dxport\dbdata.h
+	"../../include/cbbase.h"
 

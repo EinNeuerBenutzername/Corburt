@@ -5,12 +5,12 @@
 #include "cbplayer.h"
 #include "dbmap.h"
 #include "dbitem.h"
-wchar_t *inputbufl=NULL;
-foo fullmatch(wchar_t *wcs,const wchar_t *wcs2);
-foo matchcommands(wchar_t *cmd);
-foo match__commands(wchar_t *cmd); // template
-foo matchregularcommands(wchar_t *cmd);
-foo matcheditstatscommands(wchar_t *cmd);
+char *inputbufl=NULL;
+foo fullmatch(char *str,const char *str2);
+foo matchcommands(char *cmd);
+foo match__commands(char *cmd); // template
+foo matchregularcommands(char *cmd);
+foo matcheditstatscommands(char *cmd);
 void processinput();
 #ifdef CB_REALTIME
 #include "cbsys.h"
@@ -18,134 +18,149 @@ int cbio_matchid=0,cbio_matchidold=1,cbio_len=0;
 FILE *fpinput=NULL;
 #endif
 
-foo fullmatch(wchar_t *wcs,const wchar_t *wcs2){
-    if(wcs==NULL&&wcs2==NULL)return true;
-    if(wcs==NULL||wcs2==NULL)return false;
-    if(wcslen(wcs)<wcslen(wcs2))return false;
-    if(wcs[0]!=wcs2[0])return false;
-    if(wcslen(wcs)>wcslen(wcs2)){
-        if(wcs[wcslen(wcs2)]!=L' ')return false;
-        for(size_t i=0;i<wcslen(wcs2);i++){
-            if(wcs[i]!=wcs2[i])return false;
+foo fullmatch(char *str,const char *str2){
+    if(str==NULL&&str2==NULL)return true;
+    if(str==NULL||str2==NULL)return false;
+    if(strlen(str)<strlen(str2))return false;
+    if(str[0]!=str2[0])return false;
+    if(strlen(str)>strlen(str2)){
+        if(str[strlen(str2)]!=' ')return false;
+        for(size_t i=0;i<strlen(str2);i++){
+            if(str[i]!=str2[i])return false;
         }
         return true;
     }
     else{
-        if(wcscmp(wcs,wcs2)==0)return true;
+        if(strcmp(str,str2)==0)return true;
         return false;
     }
 }
-foo matchcommands(wchar_t *cmd){
+foo matchcommands(char *cmd){
     if(cbp.editstats){
         return matcheditstatscommands(cmd);
     }
     return matchregularcommands(cmd);
 }
-foo match__commands(wchar_t *cmd){
-    if(fullmatch(cmd,L"quit")||
-       fullmatch(cmd,L"exitgame")||
-       fullmatch(cmd,L"quitgame")){
+foo match__commands(char *cmd){
+    if(fullmatch(cmd,"quit")||
+       fullmatch(cmd,"exitgame")||
+       fullmatch(cmd,"quitgame")){
         quit_game=true;
         return true;
     }
     return false;
 }
-foo matchregularcommands(wchar_t *cmd){
-    if(fullmatch(cmd,L"st")||
-       fullmatch(cmd,L"stats")||
-       fullmatch(cmd,L"statistics")){
+foo matchregularcommands(char *cmd){
+    if(fullmatch(cmd,"st")||
+       fullmatch(cmd,"stats")){
+        pshowstatsbrief();
+        return true;
+    }
+    if(fullmatch(cmd,"statistics")){
         pshowstats();
         return true;
     }
-    if(fullmatch(cmd,L"quit")||
-       fullmatch(cmd,L"exitgame")||
-       fullmatch(cmd,L"quitgame")){
+    if(fullmatch(cmd,"information")||
+       fullmatch(cmd,"info")||
+       fullmatch(cmd,"character")||
+       fullmatch(cmd,"char")||
+       fullmatch(cmd,"ch")
+       ){
+        pshowinfo();
+        return true;
+    }
+    if(fullmatch(cmd,"quit")||
+       fullmatch(cmd,"exitgame")||
+       fullmatch(cmd,"quitgame")){
         quit_game=true;
         return true;
     }
-    if(fullmatch(cmd,L"cls")||
-       fullmatch(cmd,L"clear")){
+    if(fullmatch(cmd,"cls")||
+       fullmatch(cmd,"clear")){
         cbc_clearscreen();
         return true;
     }
-    if(fullmatch(cmd,L"east")||
-       fullmatch(cmd,L"e")){
+    if(fullmatch(cmd,"east")||
+       fullmatch(cmd,"e")){
         pmove(dir_East);
         return true;
     }
-    if(fullmatch(cmd,L"west")||
-       fullmatch(cmd,L"w")){
+    if(fullmatch(cmd,"west")||
+       fullmatch(cmd,"w")){
         pmove(dir_West);
         return true;
     }
-    if(fullmatch(cmd,L"north")||
-       fullmatch(cmd,L"n")){
+    if(fullmatch(cmd,"north")||
+       fullmatch(cmd,"n")){
         pmove(dir_North);
         return true;
     }
-    if(fullmatch(cmd,L"south")||
-       fullmatch(cmd,L"s")){
+    if(fullmatch(cmd,"south")||
+       fullmatch(cmd,"s")){
         pmove(dir_South);
         return true;
     }
-    if(fullmatch(cmd,L"up")){
+    if(fullmatch(cmd,"up")){
         pmove(dir_Up);
         return true;
     }
-    if(fullmatch(cmd,L"down")){
+    if(fullmatch(cmd,"down")){
         pmove(dir_Down);
         return true;
     }
-    if(fullmatch(cmd,L"inventory")||
-       fullmatch(cmd,L"inv")){
+    if(fullmatch(cmd,"inventory")||
+       fullmatch(cmd,"inv")){
         pshowinv();
         return true;
     }
-    if(fullmatch(cmd,L"experience")||
-       fullmatch(cmd,L"exp")||
-       fullmatch(cmd,L"xp")){
+    if(fullmatch(cmd,"experience")||
+       fullmatch(cmd,"exp")||
+       fullmatch(cmd,"xp")){
         pshowexp();
         return true;
     }
-    if(fullmatch(cmd,L"look")||
-       fullmatch(cmd,L"l")){
+    if(fullmatch(cmd,"look")||
+       fullmatch(cmd,"l")){
         db_rshowdesc(player.roomid);
         return true;
     }
-    if(fullmatch(cmd,L"train")||
-       fullmatch(cmd,L"tr")){
+    if(fullmatch(cmd,"train")||
+       fullmatch(cmd,"tr")){
         ptrain();
         return true;
     }
-    if(fullmatch(cmd,L"time")||
-       fullmatch(cmd,L"tm")){
+    if(fullmatch(cmd,"time")||
+       fullmatch(cmd,"tm")){
         showtime();
         return true;
     }
-    if(fullmatch(cmd,L"editstats")||
-       fullmatch(cmd,L"editst")){
+    if(fullmatch(cmd,"editstats")||
+       fullmatch(cmd,"editst")){
         peditstats();
         return true;
     }
-    if(fullmatch(cmd,L"help")){
+    if(fullmatch(cmd,"help")){
         printc(Default,msg->global_help);
         return true;
     }
-    if(fullmatch(cmd,L"abilities")||
-       fullmatch(cmd,L"abl")){
+    if(fullmatch(cmd,"abilities")||
+       fullmatch(cmd,"ability")||
+       fullmatch(cmd,"abi")||
+       fullmatch(cmd,"abl")||
+       fullmatch(cmd,"ab")){
         pshowabl();
         return true;
     }
-    if(fullmatch(cmd,L"save")){
+    if(fullmatch(cmd,"save")){
         savesaves();
         printr(Cyan|Bright,msg->global_progresssaved);
         return true;
     }
-    if(fullmatch(cmd,L"list")){
+    if(fullmatch(cmd,"list")){
         db_rshowtable(player.roomid);
         return true;
     }
-    if(fullmatch(cmd,L"buy")){
+    if(fullmatch(cmd,"buy")){
         roomdb *rm=db_rfindwithid(player.roomid);
         if(rm==NULL){
             printr(Red,msg->db_ridnullexceptionerror);
@@ -155,37 +170,37 @@ foo matchregularcommands(wchar_t *cmd){
             printr(Default,msg->db_notinstore);
             return true;
         }
-        wchar_t *buytarget=NULL;
-        buytarget=mallocpointer(128*sizeof(wchar_t));
-        wmemset(buytarget,0,128);
+        char *buytarget=NULL;
+        buytarget=mallocpointer(128*sizeof(char));
+        memset(buytarget,0,128);
         nat j=0,sth=0;
-        for(size_t i=3;i<wcslen(cmd);i++){
-            if(cmd[i]!=L' '&&((cmd[i]>L'9'||cmd[i]<L'0')||sth==3))sth=2;
+        for(size_t i=3;i<strlen(cmd);i++){
+            if(cmd[i]!=' '&&((cmd[i]>'9'||cmd[i]<'0')||sth==3))sth=2;
             else{
-                if(cmd[i]==L' '&&sth==1)sth=3;
-                else if(cmd[i]!=L' '&&sth==0)sth=1;
+                if(cmd[i]==' '&&sth==1)sth=3;
+                else if(cmd[i]!=' '&&sth==0)sth=1;
             }
             if(sth==1||sth==2){
                 buytarget[j]=cmd[i];
                 j++;
             }
-            if(sth==3&&wcslen(buytarget)>0){
+            if(sth==3&&strlen(buytarget)>0){
                 j=0;
-                wmemset(buytarget,0,128);
+                memset(buytarget,0,128);
             }
         }
         nat qnty=0;
         for(size_t i=3;i<128;i++){
-            if((cmd[i]<L'0'||cmd[i]>L'9')&&!(cmd[i]==' '&&qnty==0))break;
+            if((cmd[i]<'0'||cmd[i]>'9')&&!(cmd[i]==' '&&qnty==0))break;
             if(qnty){
                 qnty*=10;
-                qnty+=cmd[i]-L'0';
+                qnty+=cmd[i]-'0';
                 if(qnty>=ITEM_MAXSTACK){
                     qnty=ITEM_MAXSTACK;
                     break;
                 }
             }
-            if(cmd[i]>=L'1'&&cmd[i]<=L'9'&&qnty==0)qnty=cmd[i]-L'0';
+            if(cmd[i]>='1'&&cmd[i]<='9'&&qnty==0)qnty=cmd[i]-'0';
         }
         if(qnty==0)qnty=1;
         nat maxmatch=-1;
@@ -231,14 +246,14 @@ foo matchregularcommands(wchar_t *cmd){
         }
         return true;
     }
-    if(fullmatch(cmd,L"use")){
-        wchar_t *usetarget=NULL;
-        usetarget=mallocpointer(128*sizeof(wchar_t));
-        wmemset(usetarget,0,128);
+    if(fullmatch(cmd,"use")){
+        char *usetarget=NULL;
+        usetarget=mallocpointer(128*sizeof(char));
+        memset(usetarget,0,128);
         foo sth=false;
         nat j=0;
-        for(size_t i=3;i<wcslen(cmd);i++){
-            if(cmd[i]!=L' ')sth=true;
+        for(size_t i=3;i<strlen(cmd);i++){
+            if(cmd[i]!=' ')sth=true;
             if(sth){
                 usetarget[j]=cmd[i];
                 j++;
@@ -329,48 +344,48 @@ foo matchregularcommands(wchar_t *cmd){
         }
         return true;
     }
-    if(fullmatch(cmd,L"take")||
-       fullmatch(cmd,L"get")||
-       fullmatch(cmd,L"g")){
+    if(fullmatch(cmd,"take")||
+       fullmatch(cmd,"get")||
+       fullmatch(cmd,"g")){
         size_t startp=4;
-        if(fullmatch(cmd,L"get"))startp=3;
-        else if(fullmatch(cmd,L"g"))startp=1;
+        if(fullmatch(cmd,"get"))startp=3;
+        else if(fullmatch(cmd,"g"))startp=1;
         roomdb *rm=db_rfindwithid(player.roomid);
         if(rm==NULL){
             printr(Red,msg->db_ridnullexceptionerror);
             return true;
         }
-        wchar_t *taketarget=NULL;
-        taketarget=mallocpointer(128*sizeof(wchar_t));
-        wmemset(taketarget,0,128);
+        char *taketarget=NULL;
+        taketarget=mallocpointer(128*sizeof(char));
+        memset(taketarget,0,128);
         nat j=0,sth=0;
-        for(size_t i=startp;i<wcslen(cmd);i++){
-            if(cmd[i]!=L' '&&((cmd[i]>L'9'||cmd[i]<L'0')||sth==3))sth=2;
+        for(size_t i=startp;i<strlen(cmd);i++){
+            if(cmd[i]!=' '&&((cmd[i]>'9'||cmd[i]<'0')||sth==3))sth=2;
             else{
-                if(cmd[i]==L' '&&sth==1)sth=3;
-                else if(cmd[i]!=L' '&&sth==0)sth=1;
+                if(cmd[i]==' '&&sth==1)sth=3;
+                else if(cmd[i]!=' '&&sth==0)sth=1;
             }
             if(sth==1||sth==2){
                 taketarget[j]=cmd[i];
                 j++;
             }
-            if(sth==3&&wcslen(taketarget)>0){
+            if(sth==3&&strlen(taketarget)>0){
                 j=0;
-                wmemset(taketarget,0,128);
+                memset(taketarget,0,128);
             }
         }
         nat qnty=0,qnty2=0;
         for(size_t i=startp;i<128;i++){
-            if((cmd[i]<L'0'||cmd[i]>L'9')&&!(cmd[i]==' '&&qnty==0))break;
+            if((cmd[i]<'0'||cmd[i]>'9')&&!(cmd[i]==' '&&qnty==0))break;
             if(qnty){
                 qnty*=10;
-                qnty+=cmd[i]-L'0';
+                qnty+=cmd[i]-'0';
                 if(qnty>=ITEM_MAXSTACK){
                     qnty=ITEM_MAXSTACK;
                     break;
                 }
             }
-            if(cmd[i]>=L'1'&&cmd[i]<=L'9'&&qnty==0)qnty=cmd[i]-L'0';
+            if(cmd[i]>='1'&&cmd[i]<='9'&&qnty==0)qnty=cmd[i]-'0';
         }
         if(qnty==0)qnty=1;
         qnty2=qnty;
@@ -400,7 +415,7 @@ foo matchregularcommands(wchar_t *cmd){
             }
         }
         if(maxmatch<0){
-            if(taketarget[0]==L'$'){
+            if(taketarget[0]=='$'){
                 struct et_room *etrp=et_findroomwithid(player.roomid);
                 if(etrp==NULL){
                     printc(Red,msg->db_retidnullexceptionerror);
@@ -408,10 +423,10 @@ foo matchregularcommands(wchar_t *cmd){
                 }
 
                 nat moni=0;
-                for(size_t i=1;i<wcslen(taketarget);i++){
-                    if((taketarget[i]<L'0'||taketarget[i]>L'9'))break;
+                for(size_t i=1;i<strlen(taketarget);i++){
+                    if((taketarget[i]<'0'||taketarget[i]>'9'))break;
                     moni*=10;
-                    moni+=taketarget[i]-L'0';
+                    moni+=taketarget[i]-'0';
                 }
                 if(moni>etrp->money){
                     printc(Default,msg->db_retnotthatmuchmoney);
@@ -483,43 +498,43 @@ foo matchregularcommands(wchar_t *cmd){
         }
         return true;
     }
-    if(fullmatch(cmd,L"drop")){
+    if(fullmatch(cmd,"drop")){
         struct et_room *etr=et_findroomwithid(player.roomid);
         if(etr==NULL){
             printr(Red,msg->db_retidnullexceptionerror);
             return true;
         }
-        wchar_t *droptarget=NULL;
-        droptarget=mallocpointer(128*sizeof(wchar_t));
-        wmemset(droptarget,0,128);
+        char *droptarget=NULL;
+        droptarget=mallocpointer(128*sizeof(char));
+        memset(droptarget,0,128);
         nat j=0,sth=0;
-        for(size_t i=4;i<wcslen(cmd);i++){
-            if(cmd[i]!=L' '&&((cmd[i]>L'9'||cmd[i]<L'0')||sth==3))sth=2;
+        for(size_t i=4;i<strlen(cmd);i++){
+            if(cmd[i]!=' '&&((cmd[i]>'9'||cmd[i]<'0')||sth==3))sth=2;
             else{
-                if(cmd[i]==L' '&&sth==1)sth=3;
-                else if(cmd[i]!=L' '&&sth==0)sth=1;
+                if(cmd[i]==' '&&sth==1)sth=3;
+                else if(cmd[i]!=' '&&sth==0)sth=1;
             }
             if(sth==1||sth==2){
                 droptarget[j]=cmd[i];
                 j++;
             }
-            if(sth==3&&wcslen(droptarget)>0){
+            if(sth==3&&strlen(droptarget)>0){
                 j=0;
-                wmemset(droptarget,0,128);
+                memset(droptarget,0,128);
             }
         }
         nat qnty=0,qnty2=0;
         for(size_t i=4;i<128;i++){
-            if((cmd[i]<L'0'||cmd[i]>L'9')&&!(cmd[i]==' '&&qnty==0))break;
+            if((cmd[i]<'0'||cmd[i]>'9')&&!(cmd[i]==' '&&qnty==0))break;
             if(qnty){
                 qnty*=10;
-                qnty+=cmd[i]-L'0';
+                qnty+=cmd[i]-'0';
                 if(qnty>=ITEM_MAXSTACK){
                     qnty=ITEM_MAXSTACK;
                     break;
                 }
             }
-            if(cmd[i]>=L'1'&&cmd[i]<=L'9'&&qnty==0)qnty=cmd[i]-L'0';
+            if(cmd[i]>='1'&&cmd[i]<='9'&&qnty==0)qnty=cmd[i]-'0';
         }
         if(qnty==0)qnty=1;
         qnty2=qnty;
@@ -544,12 +559,12 @@ foo matchregularcommands(wchar_t *cmd){
             }
         }
         if(maxmatch<0){
-            if(droptarget[0]==L'$'){
+            if(droptarget[0]=='$'){
                 nat moni=0;
-                for(size_t i=1;i<wcslen(droptarget);i++){
-                    if((droptarget[i]<L'0'||droptarget[i]>L'9'))break;
+                for(size_t i=1;i<strlen(droptarget);i++){
+                    if((droptarget[i]<'0'||droptarget[i]>'9'))break;
                     moni*=10;
-                    moni+=droptarget[i]-L'0';
+                    moni+=droptarget[i]-'0';
                 }
                 if(moni>inventory.money){
                     printc(Default,msg->db_retplayernotthatmuchmoney);
@@ -625,7 +640,7 @@ foo matchregularcommands(wchar_t *cmd){
         }
         return true;
     }
-    if(fullmatch(cmd,L"sell")){
+    if(fullmatch(cmd,"sell")){
         roomdb *rm=db_rfindwithid(player.roomid);
         if(rm==NULL){
             printr(Red,msg->db_ridnullexceptionerror);
@@ -635,37 +650,37 @@ foo matchregularcommands(wchar_t *cmd){
             printr(Default,msg->db_notinstore);
             return true;
         }
-        wchar_t *selltarget=NULL;
-        selltarget=mallocpointer(128*sizeof(wchar_t));
-        wmemset(selltarget,0,128);
+        char *selltarget=NULL;
+        selltarget=mallocpointer(128*sizeof(char));
+        memset(selltarget,0,128);
         nat j=0,sth=0;
-        for(size_t i=4;i<wcslen(cmd);i++){
-            if(cmd[i]!=L' '&&((cmd[i]>L'9'||cmd[i]<L'0')||sth==3))sth=2;
+        for(size_t i=4;i<strlen(cmd);i++){
+            if(cmd[i]!=' '&&((cmd[i]>'9'||cmd[i]<'0')||sth==3))sth=2;
             else{
-                if(cmd[i]==L' '&&sth==1)sth=3;
-                else if(cmd[i]!=L' '&&sth==0)sth=1;
+                if(cmd[i]==' '&&sth==1)sth=3;
+                else if(cmd[i]!=' '&&sth==0)sth=1;
             }
             if(sth==1||sth==2){
                 selltarget[j]=cmd[i];
                 j++;
             }
-            if(sth==3&&wcslen(selltarget)>0){
+            if(sth==3&&strlen(selltarget)>0){
                 j=0;
-                wmemset(selltarget,0,128);
+                memset(selltarget,0,128);
             }
         }
         nat qnty=0,qnty2=0;
         for(size_t i=4;i<128;i++){
-            if((cmd[i]<L'0'||cmd[i]>L'9')&&!(cmd[i]==' '&&qnty==0))break;
+            if((cmd[i]<'0'||cmd[i]>'9')&&!(cmd[i]==' '&&qnty==0))break;
             if(qnty){
                 qnty*=10;
-                qnty+=cmd[i]-L'0';
+                qnty+=cmd[i]-'0';
                 if(qnty>=ITEM_MAXSTACK){
                     qnty=ITEM_MAXSTACK;
                     break;
                 }
             }
-            if(cmd[i]>=L'1'&&cmd[i]<=L'9'&&qnty==0)qnty=cmd[i]-L'0';
+            if(cmd[i]>='1'&&cmd[i]<='9'&&qnty==0)qnty=cmd[i]-'0';
         }
         if(qnty==0)qnty=1;
         qnty2=qnty;
@@ -742,22 +757,22 @@ foo matchregularcommands(wchar_t *cmd){
         else printr(Cyan|Bright,msg->db_isellmultitemhint,idb->name,qnty2-qnty);
         return true;
     }
-    if(fullmatch(cmd,L"attack")||
-       fullmatch(cmd,L"a")){
+    if(fullmatch(cmd,"attack")||
+       fullmatch(cmd,"a")){
         size_t startp=6;
-        if(fullmatch(cmd,L"a"))startp=1;
+        if(fullmatch(cmd,"a"))startp=1;
         roomdb *rm=db_rfindwithid(player.roomid);
         if(rm==NULL){
             printr(Red,msg->db_ridnullexceptionerror);
             return true;
         }
-        wchar_t *attacktarget=NULL;
-        attacktarget=mallocpointer(128*sizeof(wchar_t));
-        wmemset(attacktarget,0,128);
+        char *attacktarget=NULL;
+        attacktarget=mallocpointer(128*sizeof(char));
+        memset(attacktarget,0,128);
         foo sth=false;
         nat j=0;
-        for(size_t i=startp;i<wcslen(cmd);i++){
-            if(cmd[i]!=L' ')sth=true;
+        for(size_t i=startp;i<strlen(cmd);i++){
+            if(cmd[i]!=' ')sth=true;
             if(sth){
                 attacktarget[j]=cmd[i];
                 j++;
@@ -785,37 +800,44 @@ foo matchregularcommands(wchar_t *cmd){
         if(maxmatchenemyentityid==0){
             printr(Default,msg->db_enosuchenemy);
         }else if(maxmatch>=0){
-            pattack(maxmatchenemyentityid);
+            if(cbp.attackcd>0){
+                printr(Default,msg->player_cantattack);
+                pbreakready();
+                cbp.attackcd=cbp.calcstats.cd;
+                return true;
+            }
+            cbp.swinging=cbp.calcstats.prep-cbp.readyframe;
+            if(cbp.swinging==0)cbp.swinging=1;
+            cbp.targetid=maxmatchenemyentityid;
         }else{
             printr(Default,msg->db_enosuchenemy);
         }
+        pbreakready();
         return true;
     }
-    if(fullmatch(cmd,L"ready")||
-       fullmatch(cmd,L"r")){
+    if(fullmatch(cmd,"ready")||
+       fullmatch(cmd,"r")){
         pready();
+        return true;
     }
     return false;
 }
-foo matcheditstatscommands(wchar_t *cmd){
-    if(fullmatch(cmd,L"quit")||
-       fullmatch(cmd,L"exitgame")||
-       fullmatch(cmd,L"quitgame")){
+foo matcheditstatscommands(char *cmd){
+    if(fullmatch(cmd,"quit")||
+       fullmatch(cmd,"exitgame")||
+       fullmatch(cmd,"quitgame")){
         peditstatsend();
         quit_game=true;
         return true;
     }
-    if(fullmatch(cmd,L"exit")){
+    if(fullmatch(cmd,"exit")){
         peditstatsend();
         return true;
     }
-    if(fullmatch(cmd,L"1")){
+    if(fullmatch(cmd,"1")){
         if(player.stats.pts){
             player.stats.pts--;
-            player.stats.atk++;
-        }else if(player.bstats.pts){
-            player.bstats.pts--;
-            player.bstats.atk++;
+            player.stats.agi++;
         }
         // the rest is the same
         else{
@@ -823,149 +845,21 @@ foo matcheditstatscommands(wchar_t *cmd){
             peditstatsend();
         }
         printc(Default,msg->player_points,
-            player.stats.atk,player.stats.def,
-            player.stats.acc,player.stats.dod,
-            player.stats.wis,player.stats.act,
-            player.stats.con,player.stats.pts);
-        if(player.stats.pts||player.bstats.pts){
-        }else{
-            printc(Default,msg->player_editstatsend);
-            peditstatsend();
-        }
-        return true;
-    }
-    if(fullmatch(cmd,L"2")){
+            player.stats.agi,player.stats.con,
+            player.stats.res,player.stats.str,
+            player.stats.wil,player.stats.wis,
+            player.stats.pts);
         if(player.stats.pts){
-            player.stats.pts--;
-            player.stats.def++;
-        }else if(player.bstats.pts){
-            player.bstats.pts--;
-            player.bstats.def++;
-        }
-        // the rest is the same
-        else{
-            printc(Default,msg->player_editstatsnopoints);
-            peditstatsend();
-        }
-        printc(Default,msg->player_points,
-            player.stats.atk,player.stats.def,
-            player.stats.acc,player.stats.dod,
-            player.stats.wis,player.stats.act,
-            player.stats.con,player.stats.pts);
-        if(player.stats.pts||player.bstats.pts){
         }else{
             printc(Default,msg->player_editstatsend);
             peditstatsend();
         }
         return true;
     }
-    if(fullmatch(cmd,L"3")){
-        if(player.stats.pts){
-            player.stats.pts--;
-            player.stats.acc++;
-        }else if(player.bstats.pts){
-            player.bstats.pts--;
-            player.bstats.acc++;
-        }
-        // the rest is the same
-        else{
-            printc(Default,msg->player_editstatsnopoints);
-            peditstatsend();
-        }
-        printc(Default,msg->player_points,
-            player.stats.atk,player.stats.def,
-            player.stats.acc,player.stats.dod,
-            player.stats.wis,player.stats.act,
-            player.stats.con,player.stats.pts);
-        if(player.stats.pts||player.bstats.pts){
-        }else{
-            printc(Default,msg->player_editstatsend);
-            peditstatsend();
-        }
-        return true;
-    }
-    if(fullmatch(cmd,L"4")){
-        if(player.stats.pts){
-            player.stats.pts--;
-            player.stats.dod++;
-        }else if(player.bstats.pts){
-            player.bstats.pts--;
-            player.bstats.dod++;
-        }
-        // the rest is the same
-        else{
-            printc(Default,msg->player_editstatsnopoints);
-            peditstatsend();
-        }
-        printc(Default,msg->player_points,
-            player.stats.atk,player.stats.def,
-            player.stats.acc,player.stats.dod,
-            player.stats.wis,player.stats.act,
-            player.stats.con,player.stats.pts);
-        if(player.stats.pts||player.bstats.pts){
-        }else{
-            printc(Default,msg->player_editstatsend);
-            peditstatsend();
-        }
-        return true;
-    }
-    if(fullmatch(cmd,L"5")){
-        if(player.stats.pts){
-            player.stats.pts--;
-            player.stats.wis++;
-        }else if(player.bstats.pts){
-            player.bstats.pts--;
-            player.bstats.wis++;
-        }
-        // the rest is the same
-        else{
-            printc(Default,msg->player_editstatsnopoints);
-            peditstatsend();
-        }
-        printc(Default,msg->player_points,
-            player.stats.atk,player.stats.def,
-            player.stats.acc,player.stats.dod,
-            player.stats.wis,player.stats.act,
-            player.stats.con,player.stats.pts);
-        if(player.stats.pts||player.bstats.pts){
-        }else{
-            printc(Default,msg->player_editstatsend);
-            peditstatsend();
-        }
-        return true;
-    }
-    if(fullmatch(cmd,L"6")){
-        if(player.stats.pts){
-            player.stats.pts--;
-            player.stats.act++;
-        }else if(player.bstats.pts){
-            player.bstats.pts--;
-            player.bstats.act++;
-        }
-        // the rest is the same
-        else{
-            printc(Default,msg->player_editstatsnopoints);
-            peditstatsend();
-        }
-        printc(Default,msg->player_points,
-            player.stats.atk,player.stats.def,
-            player.stats.acc,player.stats.dod,
-            player.stats.wis,player.stats.act,
-            player.stats.con,player.stats.pts);
-        if(player.stats.pts||player.bstats.pts){
-        }else{
-            printc(Default,msg->player_editstatsend);
-            peditstatsend();
-        }
-        return true;
-    }
-    if(fullmatch(cmd,L"7")){
+    if(fullmatch(cmd,"2")){
         if(player.stats.pts){
             player.stats.pts--;
             player.stats.con++;
-        }else if(player.bstats.pts){
-            player.bstats.pts--;
-            player.bstats.con++;
         }
         // the rest is the same
         else{
@@ -973,11 +867,99 @@ foo matcheditstatscommands(wchar_t *cmd){
             peditstatsend();
         }
         printc(Default,msg->player_points,
-            player.stats.atk,player.stats.def,
-            player.stats.acc,player.stats.dod,
-            player.stats.wis,player.stats.act,
-            player.stats.con,player.stats.pts);
-        if(player.stats.pts||player.bstats.pts){
+            player.stats.agi,player.stats.con,
+            player.stats.res,player.stats.str,
+            player.stats.wil,player.stats.wis,
+            player.stats.pts);
+        if(player.stats.pts){
+        }else{
+            printc(Default,msg->player_editstatsend);
+            peditstatsend();
+        }
+        return true;
+    }
+    if(fullmatch(cmd,"3")){
+        if(player.stats.pts){
+            player.stats.pts--;
+            player.stats.res++;
+        }
+        // the rest is the same
+        else{
+            printc(Default,msg->player_editstatsnopoints);
+            peditstatsend();
+        }
+        printc(Default,msg->player_points,
+            player.stats.agi,player.stats.con,
+            player.stats.res,player.stats.str,
+            player.stats.wil,player.stats.wis,
+            player.stats.pts);
+        if(player.stats.pts){
+        }else{
+            printc(Default,msg->player_editstatsend);
+            peditstatsend();
+        }
+        return true;
+    }
+    if(fullmatch(cmd,"4")){
+        if(player.stats.pts){
+            player.stats.pts--;
+            player.stats.str++;
+        }
+        // the rest is the same
+        else{
+            printc(Default,msg->player_editstatsnopoints);
+            peditstatsend();
+        }
+        printc(Default,msg->player_points,
+            player.stats.agi,player.stats.con,
+            player.stats.res,player.stats.str,
+            player.stats.wil,player.stats.wis,
+            player.stats.pts);
+        if(player.stats.pts){
+        }else{
+            printc(Default,msg->player_editstatsend);
+            peditstatsend();
+        }
+        return true;
+    }
+    if(fullmatch(cmd,"5")){
+        if(player.stats.pts){
+            player.stats.pts--;
+            player.stats.wil++;
+        }
+        // the rest is the same
+        else{
+            printc(Default,msg->player_editstatsnopoints);
+            peditstatsend();
+        }
+        printc(Default,msg->player_points,
+            player.stats.agi,player.stats.con,
+            player.stats.res,player.stats.str,
+            player.stats.wil,player.stats.wis,
+            player.stats.pts);
+        if(player.stats.pts){
+        }else{
+            printc(Default,msg->player_editstatsend);
+            peditstatsend();
+        }
+        return true;
+    }
+    if(fullmatch(cmd,"6")){
+        if(player.stats.pts){
+            player.stats.pts--;
+            player.stats.wis++;
+        }
+        // the rest is the same
+        else{
+            printc(Default,msg->player_editstatsnopoints);
+            peditstatsend();
+        }
+        printc(Default,msg->player_points,
+            player.stats.agi,player.stats.con,
+            player.stats.res,player.stats.str,
+            player.stats.wil,player.stats.wis,
+            player.stats.pts);
+        if(player.stats.pts){
         }else{
             printc(Default,msg->player_editstatsend);
             peditstatsend();
@@ -989,36 +971,36 @@ foo matcheditstatscommands(wchar_t *cmd){
 }
 void processinput(){
 #ifndef CB_REALTIME
-    if(wcslen(inputbuf)==0){
+    if(strlen(inputbuf)==0){
         size_t row,col;
         cbc_getcursor(&row,&col);
         if(row>0)cbc_setcursor(row-1,0);
-        if(wcslen(inputbufl)==0)return;
-        printr(Yellow,L"%ls\n",inputbufl);
+        if(strlen(inputbufl)==0)return;
+        printr(Yellow,"%s\n",inputbufl);
         matchcommands(inputbufl);
         return;
     }
 #else
-    if(wcslen(inputbuf)==0){
+    if(strlen(inputbuf)==0){
         return;
     }
 #endif
-    wmemset(inputbufl,0,128);
-    wcscpy(inputbufl,inputbuf);
-    wcslower(&inputbufl);
+    memset(inputbufl,0,128);
+    strcpy(inputbufl,inputbuf);
+    strlower(&inputbufl);
     if(matchcommands(inputbufl)){
         return;
     }else{
         memset(inputbufl,0,128);
     }
     printr(Cyan|Bright,msg->player_say,player.name);
-    printr(Default,L"%ls\n",inputbuf);
+    printr(Default,"%s\n",inputbuf);
     return;
 }
 
 #ifdef CB_REALTIME
-void fscanline(wchar_t *scan_str,int scans){
-    wmemset(scan_str,0,scans);
+void fscanline(char *scan_str,int scans){
+    memset(scan_str,0,scans);
     if(!fpinput){
         fpinput=fopen("data.dmp","r");
         return;
@@ -1030,12 +1012,12 @@ void fscanline(wchar_t *scan_str,int scans){
         return;
     }
     if(cbio_len>=scans)cbio_len=scans-1;
-    fgetws(scan_str,cbio_len+1,fpinput);
+    fgets(scan_str,cbio_len+1,fpinput);
     cbio_matchidold=cbio_matchid;
     rewind(fpinput);
     fflush(fpinput);
 }
-void scanline(wchar_t *scan_str,int scans){
+void scanline(char *scan_str,int scans){
     while(1){
         cbtime_sleep(30);
         if(!fpinput){
@@ -1049,8 +1031,8 @@ void scanline(wchar_t *scan_str,int scans){
             continue;
         }
         if(cbio_len>scans)cbio_len=scans-1;
-        wmemset(scan_str,0,scans);
-        fgetws(scan_str,cbio_len+1,fpinput);
+        memset(scan_str,0,scans);
+        fgets(scan_str,cbio_len+1,fpinput);
         cbio_matchidold=cbio_matchid;
         rewind(fpinput);
         fflush(fpinput);

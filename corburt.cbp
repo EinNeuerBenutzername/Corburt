@@ -53,6 +53,7 @@
 		<Unit filename="include/cbplayer.h" />
 		<Unit filename="include/cbsys.h" />
 		<Unit filename="include/cbturn.h" />
+		<Unit filename="include/dbability.h" />
 		<Unit filename="include/dbbuff.h" />
 		<Unit filename="include/dbenemy.h" />
 		<Unit filename="include/dbentity.h" />

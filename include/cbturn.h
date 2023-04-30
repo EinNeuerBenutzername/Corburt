@@ -5,6 +5,7 @@ void timepass(nat tick);
 void tickfunc(struct et_room *etr);
 void turnfunc();
 void showtime();
+static void clockpulse();
 
 #include "cbplayer.h"
 #include "dbentity.h"
@@ -48,10 +49,16 @@ void tickfunc(struct et_room *etr){
     }
     {/// process player
         if(cbp.attackcd>0)cbp.attackcd--;
+        if(cbp.swinging>0){
+            cbp.swinging--;
+            if(cbp.swinging==0){
+                pattack(cbp.targetid);
+            }
+        }
         preadying();
     }
 }
-void turnfunc(){
+void turnfunc(){ // tbd
     if(global.curround%30==0){
         pregen();
         for(nat i=0,j=0;i<enemiesmax&&j<enemiescount;i++){
@@ -66,6 +73,11 @@ void turnfunc(){
     if(global.curround%120==0){
         et_spawnenemies();
     }
+    if(global.curround>36000){
+        if(1){ // tbd: measure lines of input
+            clockpulse();
+        }
+    }
 }
 void showtime(){
 #ifndef CB_REALTIME
@@ -76,6 +88,13 @@ void showtime(){
     nat m=(global.curround%3600-s)/60;
     printc(Cyan|Bright,msg->global_curtimert,h,m,s,global.curtick);
 #endif
+}
+static void clockpulse(){ // tbd
+    //tbd: happens for each 10k lines of input and 10 game hours
+    printc(Default,msg->global_clock);
+    global.curround=0;
+    global.curtick=0;
+    // things should happen during pulses
 }
 
 #endif

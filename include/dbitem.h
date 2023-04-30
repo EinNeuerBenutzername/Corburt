@@ -16,24 +16,24 @@ itemdb *db_ifindwithid(nat itemid){
     }
     return NULL;
 }
-void getitemname(nat id,wchar_t *itemname){
-    const wchar_t *p;
+void getitemname(nat id,char *itemname){
+    const char *p;
     switch(id){
     case 0:
-        p=L"(none)";
+        p="(none)";
         break;
     default:;
         itemdb *idb=db_ifindwithid(id);
         if(idb==NULL){
             printf("\n");
             printr(Red,msg->db_iidnullexceptionerror);
-            p=L"undefined";
+            p="undefined";
             break;
         }
         p=idb->name;
         break;
     }
-    wcscpy(itemname,p);
+    strcpy(itemname,p);
 }
 void consumeitem(nat itemid){
     itemdb *idb=db_ifindwithid(itemid);

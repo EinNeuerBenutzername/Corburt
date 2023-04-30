@@ -12,17 +12,17 @@ enum db_regionthreat{
 };
 typedef struct {
     nat region;
-    wchar_t *name;
+    char *name;
     nat threat;
     nat sentinel[32];
 } regiondb;
 regiondb regiondbs[]={
     {.region=db_roomregion_nlcity,
-        .name=L"Nameless City",
+        .name="Nameless City",
         .threat=db_regionthreat_low,
     },
     {.region=db_roomregion_forest,
-        .name=L"Forest of Wrath",
+        .name="Forest of Wrath",
         .threat=db_regionthreat_moderate,
     },
 };
@@ -50,13 +50,13 @@ void db_rshowdesc(nat roomid){
         printr(Red,msg->db_ridnullexceptionerror);
         return;
     }
-    printr(White|Bright,L"\n%ls\n",rm->name);
-    printr(Cyan|Bright,L"%ls\n",rm->desc);
-    printr(Green|Bright,L"exits: ");
-    if(rm->exits[dir_North])printr(Green|Bright,L"NORTH  ");
-    if(rm->exits[dir_East])printr(Green|Bright,L"EAST  ");
-    if(rm->exits[dir_South])printr(Green|Bright,L"SOUTH  ");
-    if(rm->exits[dir_West])printr(Green|Bright,L"WEST  ");
+    printr(White|Bright,"\n%s\n",rm->name);
+    printr(Cyan|Bright,"%s\n",rm->desc);
+    printr(Green|Bright,"exits: ");
+    if(rm->exits[dir_North])printr(Green|Bright,"NORTH  ");
+    if(rm->exits[dir_East])printr(Green|Bright,"EAST  ");
+    if(rm->exits[dir_South])printr(Green|Bright,"SOUTH  ");
+    if(rm->exits[dir_West])printr(Green|Bright,"WEST  ");
     struct et_room *etr=et_findroomwithid(roomid);
     if(etr==NULL){
         printr(Red,msg->db_retidnullexceptionerror);
@@ -66,9 +66,9 @@ void db_rshowdesc(nat roomid){
             if(etr->etenemy[i]!=0){
                 enemydb *edb=et_getenemydb(etr->etenemy[i]);
                 if(first){
-                    printr(Red|Bright,L"\nenemies: %ls",edb->name);
+                    printr(Red|Bright,"\nenemies: %s",edb->name);
                 }else{
-                    printr(Red|Bright,L", %ls",edb->name);
+                    printr(Red|Bright,", %s",edb->name);
                 }
                 first=0;
             }
@@ -86,16 +86,16 @@ void db_rshowdesc(nat roomid){
                     continue;
                 }
                 if(first){
-                    if(!(idb->type&db_itemtype_stackable_mask))printr(Yellow|Bright,L"\nitems: %ls",idb->name,etr->etitem[i]);
+                    if(!(idb->type&db_itemtype_stackable_mask))printr(Yellow|Bright,"\nitems: %s",idb->name,etr->etitem[i]);
                     else{
-                        if(eti->qnty==1)printr(Yellow|Bright,L"\nitems: %ls",idb->name);
-                        else printr(Yellow|Bright,L"\nitems: %ls (x%" PRIdFAST32 ")",idb->name,eti->qnty);
+                        if(eti->qnty==1)printr(Yellow|Bright,"\nitems: %s",idb->name);
+                        else printr(Yellow|Bright,"\nitems: %s (x%" PRIdFAST32 ")",idb->name,eti->qnty);
                     }
                 }else{
-                    if(!(idb->type&db_itemtype_stackable_mask))printr(Yellow|Bright,L", %ls",idb->name,etr->etitem[i]);
+                    if(!(idb->type&db_itemtype_stackable_mask))printr(Yellow|Bright,", %s",idb->name,etr->etitem[i]);
                     else{
-                        if(eti->qnty==1)printr(Yellow|Bright,L", %ls",idb->name);
-                        else printr(Yellow|Bright,L", %ls (x%" PRIdFAST32 ")",idb->name,eti->qnty);
+                        if(eti->qnty==1)printr(Yellow|Bright,", %s",idb->name);
+                        else printr(Yellow|Bright,", %s (x%" PRIdFAST32 ")",idb->name,eti->qnty);
                     }
                 }
                 first=0;
@@ -103,10 +103,10 @@ void db_rshowdesc(nat roomid){
 //            if(i==DBE_ITEMCAP-1&&first==0)printf("\n");
         }
         if(etr->money){ // money:
-            printc(Yellow|Bright,L"\nmoney: $%" PRIdFAST32,etr->money);
+            printc(Yellow|Bright,"\nmoney: $%" PRIdFAST32,etr->money);
         }
     }
-    printr(Default,L"\n\n");
+    printr(Default,"\n\n");
 }
 void db_rshowtable(nat roomid){
     roomdb *rm=db_rfindwithid(roomid);
@@ -126,7 +126,7 @@ void db_rshowtable(nat roomid){
                 printr(Red,msg->db_iidnullexceptionerror);
                 return;
             }
-            printrp(Default,L"            | ",msg->db_listitem,idb->price,idb->name);
+            printrp(Default,"            | ",msg->db_listitem,idb->price,idb->name);
         }else break;
     }
     printr(Default,msg->line);

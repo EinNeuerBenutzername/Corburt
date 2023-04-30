@@ -23,7 +23,7 @@ struct et_enemy{
     nat enemyid;
     nat hp;
     nat attackcd;
-
+    nat breach;
 };
 nat enemiescount=0;
 nat enemiesmax=0;
@@ -59,8 +59,8 @@ void et_initenemies();
 void et_spawnenemies();
 
 void setupentitydata(){
-    if(DBE_TRACELOG)tracelog(Green,L"Setting up entity data...\n");
-    if(DBE_TRACELOG)tracelog(Green,L"Rooms count: %" PRIdFAST32 "\n",roomdbsize);
+    if(DBE_TRACELOG)tracelog(Green,"Setting up entity data...\n");
+    if(DBE_TRACELOG)tracelog(Green,"Rooms count: %" PRIdFAST32 "\n",roomdbsize);
     et_rooms=mallocpointer(roomdbsize*sizeof(struct et_room));
     struct et_room etr={0};
     for(nat i=0;i<roomdbsize;i++){
@@ -90,7 +90,7 @@ struct et_room *et_findroomwithid(nat roomid){
     return NULL;
 }
 void etenemy_expand(){
-    if(DBE_TRACELOG)tracelog(Green,L"Expanding enemy entity list... (%" PRIdFAST32 "->%" PRIdFAST32 ")\n",enemiesmax,enemiesmax+DBE_EXPANDSTEP);
+    if(DBE_TRACELOG)tracelog(Green,"Expanding enemy entity list... (%" PRIdFAST32 "->%" PRIdFAST32 ")\n",enemiesmax,enemiesmax+DBE_EXPANDSTEP);
     enemiesmax+=DBE_EXPANDSTEP;
     et_enemies=reallocpointer(et_enemies,enemiesmax*sizeof(struct et_enemy));
     struct et_enemy ete={0};
@@ -155,7 +155,7 @@ void etenemy_push(nat enemyid,nat roomid){
     et_enemies[enemyentityindex]=ete;
     etr->etenemy[enemyreferenceindex]=enemyentityindex+1;
     enemiescount++;
-    if(DBE_TRACELOG)tracelog(Cyan,L"Create enemy entity: entityid=%d (enemyid=%d, roomid=%d)\n",(int)enemyentityindex+1,(int)enemyid,(int)roomid);
+    if(DBE_TRACELOG)tracelog(Cyan,"Create enemy entity: entityid=%d (enemyid=%d, roomid=%d)\n",(int)enemyentityindex+1,(int)enemyid,(int)roomid);
 }
 void etenemy_attack(nat etid,struct et_room *etr){
     struct et_enemy *ete=&et_enemies[etid-1];
@@ -249,7 +249,7 @@ void etenemy_die(nat entityid){
         ete->hp=0;
         enemiescount--;
         if(enemypointer>=entityid)enemypointer=entityid-1;
-        if(DBE_TRACELOG)tracelog(Cyan,L"Enemy entity #%" PRIdFAST32 " deleted.\n",entityid);
+        if(DBE_TRACELOG)tracelog(Cyan,"Enemy entity #%" PRIdFAST32 " deleted.\n",entityid);
     }
 }
 void etenemy_deathdrops(enemydb *edb,nat roomid){
@@ -306,7 +306,7 @@ enemydb *et_getenemydb(nat enemyentityid){
     return edb;
 }
 void etitem_expand(){
-    if(DBE_TRACELOG)tracelog(Green,L"Expanding item entity list... (%" PRIdFAST32 "->%" PRIdFAST32 ")\n",itemsmax,itemsmax+DBE_EXPANDSTEP);
+    if(DBE_TRACELOG)tracelog(Green,"Expanding item entity list... (%" PRIdFAST32 "->%" PRIdFAST32 ")\n",itemsmax,itemsmax+DBE_EXPANDSTEP);
     itemsmax+=DBE_EXPANDSTEP;
     et_items=reallocpointer(et_items,itemsmax*sizeof(struct et_item));
     struct et_item eti={0};
@@ -360,7 +360,7 @@ void etitem_delete(nat entityid){
     eti->itemid=0;
     eti->qnty=0;
     if(itempointer>=entityid)itempointer=entityid-1;
-    if(DBE_TRACELOG)tracelog(Cyan,L"Item entity #%" PRIdFAST32 " deleted.\n",entityid);
+    if(DBE_TRACELOG)tracelog(Cyan,"Item entity #%" PRIdFAST32 " deleted.\n",entityid);
 }
 void etitem_rebind(nat entityid,nat newroomid){
     struct et_item *eti=&et_items[entityid-1];
@@ -566,7 +566,7 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
         }
     }
     if(!success)itempointer--;
-    if(DBE_TRACELOG)tracelog(Cyan,L"Create item entity: entityid=%d (qnty=%d, itemid=%d, roomid=%d) %ls\n",(int)itementityindex+1,(int)qnty,(int)itemid,(int)roomid,success?L"":L"fail");
+    if(DBE_TRACELOG)tracelog(Cyan,"Create item entity: entityid=%d (qnty=%d, itemid=%d, roomid=%d) %s\n",(int)itementityindex+1,(int)qnty,(int)itemid,(int)roomid,success?"":"fail");
 }
 itemdb *et_getitemdb(nat itementityid){
     if(et_items[itementityid-1].available==false){

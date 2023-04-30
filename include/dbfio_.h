@@ -3,7 +3,8 @@
 #include "cbfio_base.h"
 #include <stdlib.h>
 #ifdef DBFIO_DATA_EXPORT
-#include "dbdata.h"
+//#include "dbdata.h"
+#include "../tools/dxport/dbdata.h"
 void savealldb();
 void savedb_map(FILE *fp);
 void savedb_reg(FILE *fp);
@@ -38,10 +39,10 @@ void savedb_map(FILE *fp){
         int_fast32_t_write(roomdbs[i].x,fp);
         int_fast32_t_write(roomdbs[i].y,fp);
         int_fast32_t_write(roomdbs[i].region,fp);
-        int_fast32_t_write(wcslen(roomdbs[i].name),fp);
-        wcs_write(roomdbs[i].name,wcslen(roomdbs[i].name),fp);
-        int_fast32_t_write(wcslen(roomdbs[i].desc),fp);
-        wcs_write(roomdbs[i].desc,wcslen(roomdbs[i].desc),fp);
+        int_fast32_t_write(strlen(roomdbs[i].name),fp);
+        str_write(roomdbs[i].name,strlen(roomdbs[i].name),fp);
+        int_fast32_t_write(strlen(roomdbs[i].desc),fp);
+        str_write(roomdbs[i].desc,strlen(roomdbs[i].desc),fp);
         int_fast32_t_write(roomdbs[i].type,fp);
         for(nat j=0;j<6;j++)
             int_fast32_t_write(roomdbs[i].exits[j],fp);
@@ -60,21 +61,32 @@ void savedb_item(FILE *fp){
         int_fast32_t_write(itemdbs[i].prep,fp);
         int_fast32_t_write(itemdbs[i].cd,fp);
         int_fast32_t_write(itemdbs[i].crit,fp);
-        int_fast32_t_write(wcslen(itemdbs[i].name),fp);
-        wcs_write(itemdbs[i].name,wcslen(itemdbs[i].name),fp);
-        int_fast32_t_write(wcslen(itemdbs[i].desc),fp);
-        wcs_write(itemdbs[i].desc,wcslen(itemdbs[i].desc),fp);
+        int_fast32_t_write(strlen(itemdbs[i].name),fp);
+        str_write(itemdbs[i].name,strlen(itemdbs[i].name),fp);
+        int_fast32_t_write(strlen(itemdbs[i].desc),fp);
+        str_write(itemdbs[i].desc,strlen(itemdbs[i].desc),fp);
         int_fast32_t_write(itemdbs[i].stats.min_,fp);
         int_fast32_t_write(itemdbs[i].stats.max_,fp);
         int_fast32_t_write(itemdbs[i].stats.regen,fp);
-        int_fast32_t_write(itemdbs[i].stats.atk,fp);
-        int_fast32_t_write(itemdbs[i].stats.def,fp);
+        int_fast32_t_write(itemdbs[i].stats.agi,fp);
         int_fast32_t_write(itemdbs[i].stats.acc,fp);
         int_fast32_t_write(itemdbs[i].stats.dod,fp);
-        int_fast32_t_write(itemdbs[i].stats.wis,fp);
-        int_fast32_t_write(itemdbs[i].stats.act,fp);
         int_fast32_t_write(itemdbs[i].stats.con,fp);
-        int_fast32_t_write(itemdbs[i].stats.pts,fp);
+        int_fast32_t_write(itemdbs[i].stats.def,fp);
+        int_fast32_t_write(itemdbs[i].stats.vit,fp);
+        int_fast32_t_write(itemdbs[i].stats.res,fp);
+        int_fast32_t_write(itemdbs[i].stats.rfl,fp);
+        int_fast32_t_write(itemdbs[i].stats.foc,fp);
+        int_fast32_t_write(itemdbs[i].stats.str,fp);
+        int_fast32_t_write(itemdbs[i].stats.atk,fp);
+        int_fast32_t_write(itemdbs[i].stats.stm,fp);
+        int_fast32_t_write(itemdbs[i].stats.wil,fp);
+        int_fast32_t_write(itemdbs[i].stats.san,fp);
+        int_fast32_t_write(itemdbs[i].stats.sat,fp);
+        int_fast32_t_write(itemdbs[i].stats.wis,fp);
+        int_fast32_t_write(itemdbs[i].stats.mag,fp);
+        int_fast32_t_write(itemdbs[i].stats.mat,fp);
+        int_fast32_t_write(itemdbs[i].stats.luck,fp);
     }
 }
 void savedb_enemy(FILE *fp){
@@ -82,10 +94,10 @@ void savedb_enemy(FILE *fp){
     for(nat i=0;i<enemydbsize;i++){
         int_fast32_t_write(enemydbs[i].id,fp);
         int_fast32_t_write(enemydbs[i].type,fp);
-        int_fast32_t_write(wcslen(enemydbs[i].name),fp);
-        wcs_write(enemydbs[i].name,wcslen(enemydbs[i].name),fp);
-//        int_fast32_t_write(wcslen(enemydbs[i].desc),fp);
-//        wcs_write(enemydbs[i].desc,wcslen(enemydbs[i].desc),fp);
+        int_fast32_t_write(strlen(enemydbs[i].name),fp);
+        str_write(enemydbs[i].name,strlen(enemydbs[i].name),fp);
+//        int_fast32_t_write(strlen(enemydbs[i].desc),fp);
+//        str_write(enemydbs[i].desc,strlen(enemydbs[i].desc),fp);
         int_fast64_t_write(enemydbs[i].exp,fp);
         int_fast32_t_write(enemydbs[i].loot.moneymin,fp);
         int_fast32_t_write(enemydbs[i].loot.moneymax,fp);
@@ -132,20 +144,20 @@ void loaddb_map(FILE *fp){
         int_fast32_t_read(&roomdbs[i].region,fp);
         nat len;
         int_fast32_t_read(&len,fp);
-        roomdbs[i].name=mallocpointer((len+1)*sizeof(wchar_t));
+        roomdbs[i].name=mallocpointer((len+1)*sizeof(char));
         global.dbpointer++;
 #ifndef CB_MAXROOMDESC
-        dbfio_.dbsize+=(len+1)*sizeof(wchar_t);
+        dbfio_.dbsize+=(len+1)*sizeof(char);
 #endif
-        wcs_read(roomdbs[i].name,len,fp);
+        str_read(roomdbs[i].name,len,fp);
         roomdbs[i].name[len]=0;
         int_fast32_t_read(&len,fp);
 #ifndef CB_MAXROOMDESC
-        roomdbs[i].desc=mallocpointer((len+1)*sizeof(wchar_t));
+        roomdbs[i].desc=mallocpointer((len+1)*sizeof(char));
         global.dbpointer++;
-        dbfio_.dbsize+=(len+1)*sizeof(wchar_t);
+        dbfio_.dbsize+=(len+1)*sizeof(char);
 #endif
-        wcs_read(roomdbs[i].desc,len,fp);
+        str_read(roomdbs[i].desc,len,fp);
         roomdbs[i].desc[len]=0;
         int_fast32_t_read(&roomdbs[i].type,fp);
         for(nat j=0;j<6;j++)
@@ -169,28 +181,39 @@ void loaddb_item(FILE *fp){
         int_fast32_t_read(&itemdbs[i].crit,fp);
         nat len;
         int_fast32_t_read(&len,fp);
-        dbfio_.dbsize+=(len+1)*sizeof(wchar_t);
-        itemdbs[i].name=mallocpointer((len+1)*sizeof(wchar_t));
+        dbfio_.dbsize+=(len+1)*sizeof(char);
+        itemdbs[i].name=mallocpointer((len+1)*sizeof(char));
         global.dbpointer++;
-        wcs_read(itemdbs[i].name,len,fp);
+        str_read(itemdbs[i].name,len,fp);
         itemdbs[i].name[len]=0;
         int_fast32_t_read(&len,fp);
-        dbfio_.dbsize+=(len+1)*sizeof(wchar_t);
-        itemdbs[i].desc=mallocpointer((len+1)*sizeof(wchar_t));
+        dbfio_.dbsize+=(len+1)*sizeof(char);
+        itemdbs[i].desc=mallocpointer((len+1)*sizeof(char));
         global.dbpointer++;
-        wcs_read(itemdbs[i].desc,len,fp);
+        str_read(itemdbs[i].desc,len,fp);
         itemdbs[i].desc[len]=0;
         int_fast32_t_read(&itemdbs[i].stats.min_,fp);
         int_fast32_t_read(&itemdbs[i].stats.max_,fp);
         int_fast32_t_read(&itemdbs[i].stats.regen,fp);
-        int_fast32_t_read(&itemdbs[i].stats.atk,fp);
-        int_fast32_t_read(&itemdbs[i].stats.def,fp);
+        int_fast32_t_read(&itemdbs[i].stats.agi,fp);
+        int_fast32_t_read(&itemdbs[i].stats.con,fp);
+        int_fast32_t_read(&itemdbs[i].stats.res,fp);
+        int_fast32_t_read(&itemdbs[i].stats.str,fp);
+        int_fast32_t_read(&itemdbs[i].stats.wil,fp);
+        int_fast32_t_read(&itemdbs[i].stats.wis,fp);
         int_fast32_t_read(&itemdbs[i].stats.acc,fp);
         int_fast32_t_read(&itemdbs[i].stats.dod,fp);
-        int_fast32_t_read(&itemdbs[i].stats.wis,fp);
-        int_fast32_t_read(&itemdbs[i].stats.act,fp);
-        int_fast32_t_read(&itemdbs[i].stats.con,fp);
-        int_fast32_t_read(&itemdbs[i].stats.pts,fp);
+        int_fast32_t_read(&itemdbs[i].stats.def,fp);
+        int_fast32_t_read(&itemdbs[i].stats.vit,fp);
+        int_fast32_t_read(&itemdbs[i].stats.rfl,fp);
+        int_fast32_t_read(&itemdbs[i].stats.foc,fp);
+        int_fast32_t_read(&itemdbs[i].stats.atk,fp);
+        int_fast32_t_read(&itemdbs[i].stats.stm,fp);
+        int_fast32_t_read(&itemdbs[i].stats.san,fp);
+        int_fast32_t_read(&itemdbs[i].stats.sat,fp);
+        int_fast32_t_read(&itemdbs[i].stats.mag,fp);
+        int_fast32_t_read(&itemdbs[i].stats.mat,fp);
+        int_fast32_t_read(&itemdbs[i].stats.luck,fp);
         dbfio_.dbsize+=sizeof(itemdb);
     }
 }
@@ -202,14 +225,14 @@ void loaddb_enemy(FILE *fp){
         int_fast32_t_read(&enemydbs[i].type,fp);
         nat len;
         int_fast32_t_read(&len,fp);
-        dbfio_.dbsize+=(len+1)*sizeof(wchar_t);
-        enemydbs[i].name=mallocpointer((len+1)*sizeof(wchar_t));
+        dbfio_.dbsize+=(len+1)*sizeof(char);
+        enemydbs[i].name=mallocpointer((len+1)*sizeof(char));
         global.dbpointer++;
-        wcs_read(enemydbs[i].name,len,fp);
+        str_read(enemydbs[i].name,len,fp);
         enemydbs[i].name[len]=0;
 //        int_fast32_t_read(&len,fp);
-//        enemydbs[i].desc=mallocpointer((len+1)*sizeof(wchar_t));
-//        wcs_read(enemydbs[i].desc,len,fp);
+//        enemydbs[i].desc=mallocpointer((len+1)*sizeof(char));
+//        str_read(enemydbs[i].desc,len,fp);
         int_fast64_t_read(&enemydbs[i].exp,fp);
         int_fast32_t_read(&enemydbs[i].loot.moneymin,fp);
         int_fast32_t_read(&enemydbs[i].loot.moneymax,fp);

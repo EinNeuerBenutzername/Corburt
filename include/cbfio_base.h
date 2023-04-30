@@ -18,9 +18,9 @@ struct fio{
     size_t fileptr;
     int_fast8_t int_fast32_t_size;
     int_fast8_t int_fast64_t_size;
-    int_fast8_t wchar_t_size;
+    int_fast8_t char_size;
     int_fast8_t fail;
-} fio={0,0,4,8,2,0};
+} fio={0,0,4,8,1,0};
 
 void fio_getfilesize(char *filename);
 void fio_fail(const char *errmsg);
@@ -137,61 +137,61 @@ void                int_fast64_t_write  (int_fast64_t b,FILE *fp){
     fwrite(&b,fio.int_fast64_t_size,1,fp);
 }
 
-static void         wcs_makele          (wchar_t *wcs);
-static void         wcs_makebe          (wchar_t *wcs);
-void                wcs_read            (wchar_t *wcs,size_t len,FILE *fp);
-void                wcs_write           (wchar_t *wcs,size_t len,FILE *fp);
+static void         str_makele          (char *str);
+static void         str_makebe          (char *str);
+void                str_read            (char *str,size_t len,FILE *fp);
+void                str_write           (char *str,size_t len,FILE *fp);
 
-static void         wcs_makele          (wchar_t *wcs){
+static void         str_makele          (char *str){
     if(fio_isle())return;
-    for(size_t i=0;i<wcslen(wcs);i++){
-        unsigned char c[sizeof(wchar_t)];
-        wchar_t result;
-        for(size_t j=0;j<sizeof(wchar_t);j++){
-            c[j]=(wcs[i]>>(CHAR_BIT*i))&UCHAR_MAX;
-            result+=(wchar_t)c[i]<<((sizeof(wchar_t)-i-1)*CHAR_BIT);
+    for(size_t i=0;i<strlen(str);i++){
+        unsigned char c[sizeof(char)];
+        char result;
+        for(size_t j=0;j<sizeof(char);j++){
+            c[j]=(str[i]>>(CHAR_BIT*i))&UCHAR_MAX;
+            result+=(char)c[i]<<((sizeof(char)-i-1)*CHAR_BIT);
         }
-        wcs[i]=result;
+        str[i]=result;
     }
 }
-static void         wcs_makebe          (wchar_t *wcs){
+static void         str_makebe          (char *str){
     if(fio_isle())return;
-    for(size_t i=0;i<wcslen(wcs);i++){
-        unsigned char c[sizeof(wchar_t)];
-        wchar_t result;
-        for(size_t j=0;j<sizeof(wchar_t);j++){
-            c[j]=(wcs[i]>>(CHAR_BIT*i))&UCHAR_MAX;
-            result+=(wchar_t)c[i]<<((sizeof(wchar_t)-i-1)*CHAR_BIT);
+    for(size_t i=0;i<strlen(str);i++){
+        unsigned char c[sizeof(char)];
+        char result;
+        for(size_t j=0;j<sizeof(char);j++){
+            c[j]=(str[i]>>(CHAR_BIT*i))&UCHAR_MAX;
+            result+=(char)c[i]<<((sizeof(char)-i-1)*CHAR_BIT);
         }
-        wcs[i]=result;
+        str[i]=result;
     }
 }
-void                wcs_read            (wchar_t *wcs,size_t len,FILE *fp){
+void                str_read            (char *str,size_t len,FILE *fp){
     if(fio.fail)return;
-    if(fio.fileptr+fio.wchar_t_size*len>fio.filesize){
+    if(fio.fileptr+fio.char_size*len>fio.filesize){
         fio_fail("exceeded file length.");
         return;
     }
     for(size_t i=0;i<len;i++){
         uint_fast32_t tmpint=0;
-        if(fread(&tmpint,fio.wchar_t_size,1,fp)!=1){
+        if(fread(&tmpint,fio.char_size,1,fp)!=1){
             fio_fail("fread() fail.");
             return;
         }
-        wcs[i]=tmpint;
-        fio.fileptr+=fio.wchar_t_size;
+        str[i]=tmpint;
+        fio.fileptr+=fio.char_size;
     }
-    if(!fio_isle())wcs_makebe(wcs);
+    if(!fio_isle())str_makebe(str);
 }
-void                wcs_write           (wchar_t *wcs,size_t len,FILE *fp){
-    wcs_makele(wcs);
-//    fwrite(wcs,len*sizeof(wchar_t),1,fp);
+void                str_write           (char *str,size_t len,FILE *fp){
+    str_makele(str);
+//    fwrite(str,len*sizeof(char),1,fp);
     for(size_t i=0;i<len;i++){
         int_fast32_t mask=(UCHAR_MAX+1)*(UCHAR_MAX+1)-1;
-        int_fast16_t tmpint16=wcs[i]%mask;
-        fwrite(&tmpint16,fio.wchar_t_size,1,fp);
+        int_fast16_t tmpint16=str[i]%mask;
+        fwrite(&tmpint16,fio.char_size,1,fp);
     }
-    wcs_makebe(wcs);
+    str_makebe(str);
 }
 
 #endif

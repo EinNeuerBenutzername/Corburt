@@ -1,11 +1,11 @@
 #ifndef Corburt_Base_h_Include_Guard
 #define Corburt_Base_h_Include_Guard
-#define DISPLAY_WIDTH 68
-#define CB_VERSIONNUM 310
+#define DISPLAY_WIDTH 68 // change this and the graphics shall explode
+#define CB_VERSIONNUM 320
 #define CB_VERSIONCHECK 0
-#define CB_VERSIONTEXT L"v0.3.1"
+#define CB_VERSIONTEXT "v0.3.2"
 //#define CB_MAXPOINTERS 32767
-#define CB_MAXPOINTERS 4096 // used: 500~600
+#define CB_MAXPOINTERS 4096 // used: about 500 as of 0.3.2
 //#define CB_MAXROOMDESC 2048
 #ifndef Corburt_Pointer_Trace_Level
     #define Corburt_Pointer_Trace_Level 0 // off
@@ -19,55 +19,97 @@
 #include "cbsys.h"
 #include <limits.h>
 #include <time.h>
-#include <wchar.h>
 #include <stdarg.h>
 #include <stdlib.h> //malloc() realloc() free() exit()
 #include <stdbool.h>
 #include <inttypes.h>
 #include <math.h>
 
+// Typedefs
 typedef bool foo;
-typedef int_fast32_t nat;//32-bit number
-typedef int_fast64_t bat;//64-bit integer
-//typedef unsigned __int64 bat;
+typedef int_fast32_t nat; // 32-bit number
+typedef int_fast64_t bat; // 64-bit integer
+//typedef int nat;
+//typedef long long bat;
+//typedef __int64 bat;
 typedef double real;
+
 MTRand mtrand;
 foo quit_game=false;
-foo isle=true; //platform endianess. this is not a flag.
+foo isle=true; // platform endianess, this is not a flag.
+
+enum ranks {
+    rank_golem,
+    rank_kin,
+    rank_regular,
+    rank_lunfading,
+    rank_unfading,
+    rank_knight,
+    rank_highkin,
+    rank_demigod,
+    rank_king,
+    rank_sage,
+    rank_god,
+    rank_truesage,
+    rank_carnageking,
+    rank_supreme
+};
 struct input{
     nat deletable;
-    wchar_t *line;
+    char *line;
 }input;
 struct player{
-    wchar_t name[32];
+    char name[32];
     nat spawn;
     nat rnk;
     nat lvl;
     bat exp;
     bat maxhp;
     bat hp;
+    bat maxfp;
+    bat fp;
+    bat maxst;
+    bat st;
+    bat maxmp;
+    bat mp;
+    bat maxpp;
+    bat pp;
     struct basestats{
-        nat atk;
-        nat def;
-        nat acc;
-        nat dod;
-        nat wis;
-        nat act;
-        nat con;
-        nat pts;
+        nat agi; // agility
+        nat con; // constitution
+        nat res; // responsiveness
+        nat str; // strength
+        nat wil; // willpower
+        nat wis; // wisdom
+        nat luck; //luck
+        nat pts; // available points
     } stats;
     struct booststats{
-        nat atk;
-        nat def;
-        nat acc;
-        nat dod;
-        nat wis;
-        nat act;
+        nat agi;
+            nat acc;
+            nat dod;
         nat con;
-        nat pts;
+            nat def;
+            nat vit;
+        nat res;
+            nat rfl;
+            nat foc;
+        nat str;
+            nat atk;
+            nat stm;
+        nat wil;
+            nat san;
+            nat sat;
+        nat wis;
+            nat mag;
+            nat mat;
+        nat luck;
     } bstats;
     nat roomid;
-} player={L"",1,1,1,0,10,10,{0,0,0,0,0,0,0,14},{0,0,0,0,0,0,0,0},1};
+} player={"",1,rank_regular,1,0,10,10,
+    0,0,0,0,0,0,0,0,
+    {0,0,0,0,0,0,0,14},{0,0,0,0,0,0,0,0},1
+};
 struct inventory{
     nat unlocked;
     nat items[64];
@@ -81,10 +123,10 @@ struct save{
     struct player plr;
     struct inventory inv;
 };
-const nat savescount=5;
-struct save saves[5]={0};
+const nat savescount=3;
+struct save saves[3]={0};
 int_fast32_t cursaveid=0;
-wchar_t *inputbuf;
+char *inputbuf;
 struct globaldata{
     void **pointerpool;
     nat pointerinuse;
@@ -102,160 +144,160 @@ enum errorenum{
     error_bufferpooloverflow,
     error_cannotsave,
 };
-void printc(int color,const wchar_t *format,...); // obsolete, please use printr()
-size_t wcwidth(const wchar_t wc);
-size_t wcswidth(const wchar_t *wcs);
-void printr(int color,const wchar_t *format,...);
-void printrp(int color,const wchar_t *linepref,const wchar_t *format,...);
-void printword(size_t *pos,size_t width,wchar_t *word);
-void tracelog(int color,const wchar_t *format,...);
+void printc(int color,const char *format,...); // obsolete, please use printr()
+size_t wcwidth(const char wc);
+size_t strwidth(const char *str);
+void printr(int color,const char *format,...);
+void printrp(int color,const char *linepref,const char *format,...);
+void printword(size_t *pos,size_t width,char *word);
+void tracelog(int color,const char *format,...);
 void fatalerror(enum errorenum error_id);
 void *mallocpointer_(size_t bytes); // for testing
 void *mallocpointer(size_t bytes);
 void *reallocpointer(void *pointer,size_t bytes);
 void freepointer(void *pointer);
 void freeall();
-void scanline(wchar_t *scan_str,int scans);
-void wcslower(wchar_t **target_str_pos);
-void printc(int color,const wchar_t *format,...){
+void scanline(char *scan_str,int scans);
+void strlower(char **target_str_pos);
+void printc(int color,const char *format,...){
     if(color!=global.curcolor)cbc_setcolor(color);
     global.curcolor=color;
 //    fflush(stdout);
     va_list args;
     va_start(args,format);
-    vwprintf(format,args);
+    vprintf(format,args);
     va_end(args);
 //    if(color!=Default)cbc_setcolor(Default);
     fflush(stdout);
 }
-size_t wcwidth(const wchar_t wc){
+size_t wcwidth(const char wc){
     if((wc>=11904&&wc<=55215)||(wc>=63744&&wc<=64255)||(wc>=65281&&wc<=65374)){ // ambiguous E.Asian wide characters
         return 2;
     }
     return 1;
 }
-size_t wcswidth(const wchar_t *wcs){
+size_t strwidth(const char *str){
     size_t len=0;
-    for(size_t i=0;i<wcslen(wcs);i++){
-        len+=wcwidth(wcs[i]);
+    for(size_t i=0;i<strlen(str);i++){
+        len+=wcwidth(str[i]);
     }
     return len;
 }
-    wchar_t *printr_dest=NULL;
-    wchar_t *printr_token=NULL;
+    char *printr_dest=NULL;
+    char *printr_token=NULL;
     size_t pos=0;
-void printr(int color,const wchar_t *format,...){
+void printr(int color,const char *format,...){
     if(color!=global.curcolor)
         cbc_setcolor(color);
     global.curcolor=color;
-    wmemset(printr_dest,0,4096);
-    wmemset(printr_token,0,DISPLAY_WIDTH);
+    memset(printr_dest,0,4096);
+    memset(printr_token,0,DISPLAY_WIDTH);
     va_list args;
     va_start(args,format);
-    vsnwprintf(printr_dest,4096,format,args);
+    vsnprintf(printr_dest,4096,format,args);
     va_end(args);
 
-    size_t wcsl=0,wcsw=0,wcsld=wcslen(printr_dest);
-    for(size_t i=0;i<wcsld;i++){
-        if(printr_dest[i]==L'\n'){
-            if(wcsl>0)wprintf(L"%ls\n",printr_token);
+    size_t strl=0,strw=0,strld=strlen(printr_dest);
+    for(size_t i=0;i<strld;i++){
+        if(printr_dest[i]=='\n'){
+            if(strl>0)printf("%s\n",printr_token);
             else putc('\n',stdout);
-            pos=0;wmemset(printr_token,0,wcsl);
-            wcsl=0;wcsw=0;
+            pos=0;memset(printr_token,0,strl);
+            strl=0;strw=0;
         }
-        else if(printr_dest[i]==L' '){
-            if(wcsl>0)wprintf(L"%ls ",printr_token);
+        else if(printr_dest[i]==' '){
+            if(strl>0)printf("%s ",printr_token);
             else putc(' ',stdout);
-            pos+=wcsl+1;wmemset(printr_token,0,wcsl);
-            wcsl=0;wcsw=0;
+            pos+=strl+1;memset(printr_token,0,strl);
+            strl=0;strw=0;
         }
         else{
-            if(wcsw+pos>=DISPLAY_WIDTH-1){
+            if(strw+pos>=DISPLAY_WIDTH-1){
                 size_t j;
-                for(j=i;j<wcslen(printr_dest);j++){
-                    if(printr_dest[j]==L'\n'||printr_dest[j]==L' ')break;
+                for(j=i;j<strlen(printr_dest);j++){
+                    if(printr_dest[j]=='\n'||printr_dest[j]==' ')break;
                 }
                 if(j-i+1<DISPLAY_WIDTH){
-                    wprintf(L"\n%ls",printr_token);
-                    pos=wcsw;wmemset(printr_token,0,wcsl);
-                    wcsl=0;wcsw=0;
+                    printf("\n%s",printr_token);
+                    pos=strw;memset(printr_token,0,strl);
+                    strl=0;strw=0;
                 }else{
-                    wprintf(L"%ls\n",printr_token);
-                    pos=0;wmemset(printr_token,0,wcsl);
-                    wcsl=0;wcsw=0;
+                    printf("%s\n",printr_token);
+                    pos=0;memset(printr_token,0,strl);
+                    strl=0;strw=0;
                 }
             }
-            printr_token[wcsl]=printr_dest[i];
-            wcsl++;
-            wcsw+=wcwidth(printr_dest[i]);
-            if(i+1==wcsld){
-                wprintf(L"%ls",printr_token);
-                pos+=wcsw;wmemset(printr_token,0,wcsl);
-                wcsl=0;wcsw=0;
+            printr_token[strl]=printr_dest[i];
+            strl++;
+            strw+=wcwidth(printr_dest[i]);
+            if(i+1==strld){
+                printf("%s",printr_token);
+                pos+=strw;memset(printr_token,0,strl);
+                strl=0;strw=0;
             }
         }
     }
 //    if(color!=Default)cbc_setcolor(Default);
     fflush(stdout);
 }
-void printrp(int color,const wchar_t *linepref,const wchar_t *format,...){
+void printrp(int color,const char *linepref,const char *format,...){
     if(color!=global.curcolor)
         cbc_setcolor(color);
     global.curcolor=color;
     fflush(stdout);
-    wmemset(printr_dest,0,4096);
-    wmemset(printr_token,0,DISPLAY_WIDTH);
+    memset(printr_dest,0,4096);
+    memset(printr_token,0,DISPLAY_WIDTH);
     va_list args;
     va_start(args,format);
-    vsnwprintf(printr_dest,4096,format,args);
+    vsnprintf(printr_dest,4096,format,args);
     va_end(args);
 
-    size_t wcsl=0,wcsw=0,wcsld=wcslen(printr_dest),wcswp=wcswidth(linepref);
-    for(size_t i=0;i<wcsld;i++){
-        if(printr_dest[i]==L'\n'){
-            if(wcsl>0)wprintf(L"%ls\n",printr_token);
+    size_t strl=0,strw=0,strld=strlen(printr_dest),strwp=strwidth(linepref);
+    for(size_t i=0;i<strld;i++){
+        if(printr_dest[i]=='\n'){
+            if(strl>0)printf("%s\n",printr_token);
             else putc('\n',stdout);
-            if(i<wcsld-1){
-                wprintf(L"%ls",linepref);
-                pos=wcswp;
+            if(i<strld-1){
+                printf("%s",linepref);
+                pos=strwp;
             }else pos=0;
-            wmemset(printr_token,0,wcsl);
-            wcsl=0;wcsw=0;
+            memset(printr_token,0,strl);
+            strl=0;strw=0;
         }
-        else if(printr_dest[i]==L' '){
-            if(wcsl>0)wprintf(L"%ls ",printr_token);
+        else if(printr_dest[i]==' '){
+            if(strl>0)printf("%s ",printr_token);
             else putc(' ',stdout);
-            pos+=wcsl+1;wmemset(printr_token,0,wcsl);
-            wcsl=0;wcsw=0;
+            pos+=strl+1;memset(printr_token,0,strl);
+            strl=0;strw=0;
         }
         else{
-            if(wcsw+pos>=DISPLAY_WIDTH-1){
+            if(strw+pos>=DISPLAY_WIDTH-1){
                 size_t j;
-                for(j=i;j<wcslen(printr_dest);j++){
-                    if(printr_dest[j]==L'\n'||printr_dest[j]==L' ')break;
+                for(j=i;j<strlen(printr_dest);j++){
+                    if(printr_dest[j]=='\n'||printr_dest[j]==' ')break;
                 }
-                if(j-i+1<DISPLAY_WIDTH-wcswp){
-                    wprintf(L"\n%ls%ls",linepref,printr_token);
-                    pos=wcsw+wcswp;wmemset(printr_token,0,wcsl);
-                    wcsl=0;wcsw=0;
+                if(j-i+1<DISPLAY_WIDTH-strwp){
+                    printf("\n%s%s",linepref,printr_token);
+                    pos=strw+strwp;memset(printr_token,0,strl);
+                    strl=0;strw=0;
                 }else{
-                    wprintf(L"%ls\n%ls",printr_token,linepref);
-                    pos=wcswp;wmemset(printr_token,0,wcsl);
-                    wcsl=0;wcsw=0;
+                    printf("%s\n%s",printr_token,linepref);
+                    pos=strwp;memset(printr_token,0,strl);
+                    strl=0;strw=0;
                 }
             }
-            printr_token[wcsl]=printr_dest[i];
-            wcsl++;
-            wcsw+=wcwidth(printr_dest[i]);
-            if(i+1==wcsld){
+            printr_token[strl]=printr_dest[i];
+            strl++;
+            strw+=wcwidth(printr_dest[i]);
+            if(i+1==strld){
                 pos=0;
-                if(wcsl<wcsld){
-                    wprintf(L"%ls",linepref);
-                    pos+=wcswp;
+                if(strl<strld){
+                    printf("%s",linepref);
+                    pos+=strwp;
                 }
-                wprintf(L"%ls",printr_token);
-                pos+=wcsw;wmemset(printr_token,0,wcsl);
-                wcsl=0;wcsw=0;
+                printf("%s",printr_token);
+                pos+=strw;memset(printr_token,0,strl);
+                strl=0;strw=0;
             }
         }
     }
@@ -263,13 +305,13 @@ void printrp(int color,const wchar_t *linepref,const wchar_t *format,...){
 //    if(color!=Default)cbc_setcolor(Default);
     fflush(stdout);
 }
-void tracelog(int color,const wchar_t *format,...){
+void tracelog(int color,const char *format,...){
 #ifdef Corburt_Debug
     if(color!=global.curcolor)cbc_setcolor(color);
     global.curcolor=color;
     va_list args;
     va_start(args,format);
-    vwprintf(format,args);
+    vprintf(format,args);
     va_end(args);
     fflush(stdout);
 #else
@@ -277,7 +319,7 @@ void tracelog(int color,const wchar_t *format,...){
 #endif
 }
 void fatalerror(enum errorenum error_id){
-    const wchar_t *m;
+    const char *m;
     switch(error_id){
     case error_cannotmalloc:
         m=msg->error_cannotmalloc;break;
@@ -294,7 +336,7 @@ void fatalerror(enum errorenum error_id){
     }
     printr(Red,m);
     FILE *errorlog=fopen("err.log","a");
-    fprintf(errorlog,"%ls",m);
+    fprintf(errorlog,"%s",m);
     fclose(errorlog);
     exit(-1);
 }
@@ -387,12 +429,12 @@ void freeall(){
     tracelog(Green,msg->trace_freealled);
 }
 #ifndef CB_REALTIME
-void scanline(wchar_t *scan_str,int scans){
+void scanline(char *scan_str,int scans){
     cbc_setcolor(Yellow);
     fflush(stdout);
-    fgetws(scan_str,scans,stdin);
-    if(scan_str[wcslen(scan_str)-1]==L'\n'){
-        scan_str[wcslen(scan_str)-1]=0;
+    fgets(scan_str,scans,stdin);
+    if(scan_str[strlen(scan_str)-1]=='\n'){
+        scan_str[strlen(scan_str)-1]=0;
     }
     fflush(stdin);
     cbc_setcolor(Default);
@@ -400,10 +442,10 @@ void scanline(wchar_t *scan_str,int scans){
     fflush(stdout);
 }
 #else
-void fscanline(wchar_t *scan_str,int scans);
+void fscanline(char *scan_str,int scans);
 #endif
-void wcslower(wchar_t **target_str_pos){
-    for(size_t i=0;i<wcslen(*target_str_pos);i++){
+void strlower(char **target_str_pos){
+    for(size_t i=0;i<strlen(*target_str_pos);i++){
         if((*target_str_pos)[i]<=90&&(*target_str_pos)[i]>=65){
             (*target_str_pos)[i]+=32;
         }
@@ -413,31 +455,31 @@ void wcslower(wchar_t **target_str_pos){
 void launchcb();
 void endcb();
 void assertcheck();
-nat match(const wchar_t *sub_str,const wchar_t *main_str);
+nat match(const char *sub_str,const char *main_str);
 void initrng();
 void assertcheck(){
     if(CHAR_BIT!=8)fatalerror(error_badcharbit);
 }
-nat match(const wchar_t *sub_str,const wchar_t *main_str){
-    if(wcslen(main_str)==0)return 0;
-    wchar_t *str1l=mallocpointer(sizeof(wchar_t)*(wcslen(main_str)+1));
-    wchar_t *str2l=mallocpointer(sizeof(wchar_t)*(wcslen(sub_str)+1));
-    wcscpy(str1l,main_str);
-    wcscpy(str2l,sub_str);
-    wcslower(&str1l);
-    wcslower(&str2l);
-    str1l[wcslen(str1l)]=0;
-    str2l[wcslen(str2l)]=0;
-    wchar_t *matchpos=wcsstr(str1l,str2l);
+nat match(const char *sub_str,const char *main_str){
+    if(strlen(main_str)==0)return 0;
+    char *str1l=mallocpointer(sizeof(char)*(strlen(main_str)+1));
+    char *str2l=mallocpointer(sizeof(char)*(strlen(sub_str)+1));
+    strcpy(str1l,main_str);
+    strcpy(str2l,sub_str);
+    strlower(&str1l);
+    strlower(&str2l);
+    str1l[strlen(str1l)]=0;
+    str2l[strlen(str2l)]=0;
+    char *matchpos=strstr(str1l,str2l);
     if(matchpos==NULL){
         freepointer(str1l);
         freepointer(str2l);
         return -1;
     }else{
-        if(matchpos==str1l||str1l[(matchpos-str1l)-1]==L' '){
+        if(matchpos==str1l||str1l[(matchpos-str1l)-1]==' '){
             freepointer(str1l);
             freepointer(str2l);
-            real m=(10000.0f*wcslen(sub_str))/(1.0f*wcslen(main_str));
+            real m=(10000.0f*strlen(sub_str))/(1.0f*strlen(main_str));
             return (nat)m;
         }else{
             freepointer(str1l);
@@ -500,18 +542,18 @@ enum direction{
 };
 // db
 #define ENEMY_MAXDROPS 16
-enum db_enemytype {
-    db_enemytype_plain,
-    db_enemytype_sentinel,
-    db_enemytype_assassin,
-    db_enemytype_boss
-};
 typedef struct enemydb{
     nat id;
     nat type;
-    wchar_t *name;
-//    wchar_t *desc;
+    char *name;
+    nat lvl;
     bat exp;
+    nat abilities[5];
+    struct {
+        nat type;
+        nat combo[20];
+        nat skills[6];
+    } ai;
     struct {
         nat moneymin;
         nat moneymax;
@@ -552,24 +594,35 @@ typedef struct itemdb{
     nat prep;
     nat cd;
     nat crit;
-    wchar_t *name;
-    wchar_t *desc;
+    char *name;
+    char *desc;
     struct {
         nat min_;
         nat max_;
         nat regen;
-        nat atk;
-        nat def;
-        nat acc;
-        nat dod;
-        nat wis;
-        nat act;
+        nat agi;
+            nat acc;
+            nat dod;
         nat con;
-        nat pts;
+            nat def;
+            nat vit;
+        nat res;
+            nat rfl;
+            nat foc;
+        nat str;
+            nat atk;
+            nat stm;
+        nat wil;
+            nat san;
+            nat sat;
+        nat wis;
+            nat mag;
+            nat mat;
+        nat luck;
     } stats;
 } itemdb;
 itemdb *db_ifindwithid(nat itemid);
-void getitemname(nat id,wchar_t *itemname);
+void getitemname(nat id,char *itemname);
 void consumeitem(nat itemid);
 
 enum db_roomtype{
@@ -589,11 +642,11 @@ typedef struct roomdb{
     nat x;
     nat y;
     nat region;
-    wchar_t *name;
+    char *name;
 #ifdef CB_MAXROOMDESC
-    wchar_t desc[CB_MAXROOMDESC];
+    char desc[CB_MAXROOMDESC];
 #else
-    wchar_t *desc;
+    char *desc;
 #endif
     nat type;
     nat exits[6];
@@ -626,8 +679,8 @@ struct intdat_door {
             nat keyid5;
         } keyset;
         struct password {
-            wchar_t *hint;
-            wchar_t *keyword;
+            char *hint;
+            char *keyword;
         } password;
         nat payamount;
     } open;
@@ -638,24 +691,24 @@ struct intdat_switch {
 };
 struct intdat_chest {
     nat capacity;
-    wchar_t *name;
+    char *name;
     nat initgold;
     nat inititems[16];
 };
-struct intdat_trap {};
+struct intdat_trap {}; // no idea how to make it work
 struct intdat_tp {
     nat dest;
 };
 struct intdat_npc {
-    wchar_t *name;
+    char *name;
     nat dialogcount;
     struct intdat_npc_dialog {
-        wchar_t *keyword;
-        wchar_t *response;
+        char *keyword;
+        char *response;
     } *dialog;
 };
 struct intdat_hazard {
-    wchar_t *name;
+    char *name;
     nat debuff[4];
 };
 
@@ -672,14 +725,25 @@ interdb *interdbs=NULL;
 // cbp
 struct {
     struct calcstats{
-        nat atk;
-        nat def;
-        nat acc;
-        nat dod;
-        nat wis;
-        nat act;
+        nat agi;
+            nat acc;
+            nat dod;
         nat con;
-        nat pts;
+            nat def;
+            nat vit;
+        nat res;
+            nat rfl;
+            nat foc;
+        nat str;
+            nat atk;
+            nat stm;
+        nat wil;
+            nat san;
+            nat sat;
+        nat wis;
+            nat mag;
+            nat mat;
+        nat luck;
         nat regen;
         nat min_;
         nat max_;
@@ -691,6 +755,8 @@ struct {
     foo editstats;
     bool readying;
     bool isready;
+    nat swinging;
+    nat targetid;
     nat readyframe;
     nat attackcd;
 } cbp={0};
@@ -698,10 +764,13 @@ void paddexp(nat add);
 void phpchange(nat num);
 void pdie();
 void pcalcstats();
+void pshowinfo();
+void pshowstatsbrief();
 void pshowstats();
 void pshowabl();
 void pshowinv();
 void pshowexp();
+void pteleport(nat roomid);
 void pmove(enum direction dir);
 void pready();
 void preadying();
