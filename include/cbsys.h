@@ -13,12 +13,14 @@
 #endif
 double cbtime_inittime=0;
 double cbtime_previoustime=0;
+double cbtime_fps;
 
 void cbtime_init();
-double cbtime_get();
-void cbtime_sleep(float ms);
+double cbtime_get(); // platform-dependent
+void cbtime_sleep(float ms); // platform-dependent
 void cbtime_wait(float targetFPS);
 void cbtime_end();
+static void cbtime_calcfps();
 
 void cbtime_init(){
     cbtime_inittime=cbtime_get();
@@ -33,7 +35,7 @@ double cbtime_get(){
 #else
     struct timespec tmspec;
     clock_gettime(CLOCK_MONOTONIC,&tmspec);
-    double tmdouble=tmsp    ec.tv_nsec/1000000000.0f+tmspec.tv_sec*1.0f;
+    double tmdouble=tmspec.tv_nsec/1000000000.0f+tmspec.tv_sec*1.0f;
     return tmdouble;
 #endif
 }
@@ -75,7 +77,28 @@ void cbtime_wait(float targetFPS){
     extratime=cbtime_previoustime+targetwaittime+extratime-currenttime;
 }
 void cbtime_end(){
+    cbtime_calcfps();
     cbtime_previoustime=cbtime_get();
+}
+static void cbtime_calcfps(){
+    double cbtime_frametime=cbtime_get()-cbtime_previoustime;
+#define CBTIME_MEASURE_FRAMES_COUNT 15
+    static int cbtime_index=0;
+    static double cbtime_history[CBTIME_MEASURE_FRAMES_COUNT]={0};
+    static double cbtime_average=0.00f;
+    if(cbtime_average>0.001f){ // locks at 1k fps
+        cbtime_index=(cbtime_index+1)%CBTIME_MEASURE_FRAMES_COUNT;
+        cbtime_average-=cbtime_history[cbtime_index];
+        cbtime_history[cbtime_index]=cbtime_frametime/(double)CBTIME_MEASURE_FRAMES_COUNT;
+        cbtime_average+=cbtime_history[cbtime_index];
+        cbtime_fps=1.0f/(double)cbtime_average;
+    }else{
+        cbtime_fps=0;
+        cbtime_index=(cbtime_index+1)%CBTIME_MEASURE_FRAMES_COUNT;
+        cbtime_average-=cbtime_history[cbtime_index];
+        cbtime_history[cbtime_index]=cbtime_frametime/(double)CBTIME_MEASURE_FRAMES_COUNT;
+        cbtime_average+=cbtime_history[cbtime_index];
+    }
 }
 #endif
 
