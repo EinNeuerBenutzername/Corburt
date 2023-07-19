@@ -7,13 +7,15 @@
         cursor manipulation
             hidecursor(), showcursor(), setcursor(row,col), getcursor(*row,*col)
         i/o manipulation
-            setcolor(color), getch(), clearscreen()
+            setcolor(color), getcolor(), getch(), clearscreen()
         buffer manipulation
+            (disabled with CBCurses_Simple flag)
             rawmode(), cookedmode(), setbufferalternate()
   Platform support: Windows (tested) and *nixes (POSIX, not tested)*/
 #ifndef Corburt_Curses_h_Include_Guard
 #define Corburt_Curses_h_Include_Guard
-//#define CBCurses_Strict  // todo
+#define CBCurses_Simple
+//#define CBCurses_Strict  // exits when literally anything goes wrong
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -52,18 +54,22 @@ typedef enum {
 	Bright=0x80,
 	FG_Mask=0x7F
 } cbc_enum_color;
+int currentcolor;
 void cbc_init();
 void cbc_setwindowtitle(const char *title);
 void cbc_getwindowsize(size_t *rows,size_t *cols);
 void cbc_setcolor(cbc_enum_color color);
+int cbc_getcolor();
 void cbc_clearscreen();
 void cbc_hidecursor();
 void cbc_showcursor();
 void cbc_setcursor(size_t row,size_t col);
 void cbc_getcursor(size_t *row,size_t *col);
+#ifndef CBCurses_Simple
 void cbc_rawmode();
 void cbc_cookedmode();
 void cbc_setbufferalternate();
+#endif
 int cbc_getch();
 #ifndef CBCurses_Disable
 static void fail(const char *failmsg){
@@ -71,6 +77,9 @@ static void fail(const char *failmsg){
     FILE *fp=fopen("curseserr.log","w");
     fprintf(fp,"%s\n",failmsg);
     fclose(fp);
+    #ifdef CBCurses_Strict
+    exit(-1);
+    #endif
 }
 #endif
 #ifdef CBCurses_Windows
@@ -140,6 +149,7 @@ void cbc_getwindowsize(size_t *rows,size_t *cols){
 #endif
 }
 void cbc_setcolor(cbc_enum_color color){
+    currentcolor=color;
 #ifdef CBCurses_Windows
     CONSOLE_SCREEN_BUFFER_INFO info;
 	static WORD dft_wAttributes=0;
@@ -171,6 +181,9 @@ void cbc_setcolor(cbc_enum_color color){
     }
 #else
 #endif
+}
+int cbc_getcolor(){
+    return currentcolor;
 }
 void cbc_clearscreen(){
 #ifdef CBCurses_Windows
@@ -282,6 +295,7 @@ void cbc_getcursor(size_t *row,size_t *col){
 #else
 #endif
 }
+#ifndef CBCurses_Simple
 void cbc_rawmode(){
 #ifdef CBCurses_Windows
 	if(!GetConsoleMode(hIn, &mode)||!SetConsoleMode(hIn,
@@ -338,6 +352,7 @@ void cbc_setbufferalternate(){
 #else
 #endif
 }
+#endif
 int cbc_getch(){
 #ifdef CBCurses_Windows
 	fflush(stdout);
