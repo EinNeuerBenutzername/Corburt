@@ -54,7 +54,9 @@ typedef enum {
 	Bright=0x80,
 	FG_Mask=0x7F
 } cbc_enum_color;
-int currentcolor;
+struct {
+    int currentcolor;
+} cbc_global={Default};
 void cbc_init();
 void cbc_setwindowtitle(const char *title);
 void cbc_getwindowsize(size_t *rows,size_t *cols);
@@ -103,7 +105,7 @@ void cbc_init(){
 #elif defined(CBCurses_Unix)
 #else
 #endif
-	setlocale(LC_ALL, "");
+//	setlocale(LC_ALL, "");
 }
 void cbc_setwindowtitle(const char *title){
 #ifdef CBCurses_Windows
@@ -149,7 +151,8 @@ void cbc_getwindowsize(size_t *rows,size_t *cols){
 #endif
 }
 void cbc_setcolor(cbc_enum_color color){
-    currentcolor=color;
+    if(color==cbc_global.currentcolor)return;
+    cbc_global.currentcolor=color;
 #ifdef CBCurses_Windows
     CONSOLE_SCREEN_BUFFER_INFO info;
 	static WORD dft_wAttributes=0;
@@ -183,7 +186,7 @@ void cbc_setcolor(cbc_enum_color color){
 #endif
 }
 int cbc_getcolor(){
-    return currentcolor;
+    return cbc_global.currentcolor;
 }
 void cbc_clearscreen(){
 #ifdef CBCurses_Windows
