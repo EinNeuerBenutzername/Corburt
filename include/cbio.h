@@ -11,6 +11,7 @@ foo matchcommands(char *cmd);
 foo match__commands(char *cmd); // template
 foo matchregularcommands(char *cmd);
 foo matcheditstatscommands(char *cmd);
+foo matchyesnocommands(char *cmd);
 void processinput();
 #ifdef CB_REALTIME
 #include "cbsys.h"
@@ -39,6 +40,9 @@ foo matchcommands(char *cmd){
     if(cbp.editstats){
         return matcheditstatscommands(cmd);
     }
+    if(cbp.ynprompt){
+        return matchyesnocommands(cmd);
+    }
     return matchregularcommands(cmd);
 }
 foo match__commands(char *cmd){
@@ -51,12 +55,12 @@ foo match__commands(char *cmd){
     return false;
 }
 foo matchregularcommands(char *cmd){
-    if(fullmatch(cmd,"st")||
-       fullmatch(cmd,"stats")){
+    if(fullmatch(cmd,"st")){
         pshowstatsbrief();
         return true;
     }
-    if(fullmatch(cmd,"statistics")){
+    if(fullmatch(cmd,"stats")||
+       fullmatch(cmd,"statistics")){
         pshowstats();
         return true;
     }
@@ -140,7 +144,7 @@ foo matchregularcommands(char *cmd){
         return true;
     }
     if(fullmatch(cmd,"help")){
-        printc(Default,msg->global_help);
+        printr(palette.msg,msg->global_help);
         return true;
     }
     if(fullmatch(cmd,"abilities")||
@@ -153,7 +157,7 @@ foo matchregularcommands(char *cmd){
     }
     if(fullmatch(cmd,"save")){
         savesaves();
-        printr(Cyan|Bright,msg->global_progresssaved);
+        printr(palette.inform,msg->global_progresssaved);
         return true;
     }
     if(fullmatch(cmd,"list")){
@@ -163,11 +167,11 @@ foo matchregularcommands(char *cmd){
     if(fullmatch(cmd,"buy")){
         roomdb *rm=db_rfindwithid(player.roomid);
         if(rm==NULL){
-            printr(Red,msg->db_ridnullexceptionerror);
+            warn(msg->db_ridnullexceptionerror);
             return true;
         }
         if(rm->type!=db_roomtype_shop){
-            printr(Default,msg->db_notinstore);
+            printr(palette.promptfail,msg->db_notinstore);
             return true;
         }
         char *buytarget=NULL;
@@ -208,7 +212,7 @@ foo matchregularcommands(char *cmd){
         for(nat i=0;rm->table[i]!=0;i++){
             itemdb *idb=db_ifindwithid(rm->table[i]);
             if(idb==NULL){
-                printr(Red,msg->db_iidnullexceptionerror);
+                warn(msg->db_iidnullexceptionerror);
                 return true;
             }
             nat curmatch=match(buytarget,idb->name);
@@ -221,7 +225,7 @@ foo matchregularcommands(char *cmd){
         if(maxmatch>=0){
             itemdb *idb=db_ifindwithid(maxmatchid);
             if(idb==NULL){
-                printr(Red,msg->db_iidnullexceptionerror);
+                warn(msg->db_iidnullexceptionerror);
                 return true;
             }
             if(idb->type&db_itemtype_stackable_mask){
@@ -229,8 +233,8 @@ foo matchregularcommands(char *cmd){
                     etitem_push(idb->id,qnty,0,1);
                     return true;
                 }else{
-                    if(qnty==1)printr(Default,msg->db_icantafford,idb->price*qnty-inventory.money);
-                    else printr(Default,msg->db_icantaffordmult,idb->price*qnty-inventory.money);
+                    if(qnty==1)printr(palette.promptfail,msg->db_icantafford,idb->price*qnty-inventory.money);
+                    else printr(palette.promptfail,msg->db_icantaffordmult,idb->price*qnty-inventory.money);
                 }
             }
             else{
@@ -238,11 +242,11 @@ foo matchregularcommands(char *cmd){
                     etitem_push(idb->id,1,0,1);
                     return true;
                 }else{
-                    printr(Default,msg->db_icantafford,idb->price-inventory.money);
+                    printr(palette.promptfail,msg->db_icantafford,idb->price-inventory.money);
                 }
             }
         }else{
-            printr(Default,msg->db_inosuchitem);
+            printr(palette.promptfail,msg->db_inosuchitem);
         }
         return true;
     }
@@ -267,7 +271,7 @@ foo matchregularcommands(char *cmd){
             if(inventory.items[i]==0)continue;
             itemdb *idb=db_ifindwithid(et_items[inventory.items[i]-1].itemid);
             if(idb==NULL){
-                printr(Red,msg->db_iidnullexceptionerror);
+                warn(msg->db_iidnullexceptionerror);
                 return true;
             }
             nat curmatch=match(usetarget,idb->name);
@@ -298,24 +302,24 @@ foo matchregularcommands(char *cmd){
         if(maxmatch>=0){
             itemdb *idb=db_ifindwithid(maxmatchid);
             if(idb==NULL){
-                printr(Red,msg->db_iidnullexceptionerror);
+                warn(msg->db_iidnullexceptionerror);
                 return true;
             }
             if(idb->type==db_itemtype_weapon){
                 inventory.weapon=ininvindex+1;
                 pcalcstats();
-                printr(Default,msg->player_inv_wield,idb->name);
+                printr(palette.inform,msg->player_inv_wield,idb->name);
             }
             if(idb->type==db_itemtype_armor){
                 inventory.armor=ininvindex+1;
                 pcalcstats();
-                printr(Default,msg->player_inv_wear,idb->name);
+                printr(palette.inform,msg->player_inv_wear,idb->name);
             }
             if(idb->type==db_itemtype_accessory){
                 foo canequip=true;
                 for(nat k=0;k<5;k++){
                     if(inventory.accessories[k]==ininvindex+1){
-                        printr(Default,msg->player_inv_alreadyequipped,idb->name);
+                        printr(palette.promptfail,msg->player_inv_alreadyequipped,idb->name);
                         canequip=false;
                         break;
                     }
@@ -324,7 +328,7 @@ foo matchregularcommands(char *cmd){
                     for(nat k=0;k<5;k++){
                         if(inventory.accessories[k]==0){
                             inventory.accessories[k]=ininvindex+1;
-                            printr(Default,msg->player_inv_equip,idb->name);
+                            printr(palette.inform,msg->player_inv_equip,idb->name);
                             pcalcstats();
                             break;
                         }
@@ -340,7 +344,7 @@ foo matchregularcommands(char *cmd){
                 }
             }
         }else{
-            printr(Default,msg->db_inosuchitem);
+            printr(palette.promptfail,msg->db_inosuchitem);
         }
         return true;
     }
@@ -352,7 +356,7 @@ foo matchregularcommands(char *cmd){
         else if(fullmatch(cmd,"g"))startp=1;
         roomdb *rm=db_rfindwithid(player.roomid);
         if(rm==NULL){
-            printr(Red,msg->db_ridnullexceptionerror);
+            warn(msg->db_ridnullexceptionerror);
             return true;
         }
         char *taketarget=NULL;
@@ -393,19 +397,19 @@ foo matchregularcommands(char *cmd){
         nat maxmatchid=0;
         struct et_room *etr=et_findroomwithid(rm->id);
         if(etr==NULL){
-            printr(Red,msg->db_retidnullexceptionerror);
+            warn(msg->db_retidnullexceptionerror);
             return true;
         }
         for(nat i=0;i<DBE_ITEMCAP;i++){
             if(etr->etitem[i]==0)continue;
             struct et_item *eti=&et_items[etr->etitem[i]-1];
             if(eti==NULL){
-                printr(Red,msg->db_ietidnullexceptionerror);
+                warn(msg->db_ietidnullexceptionerror);
                 return true;
             }
             itemdb *idb=db_ifindwithid(eti->itemid);
             if(idb==NULL){
-                printr(Red,msg->db_iidnullexceptionerror);
+                warn(msg->db_iidnullexceptionerror);
                 return true;
             }
             nat curmatch=match(taketarget,idb->name);
@@ -418,7 +422,7 @@ foo matchregularcommands(char *cmd){
             if(taketarget[0]=='$'){
                 struct et_room *etrp=et_findroomwithid(player.roomid);
                 if(etrp==NULL){
-                    printc(Red,msg->db_retidnullexceptionerror);
+                    warn(msg->db_retidnullexceptionerror);
                     return true;
                 }
 
@@ -429,11 +433,11 @@ foo matchregularcommands(char *cmd){
                     moni+=taketarget[i]-'0';
                 }
                 if(moni>etrp->money){
-                    printc(Default,msg->db_retnotthatmuchmoney);
+                    printr(palette.promptfail,msg->db_retnotthatmuchmoney);
                 }else if(moni){
                     etrp->money-=moni;
                     inventory.money+=moni;
-                    printc(Cyan|Bright,msg->db_retplayermoneypickup,moni);
+                    printr(palette.item.interact,msg->db_retplayermoneypickup,moni);
                     freepointer(taketarget);
                 }
                 return true;
@@ -443,12 +447,12 @@ foo matchregularcommands(char *cmd){
         if(maxmatch>=0){
             struct et_item *eti=&et_items[maxmatchid-1];
             if(!eti->available){
-                printr(Red,msg->db_ietidnullexceptionerror);
+                warn(msg->db_ietidnullexceptionerror);
                 return true;
             }
             itemdb *idb=db_ifindwithid(eti->itemid);
             if(idb==NULL){
-                printr(Red,msg->db_iidnullexceptionerror);
+                warn(msg->db_iidnullexceptionerror);
                 return true;
             }
             if(idb->type&db_itemtype_stackable_mask){
@@ -461,7 +465,7 @@ foo matchregularcommands(char *cmd){
                             if(etr->etitem[i]==0)continue;
                             struct et_item *etii=&et_items[etr->etitem[i]-1];
                             if(etii->available==false){
-                                printr(Red,msg->db_ietidnullexceptionerror);
+                                warn(msg->db_ietidnullexceptionerror);
                                 return true;
                             }
                             if(etii->itemid==itemid){
@@ -484,24 +488,24 @@ foo matchregularcommands(char *cmd){
                     etitem_push(eti->itemid,qnty,0,0);
                     qnty=0;
                 }
-                if(qnty2-qnty>1)printr(Cyan|Bright,msg->db_ietmulttake,idb->name,qnty2-qnty);
-                else if(qnty2-qnty==1)printr(Cyan|Bright,msg->db_iettake,idb->name);
-                else printr(Default,msg->db_inosuchitem);
+                if(qnty2-qnty>1)printr(palette.item.interact,msg->db_ietmulttake,idb->name,qnty2-qnty);
+                else if(qnty2-qnty==1)printr(palette.item.interact,msg->db_iettake,idb->name);
+                else printr(palette.promptfail,msg->db_inosuchitem);
             }
             else{
                 etitem_rebind(maxmatchid,0);
-                printr(Cyan|Bright,msg->db_iettake,idb->name);
+                printr(palette.item.interact,msg->db_iettake,idb->name);
             }
         }
         else{
-            printr(Default,msg->db_inosuchitem);
+            printr(palette.promptfail,msg->db_inosuchitem);
         }
         return true;
     }
     if(fullmatch(cmd,"drop")){
         struct et_room *etr=et_findroomwithid(player.roomid);
         if(etr==NULL){
-            printr(Red,msg->db_retidnullexceptionerror);
+            warn(msg->db_retidnullexceptionerror);
             return true;
         }
         char *droptarget=NULL;
@@ -544,12 +548,12 @@ foo matchregularcommands(char *cmd){
             if(inventory.items[i]==0)continue;
             struct et_item *eti=&et_items[inventory.items[i]-1];
             if(eti==NULL){
-                printr(Red,msg->db_ietidnullexceptionerror);
+                warn(msg->db_ietidnullexceptionerror);
                 return true;
             }
             itemdb *idb=db_ifindwithid(eti->itemid);
             if(idb==NULL){
-                printr(Red,msg->db_iidnullexceptionerror);
+                warn(msg->db_iidnullexceptionerror);
                 return true;
             }
             nat curmatch=match(droptarget,idb->name);
@@ -567,17 +571,17 @@ foo matchregularcommands(char *cmd){
                     moni+=droptarget[i]-'0';
                 }
                 if(moni>inventory.money){
-                    printc(Default,msg->db_retplayernotthatmuchmoney);
+                    printr(palette.promptfail,msg->db_retplayernotthatmuchmoney);
                     return true;
                 }else if(moni){
                     inventory.money-=moni;
                     struct et_room *etrp=et_findroomwithid(player.roomid);
                     if(etrp==NULL){
-                        printc(Red,msg->db_retidnullexceptionerror);
+                        warn(msg->db_retidnullexceptionerror);
                         return true;
                     }
                     etrp->money+=moni;
-                    printc(Cyan|Bright,msg->db_retplayermoneydrop,moni);
+                    printr(palette.item.interact,msg->db_retplayermoneydrop,moni);
                     freepointer(droptarget);
                     return true;
                 }
@@ -587,12 +591,12 @@ foo matchregularcommands(char *cmd){
         if(maxmatch>=0){
             struct et_item *eti=&et_items[maxmatchid-1];
             if(!eti->available){
-                printr(Red,msg->db_ietidnullexceptionerror);
+                warn(msg->db_ietidnullexceptionerror);
                 return true;
             }
             itemdb *idb=db_ifindwithid(eti->itemid);
             if(idb==NULL){
-                printr(Red,msg->db_iidnullexceptionerror);
+                warn(msg->db_iidnullexceptionerror);
                 return true;
             }
             if(idb->type&db_itemtype_stackable_mask){
@@ -605,7 +609,7 @@ foo matchregularcommands(char *cmd){
                             if(inventory.items[i]==0)continue;
                             struct et_item *etii=&et_items[inventory.items[i]-1];
                             if(etii->available==false){
-                                printr(Red,msg->db_ietidnullexceptionerror);
+                                warn(msg->db_ietidnullexceptionerror);
                                 return true;
                             }
                             if(etii->itemid==itemid){
@@ -627,27 +631,27 @@ foo matchregularcommands(char *cmd){
                     etitem_push(eti->itemid,qnty,player.roomid,0);
                     qnty=0;
                 }
-                if(qnty2-qnty>1)printr(Cyan|Bright,msg->db_ietmultdrop,idb->name,qnty2-qnty);
-                else printr(Cyan|Bright,msg->db_ietdrop,idb->name);
+                if(qnty2-qnty>1)printr(palette.item.interact,msg->db_ietmultdrop,idb->name,qnty2-qnty);
+                else printr(palette.item.interact,msg->db_ietdrop,idb->name);
             }
             else{
                 etitem_rebind(maxmatchid,player.roomid);
-                printr(Cyan|Bright,msg->db_ietdrop,idb->name);
+                printr(palette.item.interact,msg->db_ietdrop,idb->name);
             }
             pcalcstats();
         }else{
-            printr(Default,msg->db_inosuchitem);
+            printr(palette.promptfail,msg->db_inosuchitem);
         }
         return true;
     }
     if(fullmatch(cmd,"sell")){
         roomdb *rm=db_rfindwithid(player.roomid);
         if(rm==NULL){
-            printr(Red,msg->db_ridnullexceptionerror);
+            warn(msg->db_ridnullexceptionerror);
             return true;
         }
         if(rm->type!=db_roomtype_shop){
-            printr(Default,msg->db_notinstore);
+            printr(palette.promptfail,msg->db_notinstore);
             return true;
         }
         char *selltarget=NULL;
@@ -689,7 +693,7 @@ foo matchregularcommands(char *cmd){
         for(nat i=0;rm->table[i]!=0;i++){
             itemdb *idb=db_ifindwithid(rm->table[i]);
             if(idb==NULL){
-                printr(Red,msg->db_iidnullexceptionerror);
+                warn(msg->db_iidnullexceptionerror);
                 return true;
             }
             nat curmatch=match(selltarget,idb->name);
@@ -709,11 +713,11 @@ foo matchregularcommands(char *cmd){
         if(maxmatch>=0){
             itemdb *idb=db_ifindwithid(maxmatchitemid);
             if(idb==NULL){
-                printr(Red,msg->db_iidnullexceptionerror);
+                warn(msg->db_iidnullexceptionerror);
                 return true;
             }
         }else{
-            printr(Default,msg->db_inosuchitem);
+            printr(palette.promptfail,msg->db_inosuchitem);
             return true;
         }
         itemdb *idb=NULL;
@@ -721,12 +725,12 @@ foo matchregularcommands(char *cmd){
             if(inventory.items[i]==0)continue;
             struct et_item *eti=&et_items[inventory.items[i]-1];
             if(eti==NULL){
-                printr(Red,msg->db_ietidnullexceptionerror);
+                warn(msg->db_ietidnullexceptionerror);
                 return true;
             }
             idb=db_ifindwithid(eti->itemid);
             if(idb==NULL){
-                printr(Red,msg->db_iidnullexceptionerror);
+                warn(msg->db_iidnullexceptionerror);
                 return true;
             }
             if(idb->id==maxmatchitemid){
@@ -752,9 +756,9 @@ foo matchregularcommands(char *cmd){
         }
         pcalcstats();
         idb=db_ifindwithid(maxmatchitemid);
-        if(qnty2==qnty)printr(Default,msg->db_inosuchitem);
-        else if(qnty2-qnty==1)printr(Cyan|Bright,msg->db_isellitemhint,idb->name);
-        else printr(Cyan|Bright,msg->db_isellmultitemhint,idb->name,qnty2-qnty);
+        if(qnty2==qnty)printr(palette.promptfail,msg->db_inosuchitem);
+        else if(qnty2-qnty==1)printr(palette.item.interact,msg->db_isellitemhint,idb->name);
+        else printr(palette.item.interact,msg->db_isellmultitemhint,idb->name,qnty2-qnty);
         return true;
     }
     if(fullmatch(cmd,"attack")||
@@ -763,7 +767,7 @@ foo matchregularcommands(char *cmd){
         if(fullmatch(cmd,"a"))startp=1;
         roomdb *rm=db_rfindwithid(player.roomid);
         if(rm==NULL){
-            printr(Red,msg->db_ridnullexceptionerror);
+            warn(msg->db_ridnullexceptionerror);
             return true;
         }
         char *attacktarget=NULL;
@@ -786,7 +790,7 @@ foo matchregularcommands(char *cmd){
             if(etr->etenemy[i]==0)continue;
             enemydb *edb=et_getenemydb(etr->etenemy[i]);
             if(edb==NULL){
-                printr(Red,msg->db_eidnullexceptionerror);
+                warn(msg->db_eidnullexceptionerror);
                 return true;
             }
             nat curmatch=match(attacktarget,edb->name);
@@ -798,10 +802,10 @@ foo matchregularcommands(char *cmd){
         }
         freepointer(attacktarget);
         if(maxmatchenemyentityid==0){
-            printr(Default,msg->db_enosuchenemy);
+            printr(palette.promptfail,msg->db_enosuchenemy);
         }else if(maxmatch>=0){
             if(cbp.attackcd>0){
-                printr(Default,msg->player_cantattack);
+                printr(palette.promptfail,msg->player_cantattack);
                 pbreakready();
                 cbp.attackcd=cbp.calcstats.cd;
                 return true;
@@ -810,7 +814,7 @@ foo matchregularcommands(char *cmd){
             if(cbp.swinging==0)cbp.swinging=1;
             cbp.targetid=maxmatchenemyentityid;
         }else{
-            printr(Default,msg->db_enosuchenemy);
+            printr(palette.promptfail,msg->db_enosuchenemy);
         }
         pbreakready();
         return true;
@@ -834,139 +838,85 @@ foo matcheditstatscommands(char *cmd){
         peditstatsend();
         return true;
     }
-    if(fullmatch(cmd,"1")){
+    if(fullmatch(cmd,"1")||
+       fullmatch(cmd,"2")||
+       fullmatch(cmd,"3")||
+       fullmatch(cmd,"4")||
+       fullmatch(cmd,"5")||
+       fullmatch(cmd,"6")){
         if(player.stats.pts){
-            player.stats.pts--;
-            player.stats.agi++;
-        }
-        // the rest is the same
-        else{
-            printc(Default,msg->player_editstatsnopoints);
+            if(fullmatch(cmd,"1")){
+                player.stats.pts--;
+                player.stats.agi++;
+            }else if(fullmatch(cmd,"2")){
+                player.stats.pts--;
+                player.stats.con++;
+            }else if(fullmatch(cmd,"3")){
+                player.stats.pts--;
+                player.stats.res++;
+            }else if(fullmatch(cmd,"4")){
+                player.stats.pts--;
+                player.stats.str++;
+            }else if(fullmatch(cmd,"5")){
+                player.stats.pts--;
+                player.stats.wil++;
+            }else if(fullmatch(cmd,"6")){
+                player.stats.pts--;
+                player.stats.wis++;
+            }
+        }else{
+            printr(palette.promptfail,msg->player_editstatsnopoints);
             peditstatsend();
         }
-        printc(Default,msg->player_points,
+        printr(palette.msg,msg->player_points,
             player.stats.agi,player.stats.con,
             player.stats.res,player.stats.str,
             player.stats.wil,player.stats.wis,
             player.stats.pts);
-        if(player.stats.pts){
-        }else{
-            printc(Default,msg->player_editstatsend);
+        if(player.stats.pts){}else{
+            printr(palette.inform,msg->player_editstatsend);
             peditstatsend();
         }
         return true;
     }
-    if(fullmatch(cmd,"2")){
-        if(player.stats.pts){
-            player.stats.pts--;
-            player.stats.con++;
-        }
-        // the rest is the same
-        else{
-            printc(Default,msg->player_editstatsnopoints);
-            peditstatsend();
-        }
-        printc(Default,msg->player_points,
-            player.stats.agi,player.stats.con,
-            player.stats.res,player.stats.str,
-            player.stats.wil,player.stats.wis,
-            player.stats.pts);
-        if(player.stats.pts){
-        }else{
-            printc(Default,msg->player_editstatsend);
-            peditstatsend();
-        }
+    printr(palette.promptfail,msg->player_editstatsunknown);
+    return true;
+}
+foo matchyesnocommands(char *cmd){
+    int yesnostate=0; // don't forget to cbp.ynprompt=0;!
+    if(fullmatch(cmd,"quit")||
+       fullmatch(cmd,"exitgame")||
+       fullmatch(cmd,"quitgame")){
+        cbp.ynprompt=0;
+        quit_game=true;
         return true;
     }
-    if(fullmatch(cmd,"3")){
-        if(player.stats.pts){
-            player.stats.pts--;
-            player.stats.res++;
-        }
-        // the rest is the same
-        else{
-            printc(Default,msg->player_editstatsnopoints);
-            peditstatsend();
-        }
-        printc(Default,msg->player_points,
-            player.stats.agi,player.stats.con,
-            player.stats.res,player.stats.str,
-            player.stats.wil,player.stats.wis,
-            player.stats.pts);
-        if(player.stats.pts){
-        }else{
-            printc(Default,msg->player_editstatsend);
-            peditstatsend();
-        }
-        return true;
+    if(fullmatch(cmd,"yes")||
+       fullmatch(cmd,"ye")||
+       fullmatch(cmd,"yeah")||
+       fullmatch(cmd,"ja")||
+       fullmatch(cmd,"y")){
+        yesnostate=1;
     }
-    if(fullmatch(cmd,"4")){
-        if(player.stats.pts){
-            player.stats.pts--;
-            player.stats.str++;
-        }
-        // the rest is the same
-        else{
-            printc(Default,msg->player_editstatsnopoints);
-            peditstatsend();
-        }
-        printc(Default,msg->player_points,
-            player.stats.agi,player.stats.con,
-            player.stats.res,player.stats.str,
-            player.stats.wil,player.stats.wis,
-            player.stats.pts);
-        if(player.stats.pts){
-        }else{
-            printc(Default,msg->player_editstatsend);
-            peditstatsend();
-        }
-        return true;
+    if(fullmatch(cmd,"no")||
+       fullmatch(cmd,"nope")||
+       fullmatch(cmd,"n")){
+        yesnostate=-1;
     }
-    if(fullmatch(cmd,"5")){
-        if(player.stats.pts){
-            player.stats.pts--;
-            player.stats.wil++;
+    switch(cbp.ynprompt){
+    case 1:
+        switch(yesnostate){
+        case 1:
+            pmovedirect(cbp.promptarg);
+            break;
+        default:
+            printr(palette.item.gone,msg->player_switchregionpromptno);
+            break;
         }
-        // the rest is the same
-        else{
-            printc(Default,msg->player_editstatsnopoints);
-            peditstatsend();
-        }
-        printc(Default,msg->player_points,
-            player.stats.agi,player.stats.con,
-            player.stats.res,player.stats.str,
-            player.stats.wil,player.stats.wis,
-            player.stats.pts);
-        if(player.stats.pts){
-        }else{
-            printc(Default,msg->player_editstatsend);
-            peditstatsend();
-        }
-        return true;
+        cbp.ynprompt=0;
+        break;
+    default:break;
     }
-    if(fullmatch(cmd,"6")){
-        if(player.stats.pts){
-            player.stats.pts--;
-            player.stats.wis++;
-        }
-        // the rest is the same
-        else{
-            printc(Default,msg->player_editstatsnopoints);
-            peditstatsend();
-        }
-        printc(Default,msg->player_points,
-            player.stats.agi,player.stats.con,
-            player.stats.res,player.stats.str,
-            player.stats.wil,player.stats.wis,
-            player.stats.pts);
-        if(player.stats.pts){
-        }else{
-            printc(Default,msg->player_editstatsend);
-            peditstatsend();
-        }
-        return true;
-    }
-    printc(Default,msg->player_editstatsunknown);
     return true;
 }
 void processinput(){
@@ -976,7 +926,7 @@ void processinput(){
         cbc_getcursor(&row,&col);
         if(row>0)cbc_setcursor(row-1,0);
         if(strlen(inputbufl)==0)return;
-        printr(Yellow,"%s\n",inputbufl);
+        printr(palette.input,"%s\n",inputbufl);
         matchcommands(inputbufl);
         return;
     }
@@ -989,12 +939,13 @@ void processinput(){
     strcpy(inputbufl,inputbuf);
     strlower(&inputbufl);
     if(matchcommands(inputbufl)){
+        player.loi++;
         return;
     }else{
         memset(inputbufl,0,128);
     }
-    printr(Cyan|Bright,msg->player_say,player.name);
-    printr(Default,"%s\n",inputbuf);
+    printr(palette.chat.player,msg->player_say,player.name);
+    printr(palette.chat.text,"%s\n",inputbuf);
     return;
 }
 

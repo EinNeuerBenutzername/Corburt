@@ -33,6 +33,7 @@ struct msgtag{
     const char *global_dbsize;
     const char *global_resetenemydata;
     const char *global_clock;
+    const char *global_lag;
     const char *trace_savesize;
     const char *trace_endianess_le;
     const char *trace_endianess_be;
@@ -93,6 +94,8 @@ struct msgtag{
     const char *player_spawnupdate;
     const char *player_isready;
     const char *player_isalready;
+    const char *player_switchregionprompt;
+    const char *player_switchregionpromptno;
     const char *db_notinstore;
     const char *db_inosuchitem;
     const char *db_enosuchenemy;
@@ -144,11 +147,11 @@ struct msgtag msg_en={
     .global_invalidroomcount="Fatal error:Invalid room number.\n",
     .global_roomcountfewer="Number of rooms in this save file is fewer than expected.\nThe save file might be outdated.\n",
     .global_welcome="Welcome to Corburt.\n\n",
-    .global_splash="   @@@@                @@\n"
-                    "  @@  @@               @@                  @@\n"
+    .global_splash="   @@@@                @@                      \n"
+                    "  @@  @@               @@                  @@  \n"
                     "  ##      ####  # ###  ####  ##  ## # ###  ####\n"
-                    "  ##     ##  ## ##  ## ## ## ##  ## ##  ## ##\n",
-    .global_splash2="  $$  $$ $$  $$ $$     $$ $$ $$  $$ $$     $$\n"
+                    "  ##     ##  ## ##  ## ## ## ##  ## ##  ## ##  \n",
+    .global_splash2="  $$  $$ $$  $$ $$     $$ $$ $$  $$ $$     $$  \n"
                     "   $$$$   $$$$  $$     $$$    $$$$  $$      $$$\n\n",
     .global_nosave="No save files found.\n",
     .global_scansave="Scanning the save file...\n",
@@ -166,40 +169,40 @@ struct msgtag msg_en={
     .global_welcomeplayer2="Welcome back, %s.\n",
     .global_help="-------------------------------------------------------------------\n"
                 "                           Commands\n"
-                "  <label>                  - command target\n"
-                "  [label]                  - optional modifier\n"
+                "  $c<label>$o                  - command target\n"
+                "  $c[label]$o                  - optional modifier\n"
                 "Game\n"
-                "  (none)                   - Repeat your last command\n"
-                "  cls                      - Clear screen\n"
-                "  help                     - Show this list\n"
-                "  quit                     - Save and quit game\n"
-                "  time                     - Show current time in-game\n"
+                "  $c(none)$o                   - Repeat your last command\n"
+                "  $ccls$o                      - Clear screen\n"
+                "  $chelp$o                     - Show this list\n"
+                "  $cquit$o                     - Save and quit game\n"
+                "  $ctime$o                     - Show current time in-game\n"
                 "  * If you directly close the game, your progress will be lost.\n"
-                "  save                     - Save current progress\n"
+                "  $csave$o                     - Save current progress\n"
                 "Player Stats\n"
 //                "  abilities                - Show player's abilities\n"
-                "  character                - Show player's character info\n"
-                "  editstats                - Edit player stat points\n"
-                "  experience               - Show player's experience\n"
-                "  inventory                - Show player's inventory\n"
-                "  info                     - Show player's character info\n"
-                "  stats                    - Show player's base stats\n"
-                "  statistics               - Show player's stats\n"
-                "  train                    - Train at the training grounds\n"
+                "  $ccharacter$o                - Show player's character info\n"
+                "  $ceditstats$o                - Edit player stat points\n"
+                "  $cexperience$o               - Show player's experience\n"
+                "  $cinventory$o                - Show player's inventory\n"
+                "  $cinfo$o                     - Show player's character info\n"
+                "  $cstats$o                    - Show player's base stats\n"
+                "  $cstatistics$o               - Show player's stats\n"
+                "  $ctrain$o                    - Train at the training grounds\n"
                 "Room\n"
-                "  east (west, south, north)- Move towards certain directions\n"
-                "  look                     - Show room information\n"
+                "  $ceast$o ($cwest$o, $csouth$o, $cnorth$o)- Move towards certain directions\n"
+                "  $clook$o                     - Show room information\n"
                 "Items\n"
-                "  buy [quantity] <item>    - Buy items\n"
-                "  drop [quantity] <item>   - Drop items to the ground\n"
-                "  get [quantity] <item>    - Pick up items in the room\n"
-                "  list                     - Show the list of items at a store\n"
-                "  sell [quantity] <item>   - Sell items at a store\n"
-                "  take [quantity] <item>   - Pick up items in the room\n"
-                "  use <item>               - Use an item\n"
+                "  $cbuy$o $c[quantity] <item>$o    - Buy items\n"
+                "  $cdrop$o $c[quantity] <item>$o   - Drop items to the ground\n"
+                "  $cget$o $c[quantity] <item>$o    - Pick up items in the room\n"
+                "  $clist$o                     - Show the list of items at a store\n"
+                "  $csell$o $c[quantity] <item>$o   - Sell items at a store\n"
+                "  $ctake$o $c[quantity] <item>$o   - Pick up items in the room\n"
+                "  $cuse$o <item>               - Use an item\n"
                 "Combat\n"
-                "  attack <[enemy name]>    - Attack an enemy\n"
-                "  * Some commands have abbreviated forms, e.g. 'st' for 'stats'.\n"
+                "  $cattack$o $c<[enemy name]>$o    - Attack an enemy\n"
+                "  * Some commands have abbreviated forms, e.g. '$cst$o' for '$cstats$o'.\n"
                 "-------------------------------------------------------------------\n",
     .global_save_incompat="Incompatible save version: expected %s.\n",
     .global_curtime="Current time: %" PRIdFAST64 " turns, %" PRIdFAST32 " ticks.\n",
@@ -208,6 +211,7 @@ struct msgtag msg_en={
     .global_dbsize="Size of database: %.2f MB.\n",
     .global_resetenemydata="Resetting enemy data...\n",
     .global_clock="You feel as if the clock hand of the world had advanced by one block.\n",
+    .global_lag="Game FPS is unstable, please do not run Corburt with programs of high disk usage.\n",
     .trace_savesize="Size of a save is %zu bytes.\n",
     .trace_endianess_le="Machine is little endian.\n",
     .trace_endianess_be="Machine is big endian.\n",
@@ -335,6 +339,8 @@ struct msgtag msg_en={
     .player_spawnupdate="Your spawn point has been updated to: %s\n",
     .player_isready="You are ready for your attack.\n",
     .player_isalready="You have already prepared for your attack.\n",
+    .player_switchregionprompt="You are entering a different region. Are you sure to proceed? (Y/N)\n",
+    .player_switchregionpromptno="Region switch canceled.\n",
     .db_notinstore="You are not in a store.\n",
     .db_inosuchitem="There is no such item.\n",
     .db_enosuchenemy="There is no such enemy.\n",

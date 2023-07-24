@@ -59,8 +59,8 @@ void et_initenemies();
 void et_spawnenemies();
 
 void setupentitydata(){
-    if(DBE_TRACELOG)tracelog(Green,"Setting up entity data...\n");
-    if(DBE_TRACELOG)tracelog(Green,"Rooms count: %" PRIdFAST32 "\n",roomdbsize);
+    if(DBE_TRACELOG)tracelog("Setting up entity data...\n");
+    if(DBE_TRACELOG)tracelog("Rooms count: %" PRIdFAST32 "\n",roomdbsize);
     et_rooms=mallocpointer(roomdbsize*sizeof(struct et_room));
     struct et_room etr={0};
     for(nat i=0;i<roomdbsize;i++){
@@ -90,7 +90,7 @@ struct et_room *et_findroomwithid(nat roomid){
     return NULL;
 }
 void etenemy_expand(){
-    if(DBE_TRACELOG)tracelog(Green,"Expanding enemy entity list... (%" PRIdFAST32 "->%" PRIdFAST32 ")\n",enemiesmax,enemiesmax+DBE_EXPANDSTEP);
+    if(DBE_TRACELOG)tracelog("Expanding enemy entity list... (%" PRIdFAST32 "->%" PRIdFAST32 ")\n",enemiesmax,enemiesmax+DBE_EXPANDSTEP);
     enemiesmax+=DBE_EXPANDSTEP;
     et_enemies=reallocpointer(et_enemies,enemiesmax*sizeof(struct et_enemy));
     struct et_enemy ete={0};
@@ -110,7 +110,7 @@ void etenemy_push(nat enemyid,nat roomid){
         }
     }
     if(etr==NULL){ // no such room
-        printr(Red,msg->db_ridnullexceptionerror);
+        warn(msg->db_ridnullexceptionerror);
         return;
     }
     for(nat i=0;enemydbs[i].id!=0;i++){
@@ -120,7 +120,7 @@ void etenemy_push(nat enemyid,nat roomid){
         }
     }
     if(edb==NULL){ // no such enemy
-        printr(Red,msg->db_eidnullexceptionerror);
+        warn(msg->db_eidnullexceptionerror);
         return;
     }
     for(nat i=0;i<DBE_ENEMYCAP;i++){
@@ -155,39 +155,39 @@ void etenemy_push(nat enemyid,nat roomid){
     et_enemies[enemyentityindex]=ete;
     etr->etenemy[enemyreferenceindex]=enemyentityindex+1;
     enemiescount++;
-    if(DBE_TRACELOG)tracelog(Cyan,"Create enemy entity: entityid=%d (enemyid=%d, roomid=%d)\n",(int)enemyentityindex+1,(int)enemyid,(int)roomid);
+    if(DBE_TRACELOG)tracelog("Create enemy entity: entityid=%d (enemyid=%d, roomid=%d)\n",(int)enemyentityindex+1,(int)enemyid,(int)roomid);
 }
 void etenemy_attack(nat etid,struct et_room *etr){
     struct et_enemy *ete=&et_enemies[etid-1];
     if(ete->available==false){
-        printc(Red,msg->db_eetidnullexceptionerror);
+        warn(msg->db_eetidnullexceptionerror);
         return;
     }
     if(ete->attackcd>0)return;
     enemydb *edb=et_getenemydb(etid);
     if(edb==NULL){
-        printc(Red,msg->db_eetidnullexceptionerror);
+        warn(msg->db_eetidnullexceptionerror);
         return;
     }
     if(edb->loot.weapon){
         itemdb *idb=db_ifindwithid(edb->loot.weapon);
         if(idb==NULL){
-            printc(Red,msg->db_ietidnullexceptionerror);
+            warn(msg->db_ietidnullexceptionerror);
             return;
         }
         ete->attackcd=idb->cd;
     }else ete->attackcd=30;
     if(pcandodge(edb)){
-        printc(White,msg->db_eetattackmiss,edb->name);
+        printr(palette.enemy.miss,msg->db_eetattackmiss,edb->name);
     }
     else{
         nat atk=edb->stats.atk;
-        nat dmgcolor=Default;
+        nat dmgcolor=palette.value.plain;
         if(edb->loot.armor)atk+=db_ifindwithid(edb->loot.armor)->stats.atk;
         if(edb->loot.weapon){
             itemdb *idb=db_ifindwithid(edb->loot.weapon);
             if(idb==NULL){
-                printc(Red,msg->db_iidnullexceptionerror);
+                warn(msg->db_iidnullexceptionerror);
                 return;
             }
             atk+=idb->stats.atk;
@@ -201,18 +201,18 @@ void etenemy_attack(nat etid,struct et_room *etr){
         }
         nat dmg=dmgreduc(atk,cbp.calcstats.def*DMG_RATIO);
         if(dmg){
-            printc(Red|Bright,msg->db_eetattack1,edb->name);
-            printc(dmgcolor,msg->db_eetattack2,dmg);
-            printc(Red|Bright,msg->db_eetattack3);
+            printr(palette.enemy.strike,msg->db_eetattack1,edb->name);
+            printr(dmgcolor,msg->db_eetattack2,dmg);
+            printr(palette.enemy.strike,msg->db_eetattack3);
         }
-        else printc(White,msg->db_eetattackblocked,edb->name);
+        else printr(palette.enemy.blocked,msg->db_eetattackblocked,edb->name);
         ptakedmg(dmg);
     }
 }
 void etenemy_takedamage(nat entityid,nat dmg){
     struct et_enemy *ete=&et_enemies[entityid-1];
     if(ete==NULL){
-        printc(Red,msg->db_eetidnullexceptionerror);
+        warn(msg->db_eetidnullexceptionerror);
         return;
     }
     if(dmg>=ete->hp){
@@ -226,12 +226,12 @@ void etenemy_die(nat entityid){
     struct et_enemy *ete=&et_enemies[entityid-1];
     enemydb *edb=db_efindwithid(ete->enemyid);
     if(!ete->available){
-        printc(Red,msg->db_eetidnullexceptionerror);
+        warn(msg->db_eetidnullexceptionerror);
         return;
     }
     struct et_room *etr=et_findroomwithid(ete->roomid);
     if(etr==NULL){
-        printr(Red,msg->db_retidnullexceptionerror);
+        warn(msg->db_retidnullexceptionerror);
         return;
     }
     for(nat i=0;i<DBE_ENEMYCAP;i++){
@@ -249,13 +249,13 @@ void etenemy_die(nat entityid){
         ete->hp=0;
         enemiescount--;
         if(enemypointer>=entityid)enemypointer=entityid-1;
-        if(DBE_TRACELOG)tracelog(Cyan,"Enemy entity #%" PRIdFAST32 " deleted.\n",entityid);
+        if(DBE_TRACELOG)tracelog("Enemy entity #%" PRIdFAST32 " deleted.\n",entityid);
     }
 }
 void etenemy_deathdrops(enemydb *edb,nat roomid){
-    printc(Cyan|Bright,msg->db_eetdie,edb->name);
+    printr(palette.enemy.die,msg->db_eetdie,edb->name);
     player.exp+=edb->exp;
-    printc(Cyan|Bright,msg->db_eetdieexp,edb->exp);
+    printr(palette.enemy.reward,msg->db_eetdieexp,edb->exp);
     { // money drops
         nat money=edb->loot.moneymin;
         nat delta=edb->loot.moneymax-edb->loot.moneymin;
@@ -266,24 +266,24 @@ void etenemy_deathdrops(enemydb *edb,nat roomid){
         if(money>0){
             struct et_room *etr=et_findroomwithid(roomid);
             if(!etr){
-                printc(Red,msg->db_retidnullexceptionerror);
+                warn(msg->db_retidnullexceptionerror);
                 return;
             }
             etr->money+=money;
-            printc(Cyan|Bright,msg->db_retmoneydrop,money);
+            printr(palette.enemy.reward,msg->db_retmoneydrop,money);
         }
     }
     { // gear drops
 //        if(edb->loot.weapon){
 //            if(genRandLong(&mtrand)%10000<300){
 //                etitem_push(edb->loot.weapon,1,roomid,0);
-//                printc(Cyan|Bright,msg->db_retitemdrop,db_ifindwithid(edb->loot.weapon)->name);
+//                printr(palette.enemy.reward,msg->db_retitemdrop,db_ifindwithid(edb->loot.weapon)->name);
 //            }
 //        }
 //        if(edb->loot.armor){
 //            if(genRandLong(&mtrand)%10000<300){
 //                etitem_push(edb->loot.armor,1,roomid,0);
-//                printc(Cyan|Bright,msg->db_retitemdrop,db_ifindwithid(edb->loot.armor)->name);
+//                printr(palette.enemy.reward,msg->db_retitemdrop,db_ifindwithid(edb->loot.armor)->name);
 //            }
 //        }
     }
@@ -292,21 +292,21 @@ void etenemy_deathdrops(enemydb *edb,nat roomid){
             if(edb->loot.drops[i].itemid==0)break;
             if(genRandLong(&mtrand)%10000<edb->loot.drops[i].rate){
                 etitem_push(edb->loot.drops[i].itemid,1,roomid,0);
-                printc(Cyan|Bright,msg->db_retitemdrop,db_ifindwithid(edb->loot.drops[i].itemid)->name);
+                printr(palette.enemy.reward,msg->db_retitemdrop,db_ifindwithid(edb->loot.drops[i].itemid)->name);
             }
         }
     }
 }
 enemydb *et_getenemydb(nat enemyentityid){
     if(et_enemies[enemyentityid-1].available==false){
-        printr(Red,msg->db_eetidnullexceptionerror);
+        warn(msg->db_eetidnullexceptionerror);
         return NULL;
     }
     enemydb *edb=db_efindwithid(et_enemies[enemyentityid-1].enemyid);
     return edb;
 }
 void etitem_expand(){
-    if(DBE_TRACELOG)tracelog(Green,"Expanding item entity list... (%" PRIdFAST32 "->%" PRIdFAST32 ")\n",itemsmax,itemsmax+DBE_EXPANDSTEP);
+    if(DBE_TRACELOG)tracelog("Expanding item entity list... (%" PRIdFAST32 "->%" PRIdFAST32 ")\n",itemsmax,itemsmax+DBE_EXPANDSTEP);
     itemsmax+=DBE_EXPANDSTEP;
     et_items=reallocpointer(et_items,itemsmax*sizeof(struct et_item));
     struct et_item eti={0};
@@ -317,13 +317,13 @@ void etitem_expand(){
 void etitem_delete(nat entityid){
     struct et_item *eti=&et_items[entityid-1];
     if(!eti->available){
-        printr(Red,msg->db_ietidnullexceptionerror);
+        warn(msg->db_ietidnullexceptionerror);
         return;
     }
     if(eti->roomid!=0){
         struct et_room *etr=et_findroomwithid(eti->roomid);
         if(etr==NULL){
-            printr(Red,msg->db_retidnullexceptionerror);
+            warn(msg->db_retidnullexceptionerror);
             return;
         }
         for(nat i=0;i<DBE_ITEMCAP;i++){
@@ -360,13 +360,13 @@ void etitem_delete(nat entityid){
     eti->itemid=0;
     eti->qnty=0;
     if(itempointer>=entityid)itempointer=entityid-1;
-    if(DBE_TRACELOG)tracelog(Cyan,"Item entity #%" PRIdFAST32 " deleted.\n",entityid);
+    if(DBE_TRACELOG)tracelog("Item entity #%" PRIdFAST32 " deleted.\n",entityid);
 }
 void etitem_rebind(nat entityid,nat newroomid){
     struct et_item *eti=&et_items[entityid-1];
     struct et_item etio=et_items[entityid-1];
     if(!eti->available){
-        printr(Red,msg->db_ietidnullexceptionerror);
+        warn(msg->db_ietidnullexceptionerror);
         return;
     }
     etitem_delete(entityid);
@@ -387,7 +387,7 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
             }
         }
         if(etr==NULL){ // no such room
-            printr(Red,msg->db_ridnullexceptionerror);
+            warn(msg->db_ridnullexceptionerror);
             return;
         }
     }
@@ -398,7 +398,7 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
         }
     }
     if(idb==NULL){
-        printr(Red,msg->db_iidnullexceptionerror);
+        warn(msg->db_iidnullexceptionerror);
         return;
     }
     nat stackable=idb->type&db_itemtype_stackable_mask;
@@ -423,7 +423,7 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
                 }
             }
             if(itemreferenceindex==-1){ // etr->etitem[] is full
-                printr(Default,msg->db_ietfull,db_ifindwithid(itemid)->name);
+                printr(palette.item.gone,msg->db_ietfull,db_ifindwithid(itemid)->name);
                 return;
             }
             struct et_item eti={
@@ -477,7 +477,7 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
                 }
             }
             else if((!success)&&(!hasslot)){
-                printr(Default,msg->db_ietfull,idb->name);
+                printr(palette.item.gone,msg->db_ietfull,idb->name);
             }
             else if(success){
                 itempointer--;
@@ -499,14 +499,14 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
                     itemscount++;
                     if(purchase){
                         inventory.money-=idb->price;
-                        printr(Default,msg->db_ipurchaseitemhint,idb->name);
+                        printr(palette.msg,msg->db_ipurchaseitemhint,idb->name);
                     }
                     success=true;
                     break;
                 }
             }
             if(!success){ // drops to the ground
-                printr(Default,msg->db_icantcarry);
+                printr(palette.promptfail,msg->db_icantcarry);
                 if(!purchase)etitem_push(itemid,qnty,player.roomid,0);
             }
             else if(success){
@@ -555,22 +555,22 @@ void etitem_push(nat itemid,nat qnty,nat roomid,nat purchase){
                 }
             }
             else if((!success)&&(!hasslot)){ // drops to the ground
-                printr(Default,msg->db_icantcarry);
+                printr(palette.promptfail,msg->db_icantcarry);
                 if(!purchase)etitem_push(itemid,qnty,player.roomid,0);
             }
             if(purchase&&qnty2>qnty){
                 inventory.money-=idb->price*(qnty2-qnty);
-                printr(Default,msg->db_ipurchasemultitemhint,idb->name,(qnty2-qnty));
+                printr(palette.promptfail,msg->db_ipurchasemultitemhint,idb->name,(qnty2-qnty));
             }
             qnty=qnty2;
         }
     }
     if(!success)itempointer--;
-    if(DBE_TRACELOG)tracelog(Cyan,"Create item entity: entityid=%d (qnty=%d, itemid=%d, roomid=%d) %s\n",(int)itementityindex+1,(int)qnty,(int)itemid,(int)roomid,success?"":"fail");
+    if(DBE_TRACELOG)tracelog("Create item entity: entityid=%d (qnty=%d, itemid=%d, roomid=%d) %s\n",(int)itementityindex+1,(int)qnty,(int)itemid,(int)roomid,success?"":"fail");
 }
 itemdb *et_getitemdb(nat itementityid){
     if(et_items[itementityid-1].available==false){
-        printr(Red,msg->db_ietidnullexceptionerror);
+        warn(msg->db_ietidnullexceptionerror);
         return NULL;
     }
     itemdb *idb=db_ifindwithid(et_items[itementityid-1].itemid);
@@ -620,7 +620,7 @@ void et_spawnenemies(){
             if(enemytable[j]==0)continue;
             if(roomdbs[i].id==player.roomid){
                 enemydb *dbe=db_efindwithid(enemytable[j]);
-                printc(Red|Bright,msg->db_eetenterroom,dbe->name);
+                printr(palette.enemy.spawn,msg->db_eetenterroom,dbe->name);
             }
             etenemy_push(enemytable[j],roomdbs[i].id);
             break;

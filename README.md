@@ -1,8 +1,6 @@
 # Corburt
 
-**IMPORTANT**
-
-* **For academic reasons, Corburt's update has been suspended. Development will resume in June this year. According to the plan, I will probably release Corburt Lite in August.**
+Corburt Lite is in development and might be released this year (2023).
 
 ## About
 
@@ -20,11 +18,11 @@ Items marked by "🔸" are implemented but untested.
 
 **DEV ROADMAP TO CORBURT LITE**
 
-Corburt Lite includes 3 or 4 major regions with 2 questlines. Corburt is not quest-driven, so there is no "main quest" in Corburt Lite. It should introduce most of the mechanisms planned in the official release, but the amount of data will be about *one-tenth (a very unreliable estimation)* of it.
+Corburt Lite includes 3 or 4 major regions with 2 questlines. Corburt is not quest-driven, so there is no "main quest" in Corburt Lite. It should introduce most of the mechanisms planned in the official release, but the amount of data will be about *one-tenth (a very unreliable estimation!!)* of it.
 
 - **Code & data**
   - [x] ***REMOVE WCHAR DEPENDENCY!!!***
-    - *(Should've used UTF-8 at the first place)*
+    - *(Should've used UTF-8 at the first place, but now it's ASCII anyway)*
   - [x] Remove game database from source code to make hot updates easier.
   - [ ] Remake Nameless City:
     - [x] Map revision
@@ -37,13 +35,13 @@ Corburt Lite includes 3 or 4 major regions with 2 questlines. Corburt is not que
     - [ ] Forests of Wrath
     - [ ] Southwest Coast
     - [ ] **[SPOILER ALERT]**
-    - [ ] **[VERY HEAVY SPOILER ALERT]**
+    - [ ] **[PRETTY HEAVY SPOILER ALERT]**
 
 - **Mechanisms**
   - [ ] Implement bosses.
   - [ ] **Reimplement stats!!!**
   - [ ] Implement new battle mechanisms:
-    - [x] 🔸Ready
+    - [x] Ready
     - [ ] Breach stun
     - [ ] Break / Counter
     - [ ] Dodge
@@ -87,14 +85,14 @@ Corburt Lite includes 3 or 4 major regions with 2 questlines. Corburt is not que
 - **Open source**.
 - **Easy to compile**: only two .c files, all other files are headers. friendly for C amateurs.
 
-## Please might that Corburt...
+## Please mind that Corburt...
 
 - is in an **early stage of development**.
 - might **not** be finished.
 - might **not** work properly on non-Windows platforms.
   - Might not even work properly on Windows platforms other than Windows 10.
   - For this reason, please report if you encounter any problem.
-- **not** C++-compatible.
+- is **not** C++-compatible.
   - Actually, C++ compatibility is never taken into consideration.
 - **won't** receive updates frequently enough to implement all improvements and bug fixes. 
 
@@ -107,8 +105,7 @@ Corburt Lite includes 3 or 4 major regions with 2 questlines. Corburt is not que
 - On your computer, a byte **must** contain exactly 8 bits.
   - **Bit-wise endianness**, **non-ASCII interchange codes** (e.g. EBCDIC), et cetera, are **not** allowed.
 - It is recommended to use GCC compiler.
-  - It's especially recommended to use Code::Blocks to compile. I am using Code::Blocks to develop Corburt and would upload my C::B project files along with the source.
-  - I might ignore any MSVC-exclusive issues. MSVC just has too many of them.
+  - It's especially recommended to use Code::Blocks to compile. I am using Code::Blocks to develop Corburt and would provide my C::B project files along with the source.
 
 ### Performance
 
@@ -120,6 +117,7 @@ Corburt Lite includes 3 or 4 major regions with 2 questlines. Corburt is not que
   - The character limit for the word wrap could be changed in the code. It is not recommended to set it into a number that is too big because it makes it harder for gamers to rapidly glance down lines.
 
 ## How to
+
 ### Compile and Launch Corburt
 - Please compile `cbinput.c` and `corburt.c` separately into 2 binary/executable files.
   - `cb.dat`,  `cbinput` and `corburt` should all be under the same directory. 
@@ -205,23 +203,33 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - Any web- or multiplayer-related content
 
 ## Version History
-###  Lite Dev
+
+###  Road to Lite
+
+- **0.3.3** (Jul 24, 2023)
+  - **What's new:** **Colored text** and FPS calculation
+  - FPS calculation is implemented and is shown in the title of Corburt when Corburt is running real-time.
+  - Corburt now warns the player when FPS gets too low.
+  - Color indicators are implemented so that printed text can have colored highlights in them.
+  - Print functions have undergone a complete rewrite.
+  - Implemented palette, so that visual tests can be carried out more smoothly.
+  - Made slight visual improvements.
 - **0.3.2** (April 30, 2023)
-  - **What's new**: **`<wchar.h>` dependency removed**
+  - **What's new: `<wchar.h>` dependency removed**
   - Also removed `<wchar.h>` dependency from `input.c`.
   - Changed player's stat types to prepare for future updates. All related functions are updated as well.
-  - Split the command `stats` into two.
+  - Split the command `stats` into two. Maybe it's a bad idea after all?
   - Changed the level-capping mechanism. The level cap for Corburt Lite should still be 20, though.
   - Made preparations for the Pulse mechanism.
 - **0.3.1** (Jul 9, 2022)
-  - **Important notes**: Corburt will undergo a huge overhaul in these versions, so a lot of the original content will be removed. Currently, there are no enemies or items in game, but please do not worry. They will be added back when their update is complete.
-  - **What's new**: **new map**
+  - **Important notes:** Corburt will undergo a huge overhaul in these versions, so a lot of the original content will be removed. Currently, there are no enemies or items in game, but please do not worry. They will be added back when their update is complete.
+  - **What's new:** **new map**
   - Made balancing improvements.
   - The new critical damage calculation formula implemented.
   - Fixed the bug that player's health regen value increases on each regen.
   - The whole map of the Nameless City completely remade.
 - **0.3.0** (May 3, 2022)
-  - **What's new**: **forest** (removed in v0.3.1)
+  - **What's new:** **forest** (removed in v0.3.1)
   - Fixed the bug that enemies' hit points overflow.
   - Database is now generated as a file.
   - Fixed the bug that Corburt runs a busy loop when waiting for input.
@@ -230,10 +238,11 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - Console output is now fully buffered for faster output.
   - Attacking before the cooldown is over would cause cooldown time to reset.
   - The new region "Forest of Wrath" is in development, and half of its rooms are done and accessible by now.
+
 ###  Demo
 
 - **0.2.4** (Apr 23, 2022)
-  - **What's new**: Money loot and **real-time combat**
+  - **What's new:** Money loot and **REAL-TIME COMBAT**
   - Money can be taken from and dropped to the ground.
     - For this reason, players will not start with money in their inventory in order to prevent exploitation of the mechanism.
   - The stealth stat changed into wisdom.
@@ -242,7 +251,7 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
     - To run the game, please open both `Corburt` and `cbinput`, and type your commands at `cbinput`. `Corburt` should then be able to receive the commands.
   - Player hit points regenerate once per 30 seconds and enemies respawn every two minutes.
 - **0.2.3** (Apr 16, 2022)
-  - **What's new**: Stat edits
+  - **What's new:** Stat edits
   - Hint message for selling items fixed.
   - Counters for enemies and items fixed.
   - Players can now edit stats.
@@ -251,7 +260,7 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - Calculation formulas for damage and defense revised.
   - Experience mechanics revised to prevent players from leveling up too fast.
 - **0.2.2** (Apr 16, 2022)
-  - **What's new**: Enemy item loot
+  - **What's new:** Enemy item loot
   - Enemy entity data saving/loading functions implemented.
   - Map glitches fixed with CBME.
   - Enemies can respawn (currently once per 50 rounds).
@@ -264,35 +273,35 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - Functions accessing databases are revised and are more performant now.
   - Player hit points now regenerate once per 25 rounds.
 - **0.2.1** (Apr 10, 2022)
-  - **What's new**: Enemy attacks
+  - **What's new:** Enemy attacks
   - Item stats slightly revised.
   - Implemented player death and revival (at specific spawn points).
   - Player's arrival to a new spawn point will be recorded.
   - Player's hit points slowly regenerate (once per 50 turns).
   - Map remade with [Corburt Map Editor](https://github.com/EinNeuerBenutzername/Corburt-Map-Editor).
 - **0.2.0** (Mar 12, 2022)
-  - **What's new**: Turns
+  - **What's new:** Turns
   - Item stats slightly revised.
   - Version control improved.
   - Player stats structure revised.
   - Implemented the new command "time".
   - Currently, moving to another room takes 1 turn (30 ticks).
 - **0.1.7** (Feb 4, 2022)
-  - **What's new**: Selling items
+  - **What's new:** Selling items
   - Typos fixed.
   - Stability fix for commands: "buy", "take" and "drop".
   - Implemented the new command "sell".
   - Added a function to detect the version of the save file. 
     - Forward-compatibility is not yet taken into account, because Corburt is in a very early stage of development, meaning that the structure of save files would change many times in the future.
 - **0.1.6** (Jan 30, 2022)
-  - **What's new**: Taking & dropping items
+  - **What's new:** Taking & dropping items
   - "Use" function on consumable items implemented.
   - File I/O bug fixed.
   - The take & drop commands added.
   - Implemented a function to delete item entities.
   - Word wrap bug fixed.
 - **0.1.5** (Jan 30, 2022)
-  - **What's new**: Buying multiple items at once
+  - **What's new:** Buying multiple items at once
     - Just send `buy 10 potion`.
   - "Buy" function bugs fixed.
   - Shop list display made ready for items with names that exceed the width limit.
@@ -300,7 +309,7 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - Inventory data saving & loading implemented.
   - Item entity data saving & loading implemented.
 - **0.1.4** (Jan 29, 2022)
-  - **What's new**: Visual & security improvements
+  - **What's new:** Visual & security improvements
   - Word wrap now detects CJK full-width characters.
   - Minor improvements on visual effects.
   - Weapon/armor bonus are added onto your stats.
@@ -308,7 +317,7 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - Free() and realloc() check whether the pointer is a malloc()'ed pointer.
   - Message "you can't afford it" fixed.
 - **0.1.3** (Jan 29, 2022)
-  - **What's new**: Purchasing stackable items is now possible
+  - **What's new:** Purchasing stackable items is now possible
   - Word wrap improved.
   - Map fixed.
   - Stackable items can now be correctly pushed into inventory, thus now purchasable.
@@ -316,7 +325,7 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - Items and enemies in a room are shown.
   - Added several checks for null exceptions.
 - **0.1.2** (Jan 28, 2022)
-  - **What's new**: Entities
+  - **What's new:** Entities
   - Stackable items are temporarily unavailable for purchase.
     - This is because the merging feature of stackable items has not yet been implemented.
   - Implemented item entities and enemy entities.
@@ -325,7 +334,7 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - The 'use' command added.
   - Enemies are now shown in room descriptions with brutal line breaks.
 - **0.1.1** (Jan 27, 2022)
-  - **What's new**: Shops
+  - **What's new:** Shops
   - Finished shop lists.
   - Made item database for the goods.
   - The 'buy' command added: the first command with targets.
@@ -334,14 +343,14 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - Room exits' structure revised to leave space for future updates; typo-fixed.
   - Enemy database opened. enemies might be added in the 0.1.2 update.
 - **0.1.0** (Jan 25, 2022)
-  - **What's new**: Region - Nameless City
+  - **What's new:** Region - Nameless City
   - Visual effect on windows terminal fixed (I guess).
   - Added several basic commands.
   - Typo & grammar fixes.
   - Added the first region: Nameless City (9kb database).
   - Map revised.
 - **0.0.3** (Jan 23, 2022)
-  - **What's new**: Basic commands
+  - **What's new:** Basic commands
   - File I/O functions' portability greatly improved.
   - Basic curses library revised and finished.
   - Save / load functions implemented, only player stats are saved/loaded.
@@ -351,7 +360,7 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - Typedef revised: Corburt would now use signed 32- and 64-bit integers to store integer values.
   - Stability fixes on file I/O.
 - **0.0.2** (Jan 22, 2022)
-  - **What's new**: Basic game structure implementation
+  - **What's new:** Basic game structure implementation
   - Added `<inttypes.h>` and `<stdbool.h>` dependencies for stability and portability.
   - Basic inventory functions implemented.
   - Basic curses library mostly finished.
@@ -361,7 +370,7 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - Several empty databases created.
   - Several bugs fixed and several new bugs introduced.
 - **0.0.1** (Dec 19, 2021)
-  - **What's new**: Game interface
+  - **What's new:** Game interface
   - The very beginning of Corburt!
   - Basic file I/O functions implemented.
   - Basic player information implemented.

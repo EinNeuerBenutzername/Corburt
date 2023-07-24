@@ -1,7 +1,7 @@
 #ifndef Corburt_Database_Item_h_Include_Guard
 #define Corburt_Database_Item_h_Include_Guard
 #define ITEM_MAXSTACK 16
-#define ITEM_SELLRATE 0.9f
+#define ITEM_SELLRATE 0.5f
 #include "cbbase.h"
 #include "cbplayer.h"
 
@@ -26,7 +26,7 @@ void getitemname(nat id,char *itemname){
         itemdb *idb=db_ifindwithid(id);
         if(idb==NULL){
             printf("\n");
-            printr(Red,msg->db_iidnullexceptionerror);
+            warn(msg->db_iidnullexceptionerror);
             p="undefined";
             break;
         }

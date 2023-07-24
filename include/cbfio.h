@@ -24,7 +24,7 @@ void savesaves();
 
 static void readsave(nat saveid,FILE *fp){
     int_fast32_t_read(&saves[saveid].valid,fp);
-    //tracelog(Green,"Valid: %" PRIuFAST32 "\n",saves[saveid].valid);
+    //tracelog("Valid: %" PRIuFAST32 "\n",saves[saveid].valid);
     if(!saves[saveid].valid)return;
     readplayerstats(&saves[saveid].plr,fp);
     readinventory(&saves[saveid].inv,fp);
@@ -53,6 +53,14 @@ static void readplayerstats(struct player *p,FILE *fp){
     int_fast64_t_read(&plr.exp,fp);
     int_fast64_t_read(&plr.maxhp,fp);
     int_fast64_t_read(&plr.hp,fp);
+    int_fast64_t_read(&plr.maxfp,fp);
+    int_fast64_t_read(&plr.fp,fp);
+    int_fast64_t_read(&plr.maxst,fp);
+    int_fast64_t_read(&plr.st,fp);
+    int_fast64_t_read(&plr.maxmp,fp);
+    int_fast64_t_read(&plr.mp,fp);
+    int_fast64_t_read(&plr.maxpp,fp);
+    int_fast64_t_read(&plr.pp,fp);
     int_fast32_t_read(&plr.stats.agi,fp);
     int_fast32_t_read(&plr.stats.con,fp);
     int_fast32_t_read(&plr.stats.res,fp);
@@ -92,6 +100,14 @@ static void saveplayerstats(struct player plr,FILE *fp){
     int_fast64_t_write(plr.exp,fp);
     int_fast64_t_write(plr.maxhp,fp);
     int_fast64_t_write(plr.hp,fp);
+    int_fast64_t_write(plr.maxfp,fp);
+    int_fast64_t_write(plr.fp,fp);
+    int_fast64_t_write(plr.maxst,fp);
+    int_fast64_t_write(plr.st,fp);
+    int_fast64_t_write(plr.maxmp,fp);
+    int_fast64_t_write(plr.mp,fp);
+    int_fast64_t_write(plr.maxpp,fp);
+    int_fast64_t_write(plr.pp,fp);
     int_fast32_t_write(plr.stats.agi,fp);
     int_fast32_t_write(plr.stats.con,fp);
     int_fast32_t_write(plr.stats.res,fp);
@@ -146,7 +162,7 @@ static void saveinventory(struct inventory inv,FILE *fp){
 static void readet_items(FILE *fp){
     nat itemsmax_tmp;
     int_fast32_t_read(&itemsmax_tmp,fp);
-//    tracelog(Cyan,"max items: %" PRIdFAST32 ".\n",itemsmax_tmp);
+//    tracelog("max items: %" PRIdFAST32 ".\n",itemsmax_tmp);
     while(itemsmax_tmp>itemsmax){
         etitem_expand();
     }
@@ -163,7 +179,7 @@ static void readet_items(FILE *fp){
         }
     }
     if(itemscount)
-        tracelog(Cyan,msg->trace_loadeti,itemscount);
+        tracelog(msg->trace_loadeti,itemscount);
 }
 static void saveet_items(FILE *fp){
     int_fast32_t_write(itemsmax,fp);
@@ -180,7 +196,7 @@ static void saveet_items(FILE *fp){
 static void readet_enemies(FILE *fp){
     nat enemiesmax_tmp;
     int_fast32_t_read(&enemiesmax_tmp,fp);
-//    tracelog(Cyan,"max enemies: %" PRIdFAST32 ".\n",enemiesmax_tmp);
+//    tracelog("max enemies: %" PRIdFAST32 ".\n",enemiesmax_tmp);
     enemiescount=0;
     while(enemiesmax_tmp>enemiesmax){
         etenemy_expand();
@@ -199,7 +215,7 @@ static void readet_enemies(FILE *fp){
         }
     }
     if(enemiescount)
-        tracelog(Cyan,msg->trace_loadete,enemiescount);
+        tracelog(msg->trace_loadete,enemiescount);
 }
 static void saveet_enemies(FILE *fp){
     int_fast32_t_write(enemiesmax,fp);
@@ -219,10 +235,10 @@ static void readet_rooms(FILE *fp){
     nat roomsmax_tmp;
     int_fast32_t_read(&roomsmax_tmp,fp);
     if(roomdbsize<roomsmax_tmp){
-        printc(Red,msg->global_invalidroomcount);
+        warn(msg->global_invalidroomcount);
         exit(-1);
     }else if(roomdbsize>roomsmax_tmp){
-        printc(Cyan,msg->global_roomcountfewer);
+        printr(palette.load,msg->global_roomcountfewer);
     }
     for(nat i=0;i<roomsmax_tmp;i++){
         int_fast32_t_read(&et_rooms[i].id,fp);
@@ -252,7 +268,7 @@ static void readsavesglobaldata(FILE *fp){
     nat version=0;
     int_fast32_t_read(&version,fp);
     if(version!=CB_VERSIONNUM&&CB_VERSIONCHECK){
-        printr(Red,msg->global_save_incompat,msg->global_corburtversion);
+        warn(msg->global_save_incompat,msg->global_corburtversion);
         fio.fail=1;
     }
     int_fast32_t_read(&global.curtick,fp);
@@ -261,7 +277,7 @@ static void readsavesglobaldata(FILE *fp){
     readet_enemies(fp);
     readet_rooms(fp);
     if(version!=CB_VERSIONNUM){
-        printc(Cyan,msg->global_resetenemydata);
+        printr(palette.load,msg->global_resetenemydata);
         struct et_enemy ete={0};
         for(nat i=0;i<enemiesmax;i++){
             et_enemies[i]=ete;
@@ -292,33 +308,32 @@ void readsaves(){
     fp_save=fopen("save.txt","rb");
     if(fp_save==NULL){
         et_initenemies();
-        printr(Cyan,msg->global_nosave);
+        printr(palette.load,msg->global_nosave);
     }else{
-        printr(Cyan,msg->global_scansave);
+        printr(palette.load,msg->global_scansave);
         readsavesglobaldata(fp_save);
         for(int i=0;i<savescount;i++){
             readsave(foundsaves,fp_save);
             if(saves[foundsaves].valid)foundsaves++;
         }
         fclose(fp_save);
-        if(foundsaves==0)printr(Cyan|Bright,msg->global_saveempty);
+        if(foundsaves==0)printr(palette.inform,msg->global_saveempty);
         else if(foundsaves==1){
-            printr(Cyan|Bright,msg->global_savecount,foundsaves);
-            printr(Cyan|Bright,"%s\n",saves[0].plr.name);
+            printr(palette.inform,msg->global_savecount,foundsaves);
+            printr(palette.inform,"%s\n",saves[0].plr.name);
         }
         else{
-            printr(Cyan|Bright,msg->global_savecounts,foundsaves);
-            printr(Cyan|Bright,"%s",saves[0].plr.name);
-            for(nat i=1;i<foundsaves;i++)printr(Cyan|Bright,", %s",saves[i].plr.name);
-            printr(Cyan|Bright,"\n");
+            printr(palette.inform,msg->global_savecounts,foundsaves);
+            printr(palette.inform,"%s",saves[0].plr.name);
+            for(nat i=1;i<foundsaves;i++)printr(palette.inform,", %s\n",saves[i].plr.name);
         }
     }
     while(true){
-        printr(White|Bright,msg->global_enteryourname);
+        printr(palette.prompt,msg->global_enteryourname);
         char readsave_newname[32];
         scanline(readsave_newname,32);
         if(strlen(readsave_newname)<2){
-            printr(White|Bright,msg->global_nametooshort,readsave_newname);
+            printr(palette.prompt,msg->global_nametooshort,readsave_newname);
             continue;
         }else{
             nat saveid=-1;
@@ -330,28 +345,28 @@ void readsaves(){
             }
             if(saveid==-1){
                 if(foundsaves==savescount){
-                    printr(White|Bright,msg->global_savetoomany);
+                    printr(palette.prompt,msg->global_savetoomany);
                     continue;
                 }
-                printr(White|Bright,msg->global_confirmyourname,readsave_newname);
+                printr(palette.prompt,msg->global_confirmyourname,readsave_newname);
                 char yes[2];
                 scanline(yes,2);
                 if(yes[0]=='Y'||yes[0]=='y'){
                     cursaveid=foundsaves;
                     saves[foundsaves].valid=1;
                     strcpy(player.name,readsave_newname);
-                    printr(Green|Bright,msg->global_welcomeplayer,readsave_newname);
+                    printr(palette.splash.welcome,msg->global_welcomeplayer,readsave_newname);
                     break;
                 }
             }
             else{
-                printr(White|Bright,msg->global_confirmchoice,saves[saveid].plr.name);
+                printr(palette.prompt,msg->global_confirmchoice,saves[saveid].plr.name);
                 char yes[2];
                 scanline(yes,2);
                 if(yes[0]=='Y'||yes[0]=='y'){
                     cursaveid=saveid;
                     save_overwrite(saveid);
-                    printr(Green|Bright,msg->global_welcomeplayer2,readsave_newname);
+                    printr(palette.splash.welcome,msg->global_welcomeplayer2,readsave_newname);
                     break;
                 }
 

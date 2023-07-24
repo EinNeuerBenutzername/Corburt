@@ -1,6 +1,7 @@
 #ifndef Corburt_Player_h_Include_Guard
 #define Corburt_Player_h_Include_Guard
 #define PLAYER_LVL_CAP 20 // for Lite
+//#define PLAYER_LVL_CAP 100
 #define DMG_RATIO 0.334f
 #include "dbmap.h"
 const bat exp2next[]={
@@ -123,22 +124,29 @@ const bat exp2next[]={
     [116]=5510937917000,
     [117]=6382871949000,
     [118]=7391243090000,
-    [119]=8557240942000
+    [119]=8557240942000,
+    [120]=10000000000000
 };
 const char *ranks[]={
-    "Golem","Kin","Regular",
-    "Lesser Unfading","Unfading","Knight","Higher Kin",
-    "Demigod","King","Sage",
-    "God","True Sage","Carnage King",
-    "Supreme"
+//    "Golem","Kin","Regular",
+//    "Lesser Unfading","Unfading","Knight","Higher Kin",
+//    "Demigod","King","Sage",
+//    "God","True Sage","Carnage King",
+//    "Supreme"
+    "$T0Golem$o","$T0Kin$o","$T0Regular$o",
+    "$T1Lesser Unfading$o","$T1Unfading$o","$T1Knight$o","$T1Higher Kin$o",
+    "$T2Demigod$o","$T2King$o","$T2Sage$o",
+    "$T3God$o","$T3True Sage$o","$T3Carnage King$o",
+    "$T4Supreme$o"
 };
 const nat ranklvlcap[]={
     40,40,40,
     60,75,75,75,
     100,110,100,
-    135,120,150,
+    135,120,150, // 120 for the player
     99999
 };
+static int pswitchregprompt();
 static void pmovesuccess();
 static void paddgearstats();
 static void plvlup();
@@ -149,14 +157,16 @@ static void pbreakready();
 #include "cbturn.h"
 
 // br: breaks the "ready" state
+
 static void plvlup(){
     if(player.lvl>=ranklvlcap[player.rnk])return;
-    if(player.lvl>=120)return;
+    if(player.lvl>=120&&player.rnk!=rank_supreme)return;
+    if(player.lvl>=PLAYER_LVL_CAP)return;
     player.lvl++;
     player.stats.pts+=4;
     player.stats.pts+=player.lvl/9.429f;
     pcalcstats();
-    printr(Green|Bright,msg->player_trainsuccess,player.lvl);
+    printr(palette.success,msg->player_trainsuccess,player.lvl);
 }
 static void pchangerank(nat targetrank){}
 static void paddgearstats(){ // prep'ed
@@ -257,33 +267,35 @@ void phpchange(nat num){
         if(player.hp==player.maxhp)return;
         if(player.hp+num<player.maxhp)player.hp+=num;
         else player.hp=player.maxhp;
-        printc(Default,"[");
+        printr(palette.res.hp,"HP");
+        printr(palette.msg,": [");
         nat color;
-        if(player.hp<player.maxhp*0.3333333f)color=Red|Bright;
-        else if(player.hp<player.maxhp*0.6666667f)color=Yellow|Bright;
-        else color=Green|Bright;
-        printc(color,"%" PRIdFAST64,player.hp);
-        printc(Default,"/%" PRIdFAST64 "]\n",player.maxhp);
+        if(player.hp<player.maxhp*0.3333f)color=palette.value.low;
+        else if(player.hp<player.maxhp*0.6667f)color=palette.value.mid;
+        else color=palette.value.high;
+        printr(color,"%" PRIdFAST64,player.hp);
+        printr(palette.msg,"/%" PRIdFAST64 "]\n",player.maxhp);
     }
     else{
         if(player.hp+num>0){
             player.hp+=num;
-            printc(Default,"[");
+            printr(palette.res.hp,"HP");
+            printr(palette.msg,": [");
             nat color;
-            if(player.hp<player.maxhp*0.3333333f)color=Red|Bright;
-            else if(player.hp<player.maxhp*0.6666667f)color=Yellow|Bright;
-            else color=Green|Bright;
-            printc(color,"%" PRIdFAST64,player.hp);
-            printc(Default,"/%" PRIdFAST64 "]\n",player.maxhp);
+            if(player.hp<player.maxhp*0.3333f)color=palette.value.low;
+            else if(player.hp<player.maxhp*0.6667f)color=palette.value.mid;
+            else color=palette.value.high;
+            printr(color,"%" PRIdFAST64,player.hp);
+            printr(palette.msg,"/%" PRIdFAST64 "]\n",player.maxhp);
         }
         else pdie();
     }
 }
 void pdie(){ // br
     pbreakready();
-    printc(White|Bright,msg->player_die);
-    // should be teleported back to the nearest spawn point
-    printc(White|Bright,msg->player_die_xplost,(bat)(player.exp-(bat)player.exp*0.9f));
+    printr(palette.prompt,msg->player_die);
+    // should be teleported back to the spawn point
+    printr(palette.prompt,msg->player_die_xplost,(bat)(player.exp-(bat)player.exp*0.9f));
     player.exp*=0.9f;
     player.hp=player.maxhp*0.7f;
     { // drop money and item
@@ -292,11 +304,11 @@ void pdie(){ // br
             inventory.money-=dropm;
             struct et_room *etr=&et_rooms[player.roomid-1];
             if(!etr){
-                printc(Red,msg->db_retidnullexceptionerror);
+                warn(msg->db_retidnullexceptionerror);
                 return;
             }
             etr->money+=dropm;
-            printc(White|Bright,msg->db_retmoneydrop,dropm);
+            printr(palette.prompt,msg->db_retmoneydrop,dropm);
         }
         nat itemsc=0;
         for(nat i=0;i<inventory.unlocked;i++){
@@ -310,11 +322,11 @@ void pdie(){ // br
                 if(j==dropid){
                     itemdb *idb=et_getitemdb(inventory.items[i]);
                     if(idb==NULL){
-                        printc(Red|Bright,msg->db_ietidnullexceptionerror);
+                        warn(msg->db_ietidnullexceptionerror);
                         return;
                     }
                     etitem_rebind(inventory.items[i],player.roomid);
-                    printc(White|Bright,msg->db_retitemdrop,idb->name);
+                    printr(palette.prompt,msg->db_retitemdrop,idb->name);
                     break;
                 }
                 j++;
@@ -368,7 +380,7 @@ void pshowinfo(){
 }
 void pshowstatsbrief(){
     pcalcstats();
-    printr(Default,
+    printr(palette.msg,
         msg->player_stats_brief,
         player.name,
         ranks[player.rnk],
@@ -382,7 +394,7 @@ void pshowstatsbrief(){
 }
 void pshowstats(){
     pcalcstats();
-    printr(Default,
+    printr(palette.msg,
         msg->player_stats,
         player.name,
         ranks[player.rnk],
@@ -400,37 +412,37 @@ void pshowstats(){
         player.stats.pts
     );
 }
-void pshowabl(){printr(Default,msg->player_abl);}
+void pshowabl(){printr(palette.msg,msg->player_abl);}
 void pshowinv(){
     nat invitemscount=0;
     for(nat i=0;i<64;i++){
         if(inventory.items[i]!=0)invitemscount++;
     }
-    printr(Default,
+    printr(palette.msg,
         msg->player_inv,
         inventory.money,
         invitemscount,inventory.unlocked
     );
-    if(invitemscount==0)printr(Default,msg->player_inv_none);
+    if(invitemscount==0)printr(palette.msg,msg->player_inv_none);
     else{
         for(nat i=0,j=0;i<64;i++){
             if(inventory.items[i]!=0){
                 struct et_item *eti=&et_items[inventory.items[i]-1];
                 itemdb *idb=db_ifindwithid(eti->itemid);
-                if(j>0)printr(Default,"\n               ");
+                if(j>0)printr(palette.msg,"\n               ");
                 if(inventory.weapon==i+1){
-                    printr(Cyan|Bright,msg->player_inv_wielding);
+                    printr(palette.item.interact,msg->player_inv_wielding);
                 }
                 if(inventory.armor==i+1){
-                    printr(Cyan|Bright,msg->player_inv_wearing);
+                    printr(palette.item.interact,msg->player_inv_wearing);
                 }
                 for(nat k=0;k<5;k++)if(inventory.accessories[k]==i+1){
-                    printr(Cyan|Bright,msg->player_inv_equipping);
+                    printr(palette.item.interact,msg->player_inv_equipping);
                     break;
                 }
-                printrp(Default,"                ","%s ",idb->name);
+                printrp(palette.msg,"                ","%s ",idb->name);
                 if(idb->type&db_itemtype_stackable_mask&&eti->qnty>1){
-                    printrp(Default,"                ","(x%" PRIdFAST32 ")",eti->qnty);
+                    printrp(palette.msg,"                ","(x%" PRIdFAST32 ")",eti->qnty);
                 }
                 invitemscount--;
                 j++;
@@ -438,15 +450,15 @@ void pshowinv(){
             }
         }
     }
-    printr(Default,"\n%s",msg->line);
+    printr(palette.msg,"\n%s",msg->line);
 }
 void pshowexp(){
-    printr(Default,msg->player_exp,player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]));
+    printr(palette.msg,msg->player_exp,player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]));
 }
 void pteleport(nat roomid){
     roomdb *rm=db_rfindwithid(roomid);
     if(rm==NULL){
-        printr(Red,msg->db_ridnullexceptionerror);
+        warn(msg->db_ridnullexceptionerror);
         return;
     }
     player.roomid=roomid;
@@ -456,11 +468,21 @@ void pmove(enum direction dir){ // br
     pbreakready();
     roomdb *rm=db_rfindwithid(player.roomid);
     if(rm==NULL){
-        printr(Red,msg->db_ridnullexceptionerror);
+        warn(msg->db_ridnullexceptionerror);
         return;
     }
-    if(!rm->exits[dir]){printr(Default,msg->player_walkno);return;}
-    if(db_rfindwithid(rm->exits[dir])==NULL){printr(Default,msg->player_walkno);return;}
+    if(!rm->exits[dir]){printr(palette.promptfail,msg->player_walkno);return;}
+    roomdb *rmtarget=db_rfindwithid(rm->exits[dir]);
+    if(rmtarget==NULL){
+        warn(msg->db_ridnullexceptionerror);
+        printr(palette.promptfail,msg->player_walkno);
+        return;
+    }
+//    if(rm->region!=rmtarget->region){
+//        cbp.promptarg=dir;
+//        pswitchregprompt();
+//        return;
+//    }
 #ifndef CB_REALTIME
     timepass(30);
     if(cbp.playerdead){
@@ -468,36 +490,46 @@ void pmove(enum direction dir){ // br
         return;
     }
 #endif
+    pmovedirect(dir);
+}
+void pmovedirect(enum direction dir){
+    roomdb *rm=db_rfindwithid(player.roomid);
     player.roomid=rm->exits[dir];
     switch(dir){
     case dir_East:
-        printr(Green,msg->player_walkeast);
+        printr(palette.room.change,msg->player_walkeast);
         pmovesuccess();
         return;
     case dir_West:
-        printr(Green,msg->player_walkwest);
+        printr(palette.room.change,msg->player_walkwest);
         pmovesuccess();
         return;
     case dir_North:
-        printr(Green,msg->player_walknorth);
+        printr(palette.room.change,msg->player_walknorth);
         pmovesuccess();
         return;
     case dir_South:
-        printr(Green,msg->player_walksouth);
+        printr(palette.room.change,msg->player_walksouth);
         pmovesuccess();
         return;
     case dir_Up:
-        printr(Green,msg->player_walkup);
+        printr(palette.room.change,msg->player_walkup);
         pmovesuccess();
         return;
     case dir_Down:
-        printr(Green,msg->player_walkdown);
+        printr(palette.room.change,msg->player_walkdown);
         pmovesuccess();
         return;
     default:
         break;
     }
-    printr(Default,msg->player_walkno);
+    printr(palette.promptfail,msg->player_walkno);
+}
+static int pswitchregprompt(){ //br
+    pbreakready();
+    cbp.ynprompt=true;
+    printr(palette.prompt,msg->player_switchregionprompt);
+    return 0;
 }
 static void pmovesuccess(){
     db_rshowdesc(player.roomid);
@@ -511,21 +543,21 @@ static void pmovesuccess(){
     }
     if(rm->type==db_roomtype_birth&&player.spawn!=player.roomid){
         player.spawn=player.roomid;
-        printr(Cyan|Bright,msg->player_spawnupdate,rm->name);
+        printr(palette.inform,msg->player_spawnupdate,rm->name);
     }
 }
 void pready(){
     cbp.readying=true;
     if(cbp.readyframe<0)cbp.readyframe=0;
     if(cbp.isready){
-        printc(Default,msg->player_isalready);
+        printr(palette.player.ready,msg->player_isalready);
     }
 }
 void preadying(){
     if(!cbp.readying)return;
     if(cbp.readyframe>=cbp.calcstats.prep&&cbp.isready==false){
         cbp.isready=true;
-        printc(Default,msg->player_isready);
+        printr(palette.player.ready,msg->player_isready);
     }else if(cbp.readyframe<cbp.calcstats.prep){
         cbp.readyframe++;
     }
@@ -537,12 +569,12 @@ static void pbreakready(){
 }
 void pattack(nat entityid){ // br
 //    if(cbp.attackcd>0){
-//        printr(Default,msg->player_cantattack);
+//        printr(palette.promptfail,msg->player_cantattack);
 //        return;
 //    }
     struct et_enemy *ete=&et_enemies[entityid-1];
     if(!ete->available){
-        printc(Red,msg->db_eetidnullexceptionerror);
+        warn(msg->db_eetidnullexceptionerror);
         return;
     }
     const enemydb *edb=et_getenemydb(entityid);
@@ -554,7 +586,7 @@ void pattack(nat entityid){ // br
         enemycandodge=accreduc(cbp.calcstats.acc,edod);
     }
     if(enemycandodge){
-        printc(White,msg->db_eetyouattackmiss,edb->name);
+        printr(palette.player.miss,msg->db_eetyouattackmiss,edb->name);
     }else{
         nat bdmg=cbp.calcstats.atk*DMG_RATIO,edef=edb->stats.def;
         nat dmgcolor=0;
@@ -578,11 +610,11 @@ void pattack(nat entityid){ // br
         }
         nat dmg=dmgreduc(bdmg,edef*DMG_RATIO);
         if(dmg){
-            printc(Green|Bright,msg->db_eetyouattack1,edb->name);
-            printc(dmgcolor,msg->db_eetyouattack2,dmg);
-            printc(Green|Bright,msg->db_eetyouattack3);
+            printr(palette.player.strike,msg->db_eetyouattack1,edb->name);
+            printr(dmgcolor,msg->db_eetyouattack2,dmg);
+            printr(palette.player.strike,msg->db_eetyouattack3);
         }
-        else printc(White,msg->db_eetyouattackblocked,edb->name);
+        else printr(palette.player.blocked,msg->db_eetyouattackblocked,edb->name);
         etenemy_takedamage(entityid,dmg);
     }
     pbreakready();
@@ -596,23 +628,27 @@ void ptrain(){ // br
     pbreakready();
     roomdb *rm=db_rfindwithid(player.roomid);
     if(rm==NULL){
-        printr(Red,msg->db_ridnullexceptionerror);
+        warn(msg->db_ridnullexceptionerror);
         return;
     }
     if(rm->type!=db_roomtype_train){
-        printr(Default,msg->player_canttrain);
+        printr(palette.promptfail,msg->player_canttrain);
         return;
     }
     if(player.lvl==PLAYER_LVL_CAP){
-        printr(Default,msg->player_canttrain_maxlvl);
+        printr(palette.promptfail,msg->player_canttrain_maxlvl);
         return;
     }
-    if(player.lvl==ranklvlcap[player.rnk]){
-        printr(Default,msg->player_canttrain_maxlvl);
+    if(player.lvl>=ranklvlcap[player.rnk]){
+        printr(palette.promptfail,msg->player_canttrain_maxlvl);
+        return;
+    }
+    if(player.lvl>=120&&player.rnk!=rank_supreme){
+        printr(palette.promptfail,msg->player_canttrain_maxlvl);
         return;
     }
     if(player.exp<exp2next[player.lvl-1]){
-        printr(Default,msg->player_canttrain_noexp);
+        printr(palette.promptfail,msg->player_canttrain_noexp);
     }else{
         plvlup();
     }
@@ -620,24 +656,24 @@ void ptrain(){ // br
 void peditstats(){ // br
     pbreakready();
     if(db_rfindwithid(player.roomid)->type!=db_roomtype_train){
-        printc(Default,msg->player_canteditstats);
+        printr(palette.promptfail,msg->player_canteditstats);
         return;
     }
     if(player.stats.pts){
         cbp.editstats=true;
-        printr(Default,msg->player_editstatshint);
-        printc(Default,msg->player_points,
+        printr(palette.promptfail,msg->player_editstatshint);
+        printr(palette.promptfail,msg->player_points,
             player.stats.agi,player.stats.con,
             player.stats.res,player.stats.str,
             player.stats.wil,player.stats.wis,
             player.stats.pts);
     }else{
-        printc(Default,msg->player_points,
+        printr(palette.promptfail,msg->player_points,
             player.stats.agi,player.stats.con,
             player.stats.res,player.stats.str,
             player.stats.wil,player.stats.wis,
             player.stats.pts);
-        printc(Default,msg->player_editstatsnopoints);
+        printr(palette.promptfail,msg->player_editstatsnopoints);
     }
 }
 void peditstatsend(){
@@ -649,7 +685,7 @@ void pregen(){
     nat regennum=player.lvl;
     regennum+=cbp.calcstats.con;
     regennum+=cbp.calcstats.regen;
-//    printc(Cyan,"Regen: +%d (extra +%d)\n",regennum,cbp.calcstats.regen);
+//    printr(palette.success,"Regen: +%d (extra +%d)\n",regennum,cbp.calcstats.regen);
     phpchange(regennum);
 }
 void ptakedmg(nat dmg){

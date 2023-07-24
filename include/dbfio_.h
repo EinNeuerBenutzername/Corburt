@@ -109,13 +109,15 @@ void savedb_enemy(FILE *fp){
         }
         int_fast32_t_write(enemydbs[i].stats.hpmax,fp);
         int_fast32_t_write(enemydbs[i].stats.atkcd,fp);
-        int_fast32_t_write(enemydbs[i].stats.atk,fp);
-        int_fast32_t_write(enemydbs[i].stats.def,fp);
         int_fast32_t_write(enemydbs[i].stats.acc,fp);
         int_fast32_t_write(enemydbs[i].stats.dod,fp);
-        int_fast32_t_write(enemydbs[i].stats.wis,fp);
-        int_fast32_t_write(enemydbs[i].stats.act,fp);
-        int_fast32_t_write(enemydbs[i].stats.con,fp);
+        int_fast32_t_write(enemydbs[i].stats.vit,fp);
+        int_fast32_t_write(enemydbs[i].stats.atk,fp);
+        int_fast32_t_write(enemydbs[i].stats.stm,fp);
+        int_fast32_t_write(enemydbs[i].stats.san,fp);
+        int_fast32_t_write(enemydbs[i].stats.sat,fp);
+        int_fast32_t_write(enemydbs[i].stats.mag,fp);
+        int_fast32_t_write(enemydbs[i].stats.mat,fp);
     }
 }
 void savedb_inter(FILE *fp){}
@@ -130,9 +132,9 @@ void loadalldb(){
     loaddb_map(fp);
     loaddb_inter(fp);
     fclose(fp);
-    tracelog(Green,msg->global_dbsize,dbfio_.dbsize/1048576.0f);
-    tracelog(Green,msg->trace_pointerinuse,global.pointerinuse);
-    printc(Cyan|Bright,msg->global_dataloaded);
+    tracelog(msg->global_dbsize,dbfio_.dbsize/1048576.0f);
+    tracelog(msg->trace_pointerinuse,global.pointerinuse);
+    printr(palette.inform,msg->global_dataloaded);
 }
 void loaddb_map(FILE *fp){
     int_fast32_t_read(&roomdbsize,fp);
@@ -244,13 +246,15 @@ void loaddb_enemy(FILE *fp){
         }
         int_fast32_t_read(&enemydbs[i].stats.hpmax,fp);
         int_fast32_t_read(&enemydbs[i].stats.atkcd,fp);
-        int_fast32_t_read(&enemydbs[i].stats.atk,fp);
-        int_fast32_t_read(&enemydbs[i].stats.def,fp);
         int_fast32_t_read(&enemydbs[i].stats.acc,fp);
         int_fast32_t_read(&enemydbs[i].stats.dod,fp);
-        int_fast32_t_read(&enemydbs[i].stats.wis,fp);
-        int_fast32_t_read(&enemydbs[i].stats.act,fp);
-        int_fast32_t_read(&enemydbs[i].stats.con,fp);
+        int_fast32_t_read(&enemydbs[i].stats.vit,fp);
+        int_fast32_t_read(&enemydbs[i].stats.atk,fp);
+        int_fast32_t_read(&enemydbs[i].stats.stm,fp);
+        int_fast32_t_read(&enemydbs[i].stats.san,fp);
+        int_fast32_t_read(&enemydbs[i].stats.sat,fp);
+        int_fast32_t_read(&enemydbs[i].stats.mag,fp);
+        int_fast32_t_read(&enemydbs[i].stats.mat,fp);
         dbfio_.dbsize+=sizeof(enemydb);
     }
 }

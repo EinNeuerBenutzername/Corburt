@@ -1,9 +1,10 @@
 #ifndef Corburt_Base_h_Include_Guard
 #define Corburt_Base_h_Include_Guard
-#define DISPLAY_WIDTH 68 // change this and the graphics shall explode
-#define CB_VERSIONNUM 320
+#define DISPLAY_WIDTH 68 // SHOULD BE BIGGER THAN 48
+#define TOKEN_MAXLEN 256
+#define CB_VERSIONNUM 330
 #define CB_VERSIONCHECK 0
-#define CB_VERSIONTEXT "v0.3.2"
+#define CB_VERSIONTEXT "v0.3.3"
 //#define CB_MAXPOINTERS 32767
 #define CB_MAXPOINTERS 4096 // used: about 500 as of 0.3.2
 //#define CB_MAXROOMDESC 2048
@@ -106,9 +107,10 @@ struct player{
         nat luck;
     } bstats;
     nat roomid;
+    nat loi; // lines of input
 } player={"",1,rank_regular,1,0,10,10,
-    0,0,0,0,0,0,0,0,
-    {0,0,0,0,0,0,0,14},{0,0,0,0,0,0,0,0},1
+    10,10,10,10,0,0,0,0,
+    {0,0,0,0,0,0,0,14},{0,0,0,0,0,0,0,0},1,0
 };
 struct inventory{
     nat unlocked;
@@ -123,6 +125,72 @@ struct save{
     struct player plr;
     struct inventory inv;
 };
+struct { // palette
+    int input; // $G<
+    int msg; // $Gm regular message
+    int load; // %Gl
+    int inform; // $Gi
+    int prompt; // $Gp
+    int promptfail; // $Gf
+    int success; // $Gs
+    int debug; // $d, %Gd
+    int warning; // %w, %Gw
+    int command; // %c, %Wc
+    struct { // Splash
+        int welcome;
+        int logoup;
+        int logodown;
+        int version;
+    } splash;
+    struct { // Room
+        int hint;
+        int desc;
+        int exit;
+        int change;
+    } room;
+    struct { // Item
+        int hint;
+        int interact;
+        int gone;
+    } item;
+    struct { // Enemy
+        int hint;
+        int strike;
+        int die;
+        int miss;
+        int blocked;
+        int reward;
+        int spawn;
+    } enemy;
+    struct { // Value
+        // used in: attack damage
+        int plain;
+        int crit;
+        int supercrit;
+        // used in: resources
+        int high;
+        int mid;
+        int low;
+    } value;
+    struct { // Chat
+        int player;
+        int text;
+    } chat;
+    struct { // res Points
+        int hp;
+        int st;
+        int mp;
+        int pp;
+    } res;
+    struct { // player @
+        int ready;
+        int miss;
+        int strike;
+        int blocked;
+    } player;
+    int threat[5]; // Threat $T0~$T4
+    // when editing palette, please also edit initpalette()
+} palette;
 const nat savescount=3;
 struct save saves[3]={0};
 int_fast32_t cursaveid=0;
@@ -134,8 +202,7 @@ struct globaldata{
     nat pointerreserve;
     nat curtick;
     bat curround;
-    nat curcolor;
-}global={NULL,0,0,100,0,0,Default};
+}global={NULL,0,0,100,0,0};
 //basic
 enum errorenum{
     error_cannotmalloc,
@@ -145,12 +212,18 @@ enum errorenum{
     error_cannotsave,
 };
 void printc(int color,const char *format,...); // obsolete, please use printr()
-size_t wcwidth(const char wc);
+size_t wcwidth(const int wc); // no more wchar, so obsolete
+void charstate(char ch,int *state,int *arg,int color,int *tint,size_t *width);
 size_t strwidth(const char *str);
+int strcounthighlights(const char *str);
+void printword(const char *word);
+void printwordpref(int color,size_t prefw,int prefh,const char *pref,const char *word);
+void printr_1(int color,const char *format,...); // for backup reasons. please use printr()
 void printr(int color,const char *format,...);
+void printrp_1(int color,const char *linepref,const char *format,...); // for backup reasons.. please use printrp()
 void printrp(int color,const char *linepref,const char *format,...);
-void printword(size_t *pos,size_t width,char *word);
-void tracelog(int color,const char *format,...);
+void tracelog(const char *format,...);
+void warn(const char *format,...);
 void fatalerror(enum errorenum error_id);
 void *mallocpointer_(size_t bytes); // for testing
 void *mallocpointer(size_t bytes);
@@ -160,36 +233,231 @@ void freeall();
 void scanline(char *scan_str,int scans);
 void strlower(char **target_str_pos);
 void printc(int color,const char *format,...){
-    if(color!=global.curcolor)cbc_setcolor(color);
-    global.curcolor=color;
-//    fflush(stdout);
+    cbc_setcolor(color);
     va_list args;
     va_start(args,format);
     vprintf(format,args);
     va_end(args);
-//    if(color!=Default)cbc_setcolor(Default);
     fflush(stdout);
 }
-size_t wcwidth(const char wc){
+size_t wcwidth(const int wc){ // no more wchar, so obsolete
     if((wc>=11904&&wc<=55215)||(wc>=63744&&wc<=64255)||(wc>=65281&&wc<=65374)){ // ambiguous E.Asian wide characters
         return 2;
     }
     return 1;
 }
+void charstate(char ch,int *state,int *arg,int color,int *tint,size_t *width){
+    // states
+    // 0  - regular character
+    // 1  - valid indicator '$'
+    // 2  - color indicator
+    // 3  - complex color indicator (not yet implemented)
+    // 4  - long color indicator
+    if(*state==2)*state=0;
+    if(ch=='\n'){
+        *state=0;
+        return;
+    }
+    *width=*width+1;
+    if(ch==' '){
+        *state=0;
+        return;
+    }
+    if(ch=='$'&&*state==0){
+        *state=1;
+    }
+    else if(*state==1){
+        if((ch<='Z'&&ch>='A')||(ch<='z'&&ch>='a')){
+            *state=2;
+            switch(ch){
+            case 'o': // $o original color
+                *tint=color;
+                break;
+            case 'd': // $d, $Gd debug
+                *tint=palette.debug;
+                break;
+            case 'w': // $w, $Gw warning
+                *tint=palette.warning;
+                break;
+            case 'c': // $c, $Gc command
+                *tint=palette.command;
+                break;
+            default:
+                *state=3;*arg=ch;return;
+            }
+            *width=*width-2;
+        }else{
+            *state=0;
+        }
+    }
+    else if(*state==3){
+        if(1){
+            *state=4;
+            switch(*arg){
+                case 'G':
+                    switch(ch){
+                    case '<': // $G< input
+                        *tint=palette.input;
+                        break;
+                    case 'm': // $Gm msg
+                        *tint=palette.msg;
+                        break;
+                    case 'l': // $Gl load
+                        *tint=palette.load;
+                        break;
+                    case 'i': // $Gi inform
+                        *tint=palette.inform;
+                        break;
+                    case 'p': // $Gp prompt
+                        *tint=palette.prompt;
+                        break;
+                    case 'f': // $Gf promptfail
+                        *tint=palette.promptfail;
+                        break;
+                    case 's': // $Gs success
+                        *tint=palette.success;
+                        break;
+                    case 'd': // $d, $Gd debug
+                        *tint=palette.debug;
+                        break;
+                    case 'w': // $w, $Gw warning
+                        *tint=palette.warning;
+                        break;
+                    case 'c': // $c, $Gc command
+                        *tint=palette.command;
+                        break;
+                    default:*state=0;return;
+                    }
+                    break;
+                case 'T':
+                    switch(ch){
+                    case '0': // $T0
+                        *tint=palette.threat[0];
+                        break;
+                    case '1': // $T1
+                        *tint=palette.threat[1];
+                        break;
+                    case '2': // $T2
+                        *tint=palette.threat[2];
+                        break;
+                    case '3': // $T3
+                        *tint=palette.threat[3];
+                        break;
+                    case '4': // $T4
+                        *tint=palette.threat[4];
+                        break;
+                    default:*state=0;return;
+                    }
+                    break;
+                default:*state=0;return;
+                }
+            *width=*width-3;
+        }else{
+            *state=0;
+        }
+    }else{
+        *state=0;
+    }
+}
 size_t strwidth(const char *str){
     size_t len=0;
+    int state=0,tint=0,arg=0;
     for(size_t i=0;i<strlen(str);i++){
-        len+=wcwidth(str[i]);
+        charstate(str[i],&state,&arg,0,&tint,&len);
     }
     return len;
+}
+int strcounthighlights(const char *str){
+    int hil=0;
+    size_t len=0;
+    int state=0,tint=0,arg=0;
+    for(size_t i=0;i<strlen(str);i++){
+        charstate(str[i],&state,&arg,0,&tint,&len);
+        if(state==2)hil++;
+    }
+    return hil;
 }
     char *printr_dest=NULL;
     char *printr_token=NULL;
     size_t pos=0;
-void printr(int color,const char *format,...){
-    if(color!=global.curcolor)
-        cbc_setcolor(color);
-    global.curcolor=color;
+void printword(const char *word){
+    size_t wordlen=strlen(word);
+    if(wordlen==0)return;
+    size_t strw=strwidth(word);
+    if(strw+pos<DISPLAY_WIDTH){
+        printf("%s",word);
+        pos+=strw;
+        if(word[wordlen-1]=='\n')pos=0;
+    }else if(strw<DISPLAY_WIDTH){
+        printf("\n%s",word);
+        pos=strw;
+        if(word[wordlen-1]=='\n')pos=0;
+    }else{
+        char printword_token[TOKEN_MAXLEN];
+        memset(printword_token,0,TOKEN_MAXLEN);
+        int len=0;
+        for(int i=0;i<strlen(word);i++){
+            printword_token[len]=word[i];
+            len++;
+            if(len+pos>=DISPLAY_WIDTH){
+                printf("%s\n",printword_token);
+                memset(printword_token,0,TOKEN_MAXLEN);
+                len=0;
+            }
+        }
+        printf("%s",printword_token);
+        pos=len;
+        if(word[wordlen-1]=='\n')pos=0;
+    }
+}
+void printwordpref(int color,size_t prefw,int prefh,const char *pref,const char *word){
+    size_t wordlen=strlen(word);
+    if(wordlen==0)return;
+//    printf("[%d]",strwidth(word));
+    size_t strw=strwidth(word);
+    int wordcolor;
+    wordcolor=cbc_getcolor();
+    if(strw+pos<DISPLAY_WIDTH){
+        printf("%s",word);
+        pos+=strw;
+        if(word[wordlen-1]=='\n')pos=0;
+    }else if(strw+prefw<DISPLAY_WIDTH){
+//        if(prefh==0){
+            cbc_setcolor(color);
+            printf("\n%s",pref);
+//        }
+        cbc_setcolor(wordcolor);
+        printf("%s",word);
+        pos=strw+prefw;
+        if(word[wordlen-1]=='\n')pos=0;
+    }else{
+        char printword_token[TOKEN_MAXLEN];
+        memset(printword_token,0,TOKEN_MAXLEN);
+        int len=0;
+        for(int i=0;i<strlen(word);i++){
+            printword_token[len]=word[i];
+            len++;
+            if(len+pos+prefw>=DISPLAY_WIDTH){
+                {
+                    printf("%s\n",printword_token);
+//                    if(prefh==0){
+                        cbc_setcolor(color);
+                        printf("\n%s",pref);
+//                    }
+                    cbc_setcolor(wordcolor);
+                }
+                memset(printword_token,0,TOKEN_MAXLEN);
+                len=0;
+            }
+        }
+        cbc_setcolor(wordcolor);
+        printf("%s",printword_token);
+        pos=len+prefw;
+        if(word[wordlen-1]=='\n')pos=0;
+    }
+}
+void printr_1(int color,const char *format,...){
+    cbc_setcolor(color);
     memset(printr_dest,0,4096);
     memset(printr_token,0,DISPLAY_WIDTH);
     va_list args;
@@ -229,7 +497,7 @@ void printr(int color,const char *format,...){
             }
             printr_token[strl]=printr_dest[i];
             strl++;
-            strw+=wcwidth(printr_dest[i]);
+            strw++;
             if(i+1==strld){
                 printf("%s",printr_token);
                 pos+=strw;memset(printr_token,0,strl);
@@ -237,16 +505,73 @@ void printr(int color,const char *format,...){
             }
         }
     }
-//    if(color!=Default)cbc_setcolor(Default);
     fflush(stdout);
 }
-void printrp(int color,const char *linepref,const char *format,...){
-    if(color!=global.curcolor)
-        cbc_setcolor(color);
-    global.curcolor=color;
+void printr(int color,const char *format,...){
+    cbc_setcolor(color);
+    memset(printr_dest,0,4096);
+    memset(printr_token,0,TOKEN_MAXLEN);
+    va_list args;
+    va_start(args,format);
+    vsnprintf(printr_dest,4096,format,args);
+    va_end(args);
+
+    size_t strl=0,strw=0,strld=strlen(printr_dest);
+    int state=0,tint=cbc_getcolor(),arg=0;
+    for(size_t i=0;i<strld;i++){
+        char ch=printr_dest[i];
+        charstate(ch,&state,&arg,color,&tint,&strw);
+        printr_token[strl]=ch;
+        strl++;
+        if(state==0){
+            if(ch==' '||ch=='\n'){
+                if(printr_dest[0]!=ch){
+                    printword(printr_token);
+                    memset(printr_token,0,TOKEN_MAXLEN);
+                    strl=0;
+                }else if(i<strld-1){
+                    char ch_1=printr_dest[i+1];
+//                    if(ch_1!=ch||printr_dest[0]!=ch){
+                    if(ch_1!=ch){
+                        printword(printr_token);
+                        memset(printr_token,0,TOKEN_MAXLEN);
+                        strl=0;
+                    }
+                }
+            }
+        }
+        else if(state==2){
+            if(strl>2){
+                printr_token[strl-1]=0;
+                printr_token[strl-2]=0;
+                printword(printr_token);
+            }
+            memset(printr_token,0,TOKEN_MAXLEN);
+            strl=0;
+            cbc_setcolor(tint);
+        }
+        else if(state==4){
+            if(strl>3){
+                printr_token[strl-1]=0;
+                printr_token[strl-2]=0;
+                printr_token[strl-3]=0;
+                printword(printr_token);
+            }
+            memset(printr_token,0,TOKEN_MAXLEN);
+            strl=0;
+            cbc_setcolor(tint);
+        }
+    }
+    printword(printr_token);
+    memset(printr_token,0,TOKEN_MAXLEN);
+    fflush(stdout);
+}
+void printrp_1(int color,const char *linepref,const char *format,...){
+    // print with a starting prefix "linepref" before EVERY line FOLLOWING the first
+    if(color!=cbc_getcolor())cbc_setcolor(color);
     fflush(stdout);
     memset(printr_dest,0,4096);
-    memset(printr_token,0,DISPLAY_WIDTH);
+    memset(printr_token,0,TOKEN_MAXLEN);
     va_list args;
     va_start(args,format);
     vsnprintf(printr_dest,4096,format,args);
@@ -288,7 +613,7 @@ void printrp(int color,const char *linepref,const char *format,...){
             }
             printr_token[strl]=printr_dest[i];
             strl++;
-            strw+=wcwidth(printr_dest[i]);
+            strw++;
             if(i+1==strld){
                 pos=0;
                 if(strl<strld){
@@ -301,14 +626,67 @@ void printrp(int color,const char *linepref,const char *format,...){
             }
         }
     }
-
-//    if(color!=Default)cbc_setcolor(Default);
     fflush(stdout);
 }
-void tracelog(int color,const char *format,...){
+void printrp(int color,const char *linepref,const char *format,...){
+    // print with a starting prefix "linepref" before EVERY line FOLLOWING the first
+    // note that line prefixes CANNOT have color indicators in them. I tried, and the program aborts with fatal error afterwards.
+    cbc_setcolor(color);
+    memset(printr_dest,0,4096);
+    memset(printr_token,0,TOKEN_MAXLEN);
+    va_list args;
+    va_start(args,format);
+    vsnprintf(printr_dest,4096,format,args);
+    va_end(args);
+
+    size_t strl=0,strw=0,strld=strlen(printr_dest),prefw=strlen(linepref);
+    int state=0,tint=cbc_getcolor(),arg=0,prefh=strcounthighlights(linepref);
+    for(size_t i=0;i<strld;i++){
+        char ch=printr_dest[i];
+        charstate(ch,&state,&arg,color,&tint,&strw);
+        printr_token[strl]=ch;
+        strl++;
+        if(state==0){
+            if(ch==' '||ch=='\n'){
+                if(i<strld-1){
+                    char ch_1=printr_dest[i+1];
+                    if(ch_1!=ch){
+                    printwordpref(color,prefw,prefh,linepref,printr_token);
+                        memset(printr_token,0,TOKEN_MAXLEN);
+                        strl=0;
+                    }
+                }
+            }
+        }
+        else if(state==2){
+            if(strl>2){
+                printr_token[strl-1]=0;
+                printr_token[strl-2]=0;
+                printwordpref(color,prefw,prefh,linepref,printr_token);
+            }
+            memset(printr_token,0,TOKEN_MAXLEN);
+            strl=0;
+            cbc_setcolor(tint);
+        }
+        else if(state==4){
+            if(strl>3){
+                printr_token[strl-1]=0;
+                printr_token[strl-2]=0;
+                printr_token[strl-3]=0;
+                printwordpref(color,prefw,prefh,linepref,printr_token);
+            }
+            memset(printr_token,0,TOKEN_MAXLEN);
+            strl=0;
+            cbc_setcolor(tint);
+        }
+    }
+    printwordpref(color,prefw,prefh,linepref,printr_token);
+    memset(printr_token,0,TOKEN_MAXLEN);
+    fflush(stdout);
+}
+void tracelog(const char *format,...){
 #ifdef Corburt_Debug
-    if(color!=global.curcolor)cbc_setcolor(color);
-    global.curcolor=color;
+    cbc_setcolor(palette.debug);
     va_list args;
     va_start(args,format);
     vprintf(format,args);
@@ -317,6 +695,14 @@ void tracelog(int color,const char *format,...){
 #else
     return;
 #endif
+}
+void warn(const char *format,...){
+    cbc_setcolor(palette.warning);
+    va_list args;
+    va_start(args,format);
+    vprintf(format,args);
+    va_end(args);
+    fflush(stdout);
 }
 void fatalerror(enum errorenum error_id){
     const char *m;
@@ -334,7 +720,7 @@ void fatalerror(enum errorenum error_id){
     default:
         m=msg->error_unknown;break;
     }
-    printr(Red,m);
+    printr(palette.warning,m);
     FILE *errorlog=fopen("err.log","a");
     fprintf(errorlog,"%s",m);
     fclose(errorlog);
@@ -349,8 +735,8 @@ void *mallocpointer_(size_t bytes){
     if(pointer==NULL)fatalerror(error_cannotmalloc);
     global.pointerinuse++;
     if(Corburt_Pointer_Trace_Level>0){
-        tracelog(Green,msg->trace_malloced,bytes);
-        tracelog(Green,msg->trace_pointerinuse,global.pointerinuse);
+        tracelog(msg->trace_malloced,bytes);
+        tracelog(msg->trace_pointerinuse,global.pointerinuse);
     }
     for(nat i=0;i<CB_MAXPOINTERS;i++){
         if(global.pointerpool[i]==NULL){
@@ -369,8 +755,8 @@ void *mallocpointer(size_t bytes){
     if(pointer==NULL)fatalerror(error_cannotmalloc);
     global.pointerinuse++;
     if(Corburt_Pointer_Trace_Level>1){
-        tracelog(Green,msg->trace_malloced,bytes);
-        tracelog(Green,msg->trace_pointerinuse,global.pointerinuse);
+        tracelog(msg->trace_malloced,bytes);
+        tracelog(msg->trace_pointerinuse,global.pointerinuse);
     }
     for(nat i=0;i<CB_MAXPOINTERS;i++){
         if(global.pointerpool[i]==NULL){
@@ -387,14 +773,14 @@ void *reallocpointer(void *pointer,size_t bytes){
             break;
         }
         if(i==CB_MAXPOINTERS-1&&found==0){
-            printc(Red,msg->trace_illegalrealloc);
+            printr(palette.warning,msg->trace_illegalrealloc);
             return NULL;
         }
     }
     pointer=realloc(pointer,bytes);
     if(pointer==NULL)fatalerror(error_cannotmalloc);
     if(Corburt_Pointer_Trace_Level>0){
-        tracelog(Green,msg->trace_realloced,bytes);
+        tracelog(msg->trace_realloced,bytes);
     }
     return pointer;
 }
@@ -406,38 +792,38 @@ void freepointer(void *pointer){
             break;
         }
         if(i==CB_MAXPOINTERS-1){
-            printc(Red,msg->trace_illegalfree);
+            printr(palette.warning,msg->trace_illegalfree);
             return;
         }
     }
     free(pointer);
     global.pointerinuse--;
     if(Corburt_Pointer_Trace_Level>1){
-        tracelog(Green,msg->trace_freed);
-        tracelog(Green,msg->trace_pointerinuse,global.pointerinuse);
+        tracelog(msg->trace_freed);
+        tracelog(msg->trace_pointerinuse,global.pointerinuse);
     }
     pointer=NULL;
 }
 void freeall(){
-    tracelog(Green,msg->trace_pointerinuse,global.pointerinuse);
+    tracelog(msg->trace_pointerinuse,global.pointerinuse);
     for(nat i=0;i<CB_MAXPOINTERS&&global.pointerinuse>0;i++){
         if(global.pointerpool[i]!=NULL){
             free(global.pointerpool[i]);
             global.pointerinuse--;
         }
     }
-    tracelog(Green,msg->trace_freealled);
+    tracelog(msg->trace_freealled);
 }
 #ifndef CB_REALTIME
 void scanline(char *scan_str,int scans){
-    cbc_setcolor(Yellow);
+    cbc_setcolor(palette.input);
     fflush(stdout);
     fgets(scan_str,scans,stdin);
     if(scan_str[strlen(scan_str)-1]=='\n'){
         scan_str[strlen(scan_str)-1]=0;
     }
     fflush(stdin);
-    cbc_setcolor(Default);
+    cbc_setcolor(palette.msg);
 
     fflush(stdout);
 }
@@ -457,6 +843,7 @@ void endcb();
 void assertcheck();
 nat match(const char *sub_str,const char *main_str);
 void initrng();
+void initpalette();
 void assertcheck(){
     if(CHAR_BIT!=8)fatalerror(error_badcharbit);
 }
@@ -490,10 +877,61 @@ nat match(const char *sub_str,const char *main_str){
 }
 void initrng(){
     bat seed;
-    tracelog(Green,msg->trace_rnginit);
-    tracelog(Green,msg->trace_rngseed,seed=time(NULL));
+    tracelog(msg->trace_rnginit);
+    tracelog(msg->trace_rngseed,seed=time(NULL));
     mtrand=seedRand(seed);
-    tracelog(Green,msg->trace_rngtest,genRandLong(&mtrand));
+    tracelog(msg->trace_rngtest,genRandLong(&mtrand));
+}
+void initpalette(){
+    palette.input=Yellow;
+    palette.msg=Default;
+    palette.load=Cyan;
+    palette.inform=Cyan|Bright;
+    palette.prompt=White|Bright;
+    palette.promptfail=Default;
+    palette.success=Green|Bright;
+    palette.debug=Cyan;
+    palette.warning=Red;
+    palette.command=Yellow|Bright;
+    palette.splash.welcome=Green|Bright;
+    palette.splash.logoup=Default;
+    palette.splash.logodown=Yellow;
+    palette.splash.version=White|Bright;
+    palette.room.hint=White|Bright;
+    palette.room.desc=Cyan|Bright;
+    palette.room.exit=Green|Bright;
+    palette.room.change=Green;
+    palette.item.hint=Yellow|Bright;
+    palette.item.interact=Cyan|Bright;
+    palette.item.gone=Default;
+    palette.enemy.hint=Red|Bright;
+    palette.enemy.strike=Red|Bright;
+    palette.enemy.die=Blue|Bright;
+    palette.enemy.miss=Default;
+    palette.enemy.blocked=Default;
+    palette.enemy.reward=Cyan|Bright;
+    palette.enemy.spawn=Red|Bright;
+    palette.value.plain=Default;
+    palette.value.crit=Yellow|Bright;
+    palette.value.supercrit=Red|Bright;
+    palette.value.high=Green|Bright;
+    palette.value.mid=Yellow|Bright;
+    palette.value.low=Red|Bright;
+    palette.chat.player=Cyan|Bright;
+    palette.chat.text=Default;
+    palette.player.ready=Default;
+    palette.player.miss=Default;
+    palette.player.strike=Green|Bright;
+    palette.player.blocked=Green|Bright;
+    palette.res.hp=Red|Bright;
+    palette.res.st=Green|Bright;
+    palette.res.mp=Blue|Bright;
+    palette.res.pp=Magenta|Bright;
+    palette.threat[0]=Default;
+    palette.threat[1]=Green|Bright;
+    palette.threat[2]=Red|Bright;
+    palette.threat[3]=Yellow|Bright;
+    palette.threat[4]=Magenta|Bright;
 }
 //misc2
 nat dmgreduc(nat dmg,nat def);
@@ -531,9 +969,9 @@ nat critdmg(nat critchance,nat strike,nat basemax,nat *color){
         critdmg+=pow(1.4,i)*(float)basemax;
     }
     critdmg+=(pow(1.3,crittier-1)-1.0f)*(float)(crittier*strike*1.0f);
-    if(crittier==0)*color=Default;
-    else if(crittier==1)*color=Yellow|Bright;
-    else *color=Red|Bright;
+    if(crittier==0)*color=palette.value.plain;
+    else if(crittier==1)*color=palette.value.crit;
+    else *color=palette.value.supercrit;
     return critdmg;
 }
 // cbm
@@ -567,13 +1005,16 @@ typedef struct enemydb{
     struct {
         nat hpmax;
         nat atkcd;
-        nat atk;
-        nat def;
         nat acc;
         nat dod;
-        nat wis;
-        nat act;
-        nat con;
+        nat def;
+        nat vit;
+        nat atk;
+        nat stm;
+        nat san;
+        nat sat;
+        nat mag;
+        nat mat;
     } stats;
 } enemydb;
 
@@ -586,6 +1027,7 @@ enum db_itemtype{
     db_itemtype_consume=0|db_itemtype_stackable_mask, // stackable
     db_itemtype_collect=1|db_itemtype_stackable_mask, // stackable
     db_itemtype_misc=2|db_itemtype_stackable_mask, // stackable
+    db_itemtype_ammo=3|db_itemtype_stackable_mask, // stackable
 };
 typedef struct itemdb{
     nat id;
@@ -753,8 +1195,10 @@ struct {
     } calcstats;
     foo playerdead;
     foo editstats;
-    bool readying;
-    bool isready;
+    foo readying;
+    foo isready;
+    int ynprompt; // 1: switch region
+    int promptarg;
     nat swinging;
     nat targetid;
     nat readyframe;
@@ -772,6 +1216,7 @@ void pshowinv();
 void pshowexp();
 void pteleport(nat roomid);
 void pmove(enum direction dir);
+void pmovedirect(enum direction dir);
 void pready();
 void preadying();
 void pattack(nat entityid);
