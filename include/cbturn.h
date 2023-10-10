@@ -1,7 +1,7 @@
 #ifndef Corburt_Turn_h_Include_Guard
 #define Corburt_Turn_h_Include_Guard
 #include "cbbase.h"
-void timepass(nat tick);
+void timepass(int tick);
 void tickfunc(struct et_room *etr);
 void turnfunc();
 void showtime();
@@ -11,21 +11,22 @@ static void checkfps();
 #endif
 
 #include "cbplayer.h"
+#include "dbbuff.h"
 #include "dbentity.h"
 
-void timepass(nat tick){
+void timepass(int tick){
     if(cbp.playerdead){
         cbp.playerdead=false;
     }
     if(tick<=0)return;
     struct et_room *etr=et_findroomwithid(player.roomid);
-    for(nat i=0;i<tick;i++){
+    for(int i=0; i<tick; i++){
         if(player.roomid!=etr->id)etr=et_findroomwithid(player.roomid);
         tickfunc(etr);
 ///----------------------------------------------------
         global.curtick++;
         if(global.curtick>=30){
-            nat ct=global.curtick%30;
+            int ct=global.curtick%30;
             global.curround+=(global.curtick-ct)/30;
             global.curtick=ct;
 ///----------------------------------------------------
@@ -35,16 +36,16 @@ void timepass(nat tick){
 }
 void tickfunc(struct et_room *etr){
     {/// process enemies
-        for(nat j=0;j<DBE_ENEMYCAP;j++){
+        for(int j=0; j<DBE_ENEMYCAP; j++){
             if(etr->etenemy[j]==0)continue;
             struct et_enemy *ete=&et_enemies[etr->etenemy[j]-1];
 //            const struct enemydb *edb=et_getenemydb(etr->etenemy[j]);
             if(ete->attackcd==0){
-                etenemy_attack(etr->etenemy[j],etr);
+                etenemy_attack(etr->etenemy[j], etr);
                 if(player.roomid!=etr->id)break; // player is dead
             }
         }
-        for(nat i=0;i<enemiesmax;i++){
+        for(int i=0; i<enemiesmax; i++){
             if(!et_enemies[i].available)continue;
             if(et_enemies[i].attackcd>0)et_enemies[i].attackcd--;
             if(et_enemies[i].attackcd<0)et_enemies[i].attackcd=0;
@@ -67,7 +68,7 @@ void turnfunc(){ // tbd
 #endif
     if(global.curround%30==0){
         pregen();
-        for(nat i=0,j=0;i<enemiesmax&&j<enemiescount;i++){
+        for(int i=0, j=0; i<enemiesmax && j<enemiescount; i++){
             if(!et_enemies[i].available)continue;
             j++;
             enemydb *edb=et_getenemydb(i+1);
@@ -87,21 +88,21 @@ void turnfunc(){ // tbd
 }
 void showtime(){
 #ifndef CB_REALTIME
-    printr(palette.inform,msg->global_curtime,global.curround,global.curtick);
+    printr(palette.inform, msg->global_curtime, global.curround, global.curtick);
 #else
     bat h=global.curround/3600;
-    nat s=global.curround%60;
-    nat m=(global.curround%3600-s)/60;
-    printr(palette.inform,msg->global_curtimert,h,m,s,global.curtick);
+    int s=global.curround%60;
+    int m=(global.curround%3600-s)/60;
+    printr(palette.inform, msg->global_curtimert, h, m, s, global.curtick);
 #endif
 }
 #ifdef CB_REALTIME
 static void checkfps(){
 #ifdef Corburt_ShowFPS
     char cbtitlewithfps[128];
-    memset(cbtitlewithfps,0,128);
-//    sprintf(cbtitlewithfps,"Corburt    FPS: %.0f",cbtime_fps);
-    sprintf(cbtitlewithfps,"Corburt    FPS: %.2f",cbtime_fps);
+    memset(cbtitlewithfps, 0, 128);
+//    sprintf(cbtitlewithfps, "Corburt    FPS: %.0f", cbtime_fps);
+    sprintf(cbtitlewithfps, "Corburt    FPS: %.2f", cbtime_fps);
     cbc_setwindowtitle(cbtitlewithfps);
 #endif
     static int badthingshappen=0;
@@ -113,8 +114,8 @@ static void checkfps(){
         badthingshappen*=0.5f;
         badthingshappen-=2;
     }
-    if(fpswarncooldown==0&&badthingshappen>=10){
-        printr(palette.load,msg->global_lag);
+    if(fpswarncooldown==0 && badthingshappen>=10){
+        printr(palette.load, msg->global_lag);
         fpswarncooldownlong+=5;
         fpswarncooldown=fpswarncooldownlong;
         fpswarncooldownlong+=5;
@@ -132,7 +133,7 @@ static void checkfps(){
 #endif
 static void clockpulse(){ // tbd
     //tbd: happens for each 10k lines of input and 10 game hours
-//    printr(Default,msg->global_clock);
+//    printr(Default, msg->global_clock);
     global.curround=0;
     global.curtick=0;
     player.loi=0;

@@ -5,9 +5,9 @@
 #include "cbbase.h"
 #include "cbplayer.h"
 
-itemdb *db_ifindwithid(nat itemid){
+itemdb *db_ifindwithid(int itemid){
     if(itemdbs[itemid-1].id==itemid)return &itemdbs[itemid-1];
-    for(nat i=0;;i++){
+    for(int i=0;; i++){
         if(itemdbs[i].id==itemid){
             return &itemdbs[i];
             break;
@@ -16,7 +16,7 @@ itemdb *db_ifindwithid(nat itemid){
     }
     return NULL;
 }
-void getitemname(nat id,char *itemname){
+void getitemname(int id, char *itemname){
     const char *p;
     switch(id){
     case 0:
@@ -33,12 +33,12 @@ void getitemname(nat id,char *itemname){
         p=idb->name;
         break;
     }
-    strcpy(itemname,p);
+    strcpy(itemname, p);
 }
-void consumeitem(nat itemid){
+void consumeitem(int itemid){
     itemdb *idb=db_ifindwithid(itemid);
-    nat range=idb->stats.max_-idb->stats.min_;
-    nat regennum=idb->stats.min_;
+    int range=idb->stats.max_-idb->stats.min_;
+    int regennum=idb->stats.min_;
     if(range<0){
         range=1-range;
         regennum=genRandLong(&mtrand)%range+idb->stats.max_;

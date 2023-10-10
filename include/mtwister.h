@@ -22,7 +22,7 @@ double genRand(MTRand* rand);
 inline static void m_seedRand(MTRand* rand, uint_fast32_t seed) {
   /* set initial seeds to mt[STATE_VECTOR_LENGTH] using the generator
    * from Line 25 of Table 1 in: Donald Knuth, "The Art of Computer
-   * Programming," Vol. 2 (2nd Ed.) pp.102.
+   * Programming, " Vol. 2 (2nd Ed.) pp.102.
    */
   rand->mt[0] = seed & 0xffffffff;
   for(rand->index=1; rand->index<STATE_VECTOR_LENGTH; rand->index++) {
@@ -45,11 +45,11 @@ MTRand seedRand(uint_fast32_t seed) {
 uint_fast32_t genRandLong(MTRand* rand) {
 
   uint_fast32_t y;
-  static uint_fast32_t mag[2] = {0x0, 0x9908b0df}; /* mag[x] = x * 0x9908b0df for x = 0,1 */
-  if(rand->index >= STATE_VECTOR_LENGTH || rand->index < 0) {
+  static uint_fast32_t mag[2] = {0x0, 0x9908b0df}; /* mag[x] = x * 0x9908b0df for x = 0, 1 */
+  if(rand->index >= STATE_VECTOR_LENGTH  ||  rand->index < 0) {
     /* generate STATE_VECTOR_LENGTH words at a time */
     int kk;
-    if(rand->index >= STATE_VECTOR_LENGTH+1 || rand->index < 0) {
+    if(rand->index >= STATE_VECTOR_LENGTH+1  ||  rand->index < 0) {
       m_seedRand(rand, 4357);
     }
     for(kk=0; kk<STATE_VECTOR_LENGTH-STATE_VECTOR_M; kk++) {

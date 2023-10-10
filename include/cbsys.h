@@ -34,7 +34,7 @@ double cbtime_get(){
     return tmdouble;
 #else
     struct timespec tmspec;
-    clock_gettime(CLOCK_MONOTONIC,&tmspec);
+    clock_gettime(CLOCK_MONOTONIC, &tmspec);
     double tmdouble=tmspec.tv_nsec/1000000000.0f+tmspec.tv_sec*1.0f;
     return tmdouble;
 #endif
@@ -43,7 +43,7 @@ void cbtime_sleep(float ms){
     if(ms<=0)return;
     #if defined(_WIN32)
         Sleep((unsigned int)ms);
-    #elif defined(__linux__) || defined(__FreeBSD__) || defined(__EMSCRIPTEN__)
+    #elif defined(__linux__)  ||  defined(__FreeBSD__)  ||  defined(__EMSCRIPTEN__)
         struct timespec req = { 0 };
         time_t sec = (int)(ms/1000.0f);
         ms -= (sec*1000);
@@ -69,8 +69,8 @@ void cbtime_wait(float targetFPS){
     static double extratime=0;
     double targetwaittime=1.0f/targetFPS;
     double waittime=targetwaittime-cbtime_get()+cbtime_previoustime;
-    if(extratime<0-targetwaittime*5.0f&&extratime<-0.1f)extratime=0;
-    if(extratime>targetwaittime*5.0f&&extratime>0.1f)extratime=0;
+    if(extratime<0-targetwaittime*5.0f && extratime<-0.1f)extratime=0;
+    if(extratime>targetwaittime*5.0f && extratime>0.1f)extratime=0;
     double wait=(waittime+extratime)*1000.0f;
     cbtime_sleep(wait);
     double currenttime=cbtime_get();

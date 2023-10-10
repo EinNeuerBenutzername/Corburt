@@ -68,9 +68,15 @@ struct msgtag{
     const char *player_canttrain_noexp;
     const char *player_canttrain_maxlvl;
     const char *player_trainsuccess;
+    const char *player_res_hp;
+    const char *player_res_fp;
+    const char *player_res_st;
+    const char *player_res_mp;
+    const char *player_res_pp;
+    const char *player_stats_1;
+    const char *player_stats_2;
     const char *player_info;
-    const char *player_stats_brief;
-    const char *player_stats;
+    const char *player_char;
     const char *player_exp;
     const char *player_points;
     const char *player_canteditstats;
@@ -147,7 +153,7 @@ struct msgtag msg_en={
     .global_invalidroomcount="Fatal error:Invalid room number.\n",
     .global_roomcountfewer="Number of rooms in this save file is fewer than expected.\nThe save file might be outdated.\n",
     .global_welcome="Welcome to Corburt.\n\n",
-    .global_splash="   @@@@                @@                      \n"
+    .global_splash= "   @@@@                @@                      \n"
                     "  @@  @@               @@                  @@  \n"
                     "  ##      ####  # ###  ####  ##  ## # ###  ####\n"
                     "  ##     ##  ## ##  ## ## ## ##  ## ##  ## ##  \n",
@@ -167,7 +173,7 @@ struct msgtag msg_en={
     .global_confirmchoice="Are you sure to play as the character '%s'? [Y/N]\n",
     .global_welcomeplayer="Welcome, %s.\n",
     .global_welcomeplayer2="Welcome back, %s.\n",
-    .global_help="-------------------------------------------------------------------\n"
+    .global_help="---------------------------------------------------------------\n"
                 "                           Commands\n"
                 "  $c<label>$o                  - command target\n"
                 "  $c[label]$o                  - optional modifier\n"
@@ -177,33 +183,31 @@ struct msgtag msg_en={
                 "  $chelp$o                     - Show this list\n"
                 "  $cquit$o                     - Save and quit game\n"
                 "  $ctime$o                     - Show current time in-game\n"
-                "  * If you directly close the game, your progress will be lost.\n"
                 "  $csave$o                     - Save current progress\n"
                 "Player Stats\n"
-//                "  abilities                - Show player's abilities\n"
+                "  $cabilities$o                - Show player's abilities\n"
                 "  $ccharacter$o                - Show player's character info\n"
                 "  $ceditstats$o                - Edit player stat points\n"
                 "  $cexperience$o               - Show player's experience\n"
                 "  $cinventory$o                - Show player's inventory\n"
                 "  $cinfo$o                     - Show player's character info\n"
                 "  $cstats$o                    - Show player's base stats\n"
-                "  $cstatistics$o               - Show player's stats\n"
                 "  $ctrain$o                    - Train at the training grounds\n"
                 "Room\n"
                 "  $ceast$o ($cwest$o, $csouth$o, $cnorth$o)- Move towards certain directions\n"
                 "  $clook$o                     - Show room information\n"
                 "Items\n"
-                "  $cbuy$o $c[quantity] <item>$o    - Buy items\n"
-                "  $cdrop$o $c[quantity] <item>$o   - Drop items to the ground\n"
-                "  $cget$o $c[quantity] <item>$o    - Pick up items in the room\n"
+                "  $cbuy [quantity] <item>$o    - Buy items\n"
+                "  $cdrop [quantity] <item>$o   - Drop items to the ground\n"
+                "  $cget [quantity] <item>$o    - Pick up items in the room\n"
                 "  $clist$o                     - Show the list of items at a store\n"
-                "  $csell$o $c[quantity] <item>$o   - Sell items at a store\n"
-                "  $ctake$o $c[quantity] <item>$o   - Pick up items in the room\n"
-                "  $cuse$o <item>               - Use an item\n"
+                "  $csell [quantity] <item>$o   - Sell items at a store\n"
+                "  $ctake [quantity] <item>$o   - Pick up items in the room\n"
+                "  $cuse <item>$o               - Use an item\n"
                 "Combat\n"
                 "  $cattack$o $c<[enemy name]>$o    - Attack an enemy\n"
-                "  * Some commands have abbreviated forms, e.g. '$cst$o' for '$cstats$o'.\n"
-                "-------------------------------------------------------------------\n",
+                "  * Some commands have abbreviated forms, e.g. $cst$o for $cstats$o.\n"
+                "---------------------------------------------------------------\n",
     .global_save_incompat="Incompatible save version: expected %s.\n",
     .global_curtime="Current time: %" PRIdFAST64 " turns, %" PRIdFAST32 " ticks.\n",
     .global_curtimert="Current time: %" PRIdFAST64 " h %" PRIdFAST32 " m %" PRIdFAST32 "s, %" PRIdFAST32 " ticks.\n",
@@ -233,7 +237,7 @@ struct msgtag msg_en={
     .error_badcharbit="Fatal error: Macro CHAR_BIT is not 8.",
     .error_bufferpooloverflow="Fatal error: Buffer pool overflow. Possible reason: memory leak.",
     .error_cannotsave="Fatal error: Cannot create save file.",
-    .line="-------------------------------------------------------------------\n",
+    .line="---------------------------------------------------------------\n",
     .player_walkeast="You walk EAST.\n",
     .player_walkwest="You walk WEST.\n",
     .player_walksouth="You walk SOUTH.\n",
@@ -246,78 +250,53 @@ struct msgtag msg_en={
     .player_canttrain_noexp="You are not experienced enough for your training.\n",
     .player_canttrain_maxlvl="You have reached the limit of what you can achieve with training.\n",
     .player_trainsuccess="You are now level %" PRIdFAST32 "\n",
+    .player_res_hp="$PhHit Points$o:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n",
+    .player_res_fp="$PfFocus$o:         %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n",
+    .player_res_st="$PsStamina$o:       %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n",
+    .player_res_mp="$PmMagicka$o:       %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n",
+    .player_res_pp="$PsSanity$o:        %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n",
+    .player_stats_1="$@sStat Points$o:    %-08" PRIdFAST32 "\n"
+                    "Primary Stats\n"
+                    "  $@sAgility$o:        %-08" PRIdFAST32 "        $@sConstitution$o:  %-08" PRIdFAST32 "\n"
+                    "  $@sResponsiveness$o: %-08" PRIdFAST32 "        $@sStrength$o:      %-08" PRIdFAST32 "\n"
+                    "  $@sWillpower$o:      %-08" PRIdFAST32 "        $@sWisdom$o:        %-08" PRIdFAST32 "\n",
+    .player_stats_2="Secondary Stats\n"
+                    "  $@sAccuracy$o:       %-08" PRIdFAST32 "        $@sDodging$o:       %-08" PRIdFAST32 "\n"
+                    "  $@sDefense$o:        %-08" PRIdFAST32 "        $@sVitality$o:      %-08" PRIdFAST32 "\n"
+                    "  $@sReflection$o:     %-08" PRIdFAST32 "        $@sFocusing$o:      %-08" PRIdFAST32 "\n"
+                    "  $@sStamina$o:        %-08" PRIdFAST32 "        $@sAttack Damage$o: %-08" PRIdFAST32 "\n"
+                    "  $@sSanity$o:         %-08" PRIdFAST32 "        $@sMental Damage$o: %-08" PRIdFAST32 "\n"
+                    "  $@sMagicka$o:        %-08" PRIdFAST32 "        $@sMagic Damage$o:  %-08" PRIdFAST32 "\n",
+
     .player_info="-------------------------------------------------------------------\n"
+                "                          Your Statistics\n"
+                "Name:          %s\n"
+                "Rank:          %s\n"
+                "Level:         %" PRIdFAST32 "\n"
+                "Experience:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n\n"
+                "---------------------------------------------------------------\n",
+    .player_char="---------------------------------------------------------------\n"
                 "                           Your Statistics\n"
                 "Name:          %s\n"
                 "Rank:          %s\n"
-                "Hit Points:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n"
                 "Level:         %" PRIdFAST32 "\n"
                 "Experience:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n\n"
-                "-------------------------------------------------------------------\n"
-                "Primary Stats\n"
-                "Agility:        %-08" PRIdFAST32 "            Constitution:  %-08" PRIdFAST32 "\n"
-                "Responsiveness: %-08" PRIdFAST32 "            Strength:      %-08" PRIdFAST32 "\n"
-                "Willpower:      %-08" PRIdFAST32 "            Wisdom:        %-08" PRIdFAST32 "\n"
-                "Stat Points:    %-08" PRIdFAST32 "\n"
-                "-------------------------------------------------------------------\n"
-                "Secondary Stats\n"
-                "Accuracy:       %-08" PRIdFAST32 "            Dodging:       %-08" PRIdFAST32 "\n"
-                "Defense:        %-08" PRIdFAST32 "            Vitality:      %-08" PRIdFAST32 "\n"
-                "Reflection:     %-08" PRIdFAST32 "            Focusing:      %-08" PRIdFAST32 "\n"
-                "Stamina:        %-08" PRIdFAST32 "            Attack Damage: %-08" PRIdFAST32 "\n"
-                "Sanity:         %-08" PRIdFAST32 "            Mental Damage: %-08" PRIdFAST32 "\n"
-                "Magicka:        %-08" PRIdFAST32 "            Magic Damage:  %-08" PRIdFAST32 "\n"
-                "-------------------------------------------------------------------\n"
-                "Resistances\n"
-                "-------------------------------------------------------------------\n",
-    .player_stats_brief="-------------------------------------------------------------------\n"
-                "                           Your Statistics\n"
-                "Name:          %s\n"
-                "Rank:          %s\n"
-                "Hit Points:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n"
-                "Level:         %" PRIdFAST32 "\n"
-                "Experience:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n\n"
-                "-------------------------------------------------------------------\n"
-                "Agility:        %-08" PRIdFAST32 "            Constitution:  %-08" PRIdFAST32 "\n"
-                "Responsiveness: %-08" PRIdFAST32 "            Strength:      %-08" PRIdFAST32 "\n"
-                "Willpower:      %-08" PRIdFAST32 "            Wisdom:        %-08" PRIdFAST32 "\n"
-                "Stat Points:    %-08" PRIdFAST32 "\n"
-                "-------------------------------------------------------------------\n",
-    .player_stats="-------------------------------------------------------------------\n"
-                "                           Your Statistics\n"
-                "Name:          %s\n"
-                "Rank:          %s\n"
-                "Hit Points:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n"
-                "Level:         %" PRIdFAST32 "\n"
-                "Experience:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n\n"
-                "-------------------------------------------------------------------\n"
-                "Agility:        %-08" PRIdFAST32 "            Constitution:  %-08" PRIdFAST32 "\n"
-                "Responsiveness: %-08" PRIdFAST32 "            Strength:      %-08" PRIdFAST32 "\n"
-                "Willpower:      %-08" PRIdFAST32 "            Wisdom:        %-08" PRIdFAST32 "\n"
-                "Stat Points:    %-08" PRIdFAST32 "\n"
-                "-------------------------------------------------------------------\n"
-                "Accuracy:       %-08" PRIdFAST32 "            Dodging:       %-08" PRIdFAST32 "\n"
-                "Defense:        %-08" PRIdFAST32 "            Vitality:      %-08" PRIdFAST32 "\n"
-                "Reflection:     %-08" PRIdFAST32 "            Focusing:      %-08" PRIdFAST32 "\n"
-                "Stamina:        %-08" PRIdFAST32 "            Attack Damage: %-08" PRIdFAST32 "\n"
-                "Sanity:         %-08" PRIdFAST32 "            Mental Damage: %-08" PRIdFAST32 "\n"
-                "Magicka:        %-08" PRIdFAST32 "            Magic Damage:  %-08" PRIdFAST32 "\n"
-                "-------------------------------------------------------------------\n",
+                "---------------------------------------------------------------\n",
     .player_exp="Level:         %" PRIdFAST32 "\n"
                 "Experience:    %" PRIdFAST64 "/%" PRIdFAST64 " (%.2f%%)\n",
-    .player_points="-------------------------------------------------------------------\n"
+    .player_points="---------------------------------------------------------------\n"
                 "                           Your Base Stats\n"
                 "1) Agility:        %-08" PRIdFAST32 "      2) Constitution:   %-08" PRIdFAST32 "\n"
                 "3) Responsiveness: %-08" PRIdFAST32 "      4) Strength:       %-08" PRIdFAST32 "\n"
                 "5) Willpower:      %-08" PRIdFAST32 "      6) Wisdom:         %-08" PRIdFAST32 "\n"
                 "Stat Points:       %-08" PRIdFAST32 "\n"
-                "-------------------------------------------------------------------\n",
+                "---------------------------------------------------------------\n",
     .player_canteditstats="You can't edit your stats outside a training room.\n",
     .player_editstatshint="Enter a number to enhance the corresponding stat, type 'exit' to return to game.\n",
     .player_editstatsnopoints="You don't have available stat points.\n",
     .player_editstatsunknown="Unknown command.\n",
     .player_editstatsend="You have no more stat points available.\n",
-    .player_inv="-------------------------------------------------------------------\n"
+    .player_inv="---------------------------------------------------------------\n"
                 "                           Your Inventory\n"
                 "Money:         $%-08" PRIdFAST64 "\n"
                 "Capacity:      %" PRIdFAST32 "/%" PRIdFAST32 "\n"
@@ -330,9 +309,9 @@ struct msgtag msg_en={
     .player_inv_wield="You wield the %s.\n",
     .player_inv_equip="You equip the %s.\n",
     .player_inv_alreadyequipped="%s already equipped!\n",
-    .player_abl="-------------------------------------------------------------------\n"
+    .player_abl="---------------------------------------------------------------\n"
     "                           Your Abilities\n"
-    "-------------------------------------------------------------------\n",
+    "---------------------------------------------------------------\n",
     .player_say="%s says: ",
     .player_die="You died!\n",
     .player_die_xplost="You lost %" PRIdFAST64 " exp.\n",

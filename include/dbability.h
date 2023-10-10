@@ -39,11 +39,11 @@ enum db_abitag {
     db_abitag_breakondeath=1
 };
 struct abilitydb {
-    nat ac;
-    nat ac_2;
-    nat fx;
-    nat fx_arg;
-    nat tag;
-    nat status;
+    int ac;
+    int ac_2;
+    int fx;
+    int fx_arg;
+    int tag;
+    int status;
 };
 #endif

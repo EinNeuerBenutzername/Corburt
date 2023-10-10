@@ -3,7 +3,7 @@
 #define PLAYER_LVL_CAP 20 // for Lite
 //#define PLAYER_LVL_CAP 100
 #define DMG_RATIO 0.334f
-#include "dbmap.h"
+#define STAT_MAX 9999
 const bat exp2next[]={
     [0]=20,
     [1]=80,
@@ -128,47 +128,52 @@ const bat exp2next[]={
     [120]=10000000000000
 };
 const char *ranks[]={
-//    "Golem","Kin","Regular",
-//    "Lesser Unfading","Unfading","Knight","Higher Kin",
-//    "Demigod","King","Sage",
-//    "God","True Sage","Carnage King",
+//    "Golem", "Kin", "Regular",
+//    "Lesser Unfading", "Unfading", "Knight", "Higher Kin",
+//    "Demigod", "King", "Sage",
+//    "God", "True Sage", "Carnage King",
 //    "Supreme"
-    "$T0Golem$o","$T0Kin$o","$T0Regular$o",
-    "$T1Lesser Unfading$o","$T1Unfading$o","$T1Knight$o","$T1Higher Kin$o",
-    "$T2Demigod$o","$T2King$o","$T2Sage$o",
-    "$T3God$o","$T3True Sage$o","$T3Carnage King$o",
+    "$T0Golem$o", "$T0Kin$o", "$T0Regular$o",
+    "$T1Lesser Unfading$o", "$T1Unfading$o", "$T1Knight$o", "$T1Higher Kin$o",
+    "$T2Demigod$o", "$T2King$o", "$T2Sage$o",
+    "$T3God$o", "$T3True Sage$o", "$T3Carnage King$o",
     "$T4Supreme$o"
 };
-const nat ranklvlcap[]={
-    40,40,40,
-    60,75,75,75,
-    100,110,100,
-    135,120,150, // 120 for the player
+const int ranklvlcap[]={
+    40, 40, 40,
+    60, 75, 75, 75,
+    100, 110, 100,
+    135, 120, 150, // all 120 for the player, though...
     99999
 };
-static int pswitchregprompt();
+//static int pswitchregprompt();
 static void pmovesuccess();
 static void paddgearstats();
 static void plvlup();
-static void pchangerank(nat targetrank);
+static void pchangerank(int targetrank);
 static void pbreakready();
 
+#include "dbmap.h"
+#include "dbability.h"
+#include "dbbuff.h"
 #include "dbitem.h"
+#include "dbinteract.h"
 #include "cbturn.h"
+
 
 // br: breaks the "ready" state
 
 static void plvlup(){
     if(player.lvl>=ranklvlcap[player.rnk])return;
-    if(player.lvl>=120&&player.rnk!=rank_supreme)return;
+    if(player.lvl>=120 && player.rnk!=rank_supreme)return;
     if(player.lvl>=PLAYER_LVL_CAP)return;
     player.lvl++;
     player.stats.pts+=4;
     player.stats.pts+=player.lvl/9.429f;
     pcalcstats();
-    printr(palette.success,msg->player_trainsuccess,player.lvl);
+    printr(palette.success, msg->player_trainsuccess, player.lvl);
 }
-static void pchangerank(nat targetrank){}
+static void pchangerank(int targetrank){}
 static void paddgearstats(){ // prep'ed
     if(inventory.weapon!=0){
         struct et_item *eti=&et_items[inventory.items[inventory.weapon-1]-1];
@@ -229,7 +234,7 @@ static void paddgearstats(){ // prep'ed
         cbp.calcstats.luck+=idb->stats.luck;
         cbp.calcstats.regen+=idb->stats.regen;
     }
-    for(nat i=0;i<5;i++){
+    for(int i=0; i<5; i++){
         if(inventory.accessories[i]!=0){
             struct et_item *eti=&et_items[inventory.items[inventory.accessories[i]-1]-1];
             itemdb *idb=db_ifindwithid(eti->itemid);
@@ -256,51 +261,54 @@ static void paddgearstats(){ // prep'ed
         }
     }
 }
-void paddexp(nat add){
+void paddexp(int add){
     if(add>0)player.exp+=add;
-    else if(add<0&&player.exp+add>0)player.exp+=add;
+    else if(add<0){
+        if(player.exp+add>0) player.exp+=add;
+        else player.exp=0;
+    }
     if(player.exp>exp2next[PLAYER_LVL_CAP-1])player.exp=exp2next[PLAYER_LVL_CAP-1];
 }
-void phpchange(nat num){
+void phpchange(int num){
     if(num==0)return;
     if(num>0){
         if(player.hp==player.maxhp)return;
         if(player.hp+num<player.maxhp)player.hp+=num;
         else player.hp=player.maxhp;
-        printr(palette.res.hp,"HP");
-        printr(palette.msg,": [");
-        nat color;
+        printr(palette.res.hp, "HP");
+        printr(palette.msg, ": [");
+        int color;
         if(player.hp<player.maxhp*0.3333f)color=palette.value.low;
         else if(player.hp<player.maxhp*0.6667f)color=palette.value.mid;
         else color=palette.value.high;
-        printr(color,"%" PRIdFAST64,player.hp);
-        printr(palette.msg,"/%" PRIdFAST64 "]\n",player.maxhp);
+        printr(color, "%" PRIdFAST64, player.hp);
+        printr(palette.msg, "/%" PRIdFAST64 "]\n", player.maxhp);
     }
     else{
         if(player.hp+num>0){
             player.hp+=num;
-            printr(palette.res.hp,"HP");
-            printr(palette.msg,": [");
-            nat color;
+            printr(palette.res.hp, "HP");
+            printr(palette.msg, ": [");
+            int color;
             if(player.hp<player.maxhp*0.3333f)color=palette.value.low;
             else if(player.hp<player.maxhp*0.6667f)color=palette.value.mid;
             else color=palette.value.high;
-            printr(color,"%" PRIdFAST64,player.hp);
-            printr(palette.msg,"/%" PRIdFAST64 "]\n",player.maxhp);
+            printr(color, "%" PRIdFAST64, player.hp);
+            printr(palette.msg, "/%" PRIdFAST64 "]\n", player.maxhp);
         }
         else pdie();
     }
 }
 void pdie(){ // br
     pbreakready();
-    printr(palette.prompt,msg->player_die);
+    printr(palette.prompt, msg->player_die);
     // should be teleported back to the spawn point
-    printr(palette.prompt,msg->player_die_xplost,(bat)(player.exp-(bat)player.exp*0.9f));
+    printr(palette.prompt, msg->player_die_xplost, (bat)(player.exp-(bat)player.exp*0.9f));
     player.exp*=0.9f;
     player.hp=player.maxhp*0.7f;
     { // drop money and item
-        nat dropm=inventory.money*0.1f;
-        if(dropm>0&&inventory.money>0){
+        int dropm=inventory.money*0.1f;
+        if(dropm>0 && inventory.money>0){
             inventory.money-=dropm;
             struct et_room *etr=&et_rooms[player.roomid-1];
             if(!etr){
@@ -308,16 +316,16 @@ void pdie(){ // br
                 return;
             }
             etr->money+=dropm;
-            printr(palette.prompt,msg->db_retmoneydrop,dropm);
+            printr(palette.prompt, msg->db_retmoneydrop, dropm);
         }
-        nat itemsc=0;
-        for(nat i=0;i<inventory.unlocked;i++){
+        int itemsc=0;
+        for(int i=0; i<inventory.unlocked; i++){
             if(inventory.items[i]!=0)itemsc++;
         }
         if(itemsc){
-            nat dropid=genRandLong(&mtrand)%itemsc;
-            printf("%d/%d\n",dropid,itemsc);
-            for(nat i=0,j=0;i<inventory.unlocked;i++){
+            int dropid=genRandLong(&mtrand)%itemsc;
+            printf("%d/%d\n", dropid, itemsc);
+            for(int i=0, j=0; i<inventory.unlocked; i++){
                 if(inventory.items[i]==0)continue;
                 if(j==dropid){
                     itemdb *idb=et_getitemdb(inventory.items[i]);
@@ -325,8 +333,8 @@ void pdie(){ // br
                         warn(msg->db_ietidnullexceptionerror);
                         return;
                     }
-                    etitem_rebind(inventory.items[i],player.roomid);
-                    printr(palette.prompt,msg->db_retitemdrop,idb->name);
+                    etitem_rebind(inventory.items[i], player.roomid);
+                    printr(palette.prompt, msg->db_retitemdrop, idb->name);
                     break;
                 }
                 j++;
@@ -341,29 +349,28 @@ void pcalcstats(){
     { // hp
         player.maxhp=10;
         player.maxhp+=player.lvl*(player.lvl/1.942f);
-        player.maxhp+=player.stats.con*pow(player.lvl,0.7)/2.85f;
-        player.maxhp+=player.stats.con*pow(player.lvl,1.5)/32.52f;
-        player.maxhp+=player.stats.con*player.stats.con*pow(player.lvl,0.7)/25972.142f;
+        player.maxhp+=player.stats.con*pow(player.lvl, 0.7)/2.85f;
+        player.maxhp+=player.stats.con*pow(player.lvl, 1.5)/32.52f;
+        player.maxhp+=player.stats.con*player.stats.con*pow(player.lvl, 0.7)/25972.142f;
         if(player.maxhp<1)player.maxhp=1;
         if(player.hp>player.maxhp)player.hp=player.maxhp;
     }
     { // stats
-        int statcap=99999;
-        if(player.stats.agi>statcap)player.stats.agi=statcap;
-        if(player.stats.con>statcap)player.stats.con=statcap;
-        if(player.stats.res>statcap)player.stats.res=statcap;
-        if(player.stats.str>statcap)player.stats.str=statcap;
-        if(player.stats.wil>statcap)player.stats.wil=statcap;
-        if(player.stats.wis>statcap)player.stats.wis=statcap;
-        if(player.stats.luck>statcap)player.stats.luck=statcap;
-        if(player.stats.pts>statcap)player.stats.pts=statcap;
-        if(player.bstats.agi>statcap)player.bstats.agi=statcap;
-        if(player.bstats.con>statcap)player.bstats.con=statcap;
-        if(player.bstats.res>statcap)player.bstats.res=statcap;
-        if(player.bstats.str>statcap)player.bstats.str=statcap;
-        if(player.bstats.wil>statcap)player.bstats.wil=statcap;
-        if(player.bstats.wis>statcap)player.bstats.wis=statcap;
-        if(player.bstats.luck>statcap)player.bstats.luck=statcap;
+        if(player.stats.agi>STAT_MAX)player.stats.agi=STAT_MAX;
+        if(player.stats.con>STAT_MAX)player.stats.con=STAT_MAX;
+        if(player.stats.res>STAT_MAX)player.stats.res=STAT_MAX;
+        if(player.stats.str>STAT_MAX)player.stats.str=STAT_MAX;
+        if(player.stats.wil>STAT_MAX)player.stats.wil=STAT_MAX;
+        if(player.stats.wis>STAT_MAX)player.stats.wis=STAT_MAX;
+        if(player.stats.luck>STAT_MAX)player.stats.luck=STAT_MAX;
+        if(player.stats.pts>STAT_MAX)player.stats.pts=STAT_MAX;
+        if(player.bstats.agi>STAT_MAX)player.bstats.agi=STAT_MAX;
+        if(player.bstats.con>STAT_MAX)player.bstats.con=STAT_MAX;
+        if(player.bstats.res>STAT_MAX)player.bstats.res=STAT_MAX;
+        if(player.bstats.str>STAT_MAX)player.bstats.str=STAT_MAX;
+        if(player.bstats.wil>STAT_MAX)player.bstats.wil=STAT_MAX;
+        if(player.bstats.wis>STAT_MAX)player.bstats.wis=STAT_MAX;
+        if(player.bstats.luck>STAT_MAX)player.bstats.luck=STAT_MAX;
         cbp.calcstats.agi=player.stats.agi+player.bstats.agi;
         cbp.calcstats.con=player.stats.con+player.bstats.con;
         cbp.calcstats.res=player.stats.res+player.bstats.res;
@@ -376,73 +383,74 @@ void pcalcstats(){
     }
 }
 void pshowinfo(){
-
+    pshowcharacter();
+    pshowresources();
 }
-void pshowstatsbrief(){
-    pcalcstats();
+void pshowcharacter(){
     printr(palette.msg,
-        msg->player_stats_brief,
+        msg->player_char,
         player.name,
         ranks[player.rnk],
-        player.hp,player.maxhp,(player.hp*100.0f/player.maxhp),
-        player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]),
-        cbp.calcstats.agi,cbp.calcstats.con,
-        cbp.calcstats.res,cbp.calcstats.str,
-        cbp.calcstats.wil,cbp.calcstats.wis,
-        player.stats.pts
+        player.lvl, player.exp, exp2next[player.lvl-1], (player.exp*100.0f/exp2next[player.lvl-1])
     );
 }
 void pshowstats(){
     pcalcstats();
     printr(palette.msg,
-        msg->player_stats,
-        player.name,
-        ranks[player.rnk],
-        player.hp,player.maxhp,(player.hp*100.0f/player.maxhp),
-        player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]),
-        cbp.calcstats.agi,cbp.calcstats.con,
-        cbp.calcstats.res,cbp.calcstats.str,
-        cbp.calcstats.wil,cbp.calcstats.wis,
-        cbp.calcstats.acc,cbp.calcstats.dod,
-        cbp.calcstats.def,cbp.calcstats.vit,
-        cbp.calcstats.rfl,cbp.calcstats.foc,
-        cbp.calcstats.atk,cbp.calcstats.stm,
-        cbp.calcstats.san,cbp.calcstats.sat,
-        cbp.calcstats.mag,cbp.calcstats.mat,
-        player.stats.pts
+        msg->player_stats_1,
+        player.stats.pts,
+        cbp.calcstats.agi, cbp.calcstats.con,
+        cbp.calcstats.res, cbp.calcstats.str,
+        cbp.calcstats.wil, cbp.calcstats.wis
+    );
+    printr(palette.msg,
+        msg->player_stats_2,
+        cbp.calcstats.acc, cbp.calcstats.dod,
+        cbp.calcstats.def, cbp.calcstats.vit,
+        cbp.calcstats.rfl, cbp.calcstats.foc,
+        cbp.calcstats.atk, cbp.calcstats.stm,
+        cbp.calcstats.san, cbp.calcstats.sat,
+        cbp.calcstats.mag, cbp.calcstats.mat
     );
 }
-void pshowabl(){printr(palette.msg,msg->player_abl);}
+void pshowresources(){
+    printr(palette.msg,msg->player_res_hp,player.hp,player.maxhp,(player.hp*100.0f/player.maxhp));
+    printr(palette.msg,msg->player_res_fp,player.fp,player.maxfp,(player.fp*100.0f/player.maxfp));
+    printr(palette.msg,msg->player_res_st,player.st,player.maxst,(player.fp*100.0f/player.maxst));
+    if(player.info.hasMP)printr(palette.msg,msg->player_res_mp,player.mp,player.maxmp,(player.mp*100.0f/player.maxmp));
+    if(player.info.hasPP)printr(palette.msg,msg->player_res_pp,player.pp,player.maxpp,(player.pp*100.0f/player.maxpp));
+}
+void pshowabl(){printr(palette.msg, msg->player_abl);}
 void pshowinv(){
-    nat invitemscount=0;
-    for(nat i=0;i<64;i++){
+    int invitemscount=0;
+    for(int i=0; i<64; i++){
         if(inventory.items[i]!=0)invitemscount++;
     }
     printr(palette.msg,
         msg->player_inv,
         inventory.money,
-        invitemscount,inventory.unlocked
+        invitemscount, inventory.unlocked
     );
-    if(invitemscount==0)printr(palette.msg,msg->player_inv_none);
+    if(invitemscount==0)printr(palette.msg, msg->player_inv_none);
     else{
-        for(nat i=0,j=0;i<64;i++){
+        for(int i=0, j=0; i<64; i++){
             if(inventory.items[i]!=0){
                 struct et_item *eti=&et_items[inventory.items[i]-1];
                 itemdb *idb=db_ifindwithid(eti->itemid);
-                if(j>0)printr(palette.msg,"\n               ");
+                if(j>0)printr(palette.msg, "\n               ");
                 if(inventory.weapon==i+1){
-                    printr(palette.item.interact,msg->player_inv_wielding);
+                    printr(palette.item.interact, msg->player_inv_wielding);
                 }
                 if(inventory.armor==i+1){
-                    printr(palette.item.interact,msg->player_inv_wearing);
+                    printr(palette.item.interact, msg->player_inv_wearing);
                 }
-                for(nat k=0;k<5;k++)if(inventory.accessories[k]==i+1){
-                    printr(palette.item.interact,msg->player_inv_equipping);
+                for(int k=0; k<5; k++)if(inventory.accessories[k]==i+1){
+                    printr(palette.item.interact, msg->player_inv_equipping);
                     break;
                 }
-                printrp(palette.msg,"                ","%s ",idb->name);
-                if(idb->type&db_itemtype_stackable_mask&&eti->qnty>1){
-                    printrp(palette.msg,"                ","(x%" PRIdFAST32 ")",eti->qnty);
+                printrp(palette.msg, "                ", "%s ", idb->name);
+                if(idb->type&db_itemtype_stackable_mask && eti->qnty>1){
+                    printrp(palette.msg, "                ", "(x%" PRIdFAST32 ")", eti->qnty);
                 }
                 invitemscount--;
                 j++;
@@ -450,12 +458,12 @@ void pshowinv(){
             }
         }
     }
-    printr(palette.msg,"\n%s",msg->line);
+    printr(palette.msg, "\n%s", msg->line);
 }
 void pshowexp(){
-    printr(palette.msg,msg->player_exp,player.lvl,player.exp,exp2next[player.lvl-1],(player.exp*100.0f/exp2next[player.lvl-1]));
+    printr(palette.msg, msg->player_exp, player.lvl, player.exp, exp2next[player.lvl-1], (player.exp*100.0f/exp2next[player.lvl-1]));
 }
-void pteleport(nat roomid){
+void pteleport(int roomid){
     roomdb *rm=db_rfindwithid(roomid);
     if(rm==NULL){
         warn(msg->db_ridnullexceptionerror);
@@ -471,11 +479,11 @@ void pmove(enum direction dir){ // br
         warn(msg->db_ridnullexceptionerror);
         return;
     }
-    if(!rm->exits[dir]){printr(palette.promptfail,msg->player_walkno);return;}
+    if(!rm->exits[dir]){printr(palette.promptfail, msg->player_walkno);return;}
     roomdb *rmtarget=db_rfindwithid(rm->exits[dir]);
     if(rmtarget==NULL){
         warn(msg->db_ridnullexceptionerror);
-        printr(palette.promptfail,msg->player_walkno);
+        printr(palette.promptfail, msg->player_walkno);
         return;
     }
 //    if(rm->region!=rmtarget->region){
@@ -497,67 +505,61 @@ void pmovedirect(enum direction dir){
     player.roomid=rm->exits[dir];
     switch(dir){
     case dir_East:
-        printr(palette.room.change,msg->player_walkeast);
+        printr(palette.room.change, msg->player_walkeast);
         pmovesuccess();
         return;
     case dir_West:
-        printr(palette.room.change,msg->player_walkwest);
+        printr(palette.room.change, msg->player_walkwest);
         pmovesuccess();
         return;
     case dir_North:
-        printr(palette.room.change,msg->player_walknorth);
+        printr(palette.room.change, msg->player_walknorth);
         pmovesuccess();
         return;
     case dir_South:
-        printr(palette.room.change,msg->player_walksouth);
+        printr(palette.room.change, msg->player_walksouth);
         pmovesuccess();
         return;
     case dir_Up:
-        printr(palette.room.change,msg->player_walkup);
+        printr(palette.room.change, msg->player_walkup);
         pmovesuccess();
         return;
     case dir_Down:
-        printr(palette.room.change,msg->player_walkdown);
+        printr(palette.room.change, msg->player_walkdown);
         pmovesuccess();
         return;
     default:
         break;
     }
-    printr(palette.promptfail,msg->player_walkno);
-}
-static int pswitchregprompt(){ //br
-    pbreakready();
-    cbp.ynprompt=true;
-    printr(palette.prompt,msg->player_switchregionprompt);
-    return 0;
+    printr(palette.promptfail, msg->player_walkno);
 }
 static void pmovesuccess(){
     db_rshowdesc(player.roomid);
     roomdb *rm=db_rfindwithid(player.roomid);
     { // enemies are waiting
         struct et_room *etr=et_findroomwithid(player.roomid);
-        for(nat i=0;i<DBE_ENEMYCAP;i++){
+        for(int i=0; i<DBE_ENEMYCAP; i++){
             struct et_enemy *ete=&et_enemies[etr->etenemy[i]-1];
             if(ete->attackcd<=1)ete->attackcd+=genRandLong(&mtrand)%8+1;
         }
     }
-    if(rm->type==db_roomtype_birth&&player.spawn!=player.roomid){
+    if(rm->type==db_roomtype_birth && player.spawn!=player.roomid){
         player.spawn=player.roomid;
-        printr(palette.inform,msg->player_spawnupdate,rm->name);
+        printr(palette.inform, msg->player_spawnupdate, rm->name);
     }
 }
 void pready(){
     cbp.readying=true;
     if(cbp.readyframe<0)cbp.readyframe=0;
     if(cbp.isready){
-        printr(palette.player.ready,msg->player_isalready);
+        printr(palette.player.ready, msg->player_isalready);
     }
 }
 void preadying(){
     if(!cbp.readying)return;
-    if(cbp.readyframe>=cbp.calcstats.prep&&cbp.isready==false){
+    if(cbp.readyframe>=cbp.calcstats.prep && cbp.isready==false){
         cbp.isready=true;
-        printr(palette.player.ready,msg->player_isready);
+        printr(palette.player.ready, msg->player_isready);
     }else if(cbp.readyframe<cbp.calcstats.prep){
         cbp.readyframe++;
     }
@@ -567,9 +569,9 @@ static void pbreakready(){
     cbp.readying=false;
     cbp.readyframe=0;
 }
-void pattack(nat entityid){ // br
+void pattack(int entityid){ // br
 //    if(cbp.attackcd>0){
-//        printr(palette.promptfail,msg->player_cantattack);
+//        printr(palette.promptfail, msg->player_cantattack);
 //        return;
 //    }
     struct et_enemy *ete=&et_enemies[entityid-1];
@@ -580,24 +582,24 @@ void pattack(nat entityid){ // br
     const enemydb *edb=et_getenemydb(entityid);
     bool enemycandodge;
     { // enemycandodge
-        nat edod=edb->stats.dod;
+        int edod=edb->stats.dod;
         if(edb->loot.weapon)edod+=db_ifindwithid(edb->loot.weapon)->stats.dod;
         if(edb->loot.armor)edod+=db_ifindwithid(edb->loot.armor)->stats.dod;
-        enemycandodge=accreduc(cbp.calcstats.acc,edod);
+        enemycandodge=accreduc(cbp.calcstats.acc, edod);
     }
     if(enemycandodge){
-        printr(palette.player.miss,msg->db_eetyouattackmiss,edb->name);
+        printr(palette.player.miss, msg->db_eetyouattackmiss, edb->name);
     }else{
-        nat bdmg=cbp.calcstats.atk*DMG_RATIO,edef=edb->stats.def;
-        nat dmgcolor=0;
+        int bdmg=cbp.calcstats.atk*DMG_RATIO, edef=edb->stats.def;
+        int dmgcolor=0;
         { // player base damage
-            nat delta=cbp.calcstats.max_-cbp.calcstats.min_;
+            int delta=cbp.calcstats.max_-cbp.calcstats.min_;
             bdmg+=cbp.calcstats.min_;
             if(delta!=0){
                 if(delta<0)delta=0-delta;
                 bdmg+=genRandLong(&mtrand)%(delta)+cbp.calcstats.min_;
             }
-            bdmg+=critdmg(cbp.calcstats.crit,cbp.calcstats.atk,cbp.calcstats.max_,&dmgcolor);
+            bdmg+=critdmg(cbp.calcstats.crit, cbp.calcstats.atk, cbp.calcstats.max_, &dmgcolor);
             if(bdmg<1)bdmg=1;
         }
         { // enemy defense
@@ -608,14 +610,14 @@ void pattack(nat entityid){ // br
                 edef+=db_ifindwithid(edb->loot.armor)->stats.def;
             }
         }
-        nat dmg=dmgreduc(bdmg,edef*DMG_RATIO);
+        int dmg=dmgreduc(bdmg, edef*DMG_RATIO);
         if(dmg){
-            printr(palette.player.strike,msg->db_eetyouattack1,edb->name);
-            printr(dmgcolor,msg->db_eetyouattack2,dmg);
-            printr(palette.player.strike,msg->db_eetyouattack3);
+            printr(palette.player.strike, msg->db_eetyouattack1, edb->name);
+            printr(dmgcolor, msg->db_eetyouattack2, dmg);
+            printr(palette.player.strike, msg->db_eetyouattack3);
         }
-        else printr(palette.player.blocked,msg->db_eetyouattackblocked,edb->name);
-        etenemy_takedamage(entityid,dmg);
+        else printr(palette.player.blocked, msg->db_eetyouattackblocked, edb->name);
+        etenemy_takedamage(entityid, dmg);
     }
     pbreakready();
 #ifndef CB_REALTIME
@@ -632,23 +634,23 @@ void ptrain(){ // br
         return;
     }
     if(rm->type!=db_roomtype_train){
-        printr(palette.promptfail,msg->player_canttrain);
+        printr(palette.promptfail, msg->player_canttrain);
         return;
     }
     if(player.lvl==PLAYER_LVL_CAP){
-        printr(palette.promptfail,msg->player_canttrain_maxlvl);
+        printr(palette.promptfail, msg->player_canttrain_maxlvl);
         return;
     }
     if(player.lvl>=ranklvlcap[player.rnk]){
-        printr(palette.promptfail,msg->player_canttrain_maxlvl);
+        printr(palette.promptfail, msg->player_canttrain_maxlvl);
         return;
     }
-    if(player.lvl>=120&&player.rnk!=rank_supreme){
-        printr(palette.promptfail,msg->player_canttrain_maxlvl);
+    if(player.lvl>=120 && player.rnk!=rank_supreme){
+        printr(palette.promptfail, msg->player_canttrain_maxlvl);
         return;
     }
     if(player.exp<exp2next[player.lvl-1]){
-        printr(palette.promptfail,msg->player_canttrain_noexp);
+        printr(palette.promptfail, msg->player_canttrain_noexp);
     }else{
         plvlup();
     }
@@ -656,24 +658,24 @@ void ptrain(){ // br
 void peditstats(){ // br
     pbreakready();
     if(db_rfindwithid(player.roomid)->type!=db_roomtype_train){
-        printr(palette.promptfail,msg->player_canteditstats);
+        printr(palette.promptfail, msg->player_canteditstats);
         return;
     }
     if(player.stats.pts){
         cbp.editstats=true;
-        printr(palette.promptfail,msg->player_editstatshint);
-        printr(palette.promptfail,msg->player_points,
-            player.stats.agi,player.stats.con,
-            player.stats.res,player.stats.str,
-            player.stats.wil,player.stats.wis,
+        printr(palette.promptfail, msg->player_editstatshint);
+        printr(palette.promptfail, msg->player_points,
+            player.stats.agi, player.stats.con,
+            player.stats.res, player.stats.str,
+            player.stats.wil, player.stats.wis,
             player.stats.pts);
     }else{
-        printr(palette.promptfail,msg->player_points,
-            player.stats.agi,player.stats.con,
-            player.stats.res,player.stats.str,
-            player.stats.wil,player.stats.wis,
+        printr(palette.promptfail, msg->player_points,
+            player.stats.agi, player.stats.con,
+            player.stats.res, player.stats.str,
+            player.stats.wil, player.stats.wis,
             player.stats.pts);
-        printr(palette.promptfail,msg->player_editstatsnopoints);
+        printr(palette.promptfail, msg->player_editstatsnopoints);
     }
 }
 void peditstatsend(){
@@ -682,13 +684,13 @@ void peditstatsend(){
     db_rshowdesc(player.roomid);
 }
 void pregen(){
-    nat regennum=player.lvl;
+    int regennum=player.lvl;
     regennum+=cbp.calcstats.con;
     regennum+=cbp.calcstats.regen;
-//    printr(palette.success,"Regen: +%d (extra +%d)\n",regennum,cbp.calcstats.regen);
+//    printr(palette.success, "Regen: +%d (extra +%d)\n", regennum, cbp.calcstats.regen);
     phpchange(regennum);
 }
-void ptakedmg(nat dmg){
+void ptakedmg(int dmg){
     if(dmg<=0)return;
     if(player.hp-dmg>0){
         phpchange(0-dmg);
@@ -699,9 +701,16 @@ void ptakedmg(nat dmg){
     }
 }
 bool pcandodge(enemydb *edb){
-    nat gearacc=0;
+    int gearacc=0;
     if(edb->loot.weapon)gearacc+=db_ifindwithid(edb->loot.weapon)->stats.acc;
     if(edb->loot.armor)gearacc+=db_ifindwithid(edb->loot.armor)->stats.acc;
-    return accreduc(edb->stats.acc+gearacc,cbp.calcstats.dod);
+    return accreduc(edb->stats.acc+gearacc, cbp.calcstats.dod);
 }
+
+/*static int pswitchregprompt(){ //br
+    pbreakready();
+    cbp.ynprompt=true;
+    printr(palette.prompt, msg->player_switchregionprompt);
+    return 0;
+}*/
 #endif
