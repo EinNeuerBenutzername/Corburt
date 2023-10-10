@@ -16,16 +16,44 @@ static int fio_isle(){
 struct fio{
     size_t filesize;
     size_t fileptr;
+    size_t workingdirmaxlen;
     int_fast8_t int_fast32_t_size;
     int_fast8_t int_fast64_t_size;
     int_fast8_t char_size;
     int_fast8_t fail;
-} fio={0, 0, 4, 8, 1, 0};
+    char *workingdir;
+} fio={0, 0, 256, 4, 8, 1, 0, NULL};
 
+FILE *fopenrelative(const char *relative_path, const char *restrict_mode);
+void fio_init(const char *execpath);
 void fio_getfilesize(char *filename);
 void fio_fail(const char *errmsg);
+void fio_denit();
+FILE *fopenrelative(const char *relative_path, const char *restrict_mode){
+    char *tmppath=malloc(fio.workingdirmaxlen);
+    memset(tmppath, 0, fio.workingdirmaxlen);
+    strcpy(tmppath, fio.workingdir);
+    strcat(tmppath, relative_path);
+    FILE *fp=fopen(tmppath, restrict_mode);
+    free(tmppath);
+    return fp;
+}
+void fio_init(const char *execpath){
+    int execpathlen=strlen(execpath);
+    fio.workingdir=malloc(execpathlen+1);
+    fio.workingdirmaxlen=execpathlen+32;
+    memset(fio.workingdir, 0, execpathlen+1);
+    strcpy(fio.workingdir,execpath);
+    for(int i=execpathlen-1; i>=0; i--){
+        if(fio.workingdir[i]=='\\' || fio.workingdir[i]=='/'){
+            break;
+        }else{
+            fio.workingdir[i]=0;
+        }
+    }
+}
 void fio_getfilesize(char *filename){
-    FILE *fp=fopen(filename, "rb");
+    FILE *fp=fopenrelative(filename, "rb");
     fio.filesize=0;
     fio.fileptr=0;
     fio.fail=0;
@@ -40,11 +68,15 @@ void fio_getfilesize(char *filename){
 void fio_fail(const char *errmsg){
     if(!fio.fail){
         fio.fail=1;
-        printf("FIO Fail: failure at position %" PRIdFAST32 ": %s\n", fio.fileptr, errmsg);
+        int fiofileptr_int=fio.fileptr;
+        printf("FIO Fail: failure at position %" PRIdFAST32 ": %s\n", fiofileptr_int, errmsg);
         FILE *errorlog=fopen("err.log", "a");
-        fprintf(errorlog, "FIO Fail: failure at position %" PRIdFAST32 ": %s\n", fio.fileptr, errmsg);
+        fprintf(errorlog, "FIO Fail: failure at position %" PRIdFAST32 ": %s\n", fiofileptr_int, errmsg);
         fclose(errorlog);
     }
+}
+void fio_denit(){
+    free(fio.workingdir);
 }
 
 static int_fast32_t int_fast32_t_makele (int_fast32_t n);

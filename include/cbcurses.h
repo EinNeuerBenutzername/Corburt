@@ -99,6 +99,7 @@ void cbc_functiontemplate(){
 #endif
 }
 */
+
 void cbc_init(){
 #ifdef CBCurses_Windows
 	hIn=GetStdHandle(STD_INPUT_HANDLE);
@@ -106,7 +107,6 @@ void cbc_init(){
 	if(hOutOld==INVALID_HANDLE_VALUE || hIn==INVALID_HANDLE_VALUE)
 		fail("Failure in function init()");
 #elif defined(CBCurses_Unix)
-    printf("\03340m");
 #else
 #endif
 //	setlocale(LC_ALL, "");
@@ -167,6 +167,7 @@ void cbc_setcolor(cbc_enum_color color){
 	}
 	if(Default==(color&FG_Mask)){
 		wAttributes|=dft_wAttributes&(FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE|FOREGROUND_INTENSITY);
+		wAttributes|=(color&Bright)?FOREGROUND_INTENSITY:0;
 	}else{
 		wAttributes|=(color&Bright)?FOREGROUND_INTENSITY:0;
 		switch(color&FG_Mask){
@@ -185,15 +186,16 @@ void cbc_setcolor(cbc_enum_color color){
     printf("\033[m");
 	if (Default!=(color&FG_Mask)){
         printf("\033[%dm", 29+(color&FG_Mask)+((color&Bright)?60:0));
+    } else {
+        if(color&Bright){
+            printf("\033[1m");
+        }
     }
 #else
 #endif
 }
 int cbc_getcolor(){
     return cbc_global.currentcolor;
-}
-void cbc_reversecolors(){
-    cbc_global.reversemode=1-cbc_global.reversemode;
 }
 void cbc_clearscreen(){
 #ifdef CBCurses_Windows

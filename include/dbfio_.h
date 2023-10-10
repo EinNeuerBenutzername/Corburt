@@ -25,7 +25,7 @@ void loaddb_inter(FILE *fp);
 
 #ifdef DBFIO_DATA_EXPORT
 void savealldb(){
-    FILE *fp=fopen("cb.dat", "wb");
+    FILE *fp=fopenrelative("cb.dat", "wb");
     savedb_enemy(fp);
     savedb_item(fp);
     savedb_map(fp);
@@ -130,7 +130,7 @@ void loadalldb(){
         cbc_getch();
         exit(-1);
     }
-    FILE *fp=fopen("cb.dat", "rb");
+    FILE *fp=fopenrelative("cb.dat", "rb");
     if(!fp)exit(-1);
     loaddb_enemy(fp);
     loaddb_item(fp);

@@ -34,6 +34,7 @@ struct msgtag{
     const char *global_resetenemydata;
     const char *global_clock;
     const char *global_lag;
+    const char *global_suggestbg;
     const char *trace_savesize;
     const char *trace_endianess_le;
     const char *trace_endianess_be;
@@ -152,8 +153,8 @@ struct msgtag msg_en={
     .global_waitingforinput="Waiting for cbinput...\n",
     .global_invalidroomcount="Fatal error:Invalid room number.\n",
     .global_roomcountfewer="Number of rooms in this save file is fewer than expected.\nThe save file might be outdated.\n",
-    .global_welcome="Welcome to Corburt.\n\n",
-    .global_splash= "   @@@@                @@                      \n"
+    .global_welcome="Welcome to Corburt.\n",
+    .global_splash= "\n   @@@@                @@                      \n"
                     "  @@  @@               @@                  @@  \n"
                     "  ##      ####  # ###  ####  ##  ## # ###  ####\n"
                     "  ##     ##  ## ##  ## ## ## ##  ## ##  ## ##  \n",
@@ -216,6 +217,9 @@ struct msgtag msg_en={
     .global_resetenemydata="Resetting enemy data...\n",
     .global_clock="You feel as if the clock hand of the world had advanced by one block.\n",
     .global_lag="Game FPS is unstable, please do not run Corburt with programs of high disk usage.\n",
+    .global_suggestbg="If you see this line of text, please set the background color of the console to black. "
+        "This can be achieved through setting the palette or theme (as on Windows 10+) of your terminal, "
+        "or turning on night mode on some platforms such as MacOS.",
     .trace_savesize="Size of a save is %zu bytes.\n",
     .trace_endianess_le="Machine is little endian.\n",
     .trace_endianess_be="Machine is big endian.\n",

@@ -1,6 +1,5 @@
 //#define Corburt_Debug
 #define Corburt_Pointer_Trace_Level 1 // partially on
-#define Corburt_ReverseColors 0
 #define Corburt_ShowFPS
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,14 +11,17 @@
 #include "include/cbfio.h"
 #include "include/dbfio_.h"
 #include "include/dbentity.h"
-int main(){
-    launchcb();
+void launchcb(const char *execpath);
+void endcb();
+int main(int argc, char *argv[]){
+    launchcb(argc?argv[0]:"");
 #ifdef CB_REALTIME
     scanline(inputbuf, 127);
     memset(inputbuf, 0, 128);
     cbc_hidecursor();
 #endif
     printr(palette.splash.welcome, "%s", msg->global_welcome);
+    printr(palette.bg, "%s", msg->global_suggestbg);
     printr(palette.splash.logoup, msg->global_splash);
     printr(palette.splash.logodown, msg->global_splash2);
     printr(palette.splash.version, "%47s\n", msg->global_corburtversion);
@@ -46,7 +48,8 @@ int main(){
 	endcb();
     return 0;
 }
-void launchcb(){
+void launchcb(const char *execpath){
+    fio_init(execpath);
     atexit(endcb);
     global.pointerpool=malloc(CB_MAXPOINTERS*sizeof(void *));
     for(int i=0; i<CB_MAXPOINTERS; i++)global.pointerpool[i]=NULL;
@@ -54,9 +57,6 @@ void launchcb(){
     printr_token=mallocpointer(TOKEN_MAXLEN);
     assertcheck();
     cbc_init();
-#if Corburt_ReverseColors==1
-    cbc_reversecolors();
-#endif
     cbc_setwindowtitle("Corburt");
     cbc_setcolor(Default);
     cbc_clearscreen();
@@ -77,7 +77,7 @@ void launchcb(){
     memset(inputbufl, 0, 128);
     setvbuf(stdout, NULL, _IOFBF, 0);
 #ifdef CB_REALTIME
-    fpinput=fopen("data.dmp", "r");
+    fpinput=fopen("cbfiodata.dmp", "r");
     if(!fpinput){
         printr(palette.inform, msg->global_waitingforinput);
     }
@@ -86,9 +86,10 @@ void launchcb(){
 void endcb(){
 #ifdef CB_REALTIME
     fclose(fpinput);
-    remove("data.dmp");
+    remove("cbfiodata.dmp");
 #endif
     cbc_setcolor(Default);
     fflush(stdout);
+    fio_denit();
     freeall();
 }

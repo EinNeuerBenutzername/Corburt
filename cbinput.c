@@ -11,15 +11,15 @@ int main(){
     cbc_setwindowtitle("cbinput");
     cbc_setcolor(Default);
     cbc_clearscreen();
-    remove("data.dmp");
-    fp=fopen("data.dmp","r");
+    remove("cbfiodata.dmp");
+    fp=fopen("cbfiodata.dmp","r");
     if(fp!=NULL){
         return 1;
     }
     fclose(fp);
     atexit(exitfunc);
     int matchid=0;
-    fp=fopen("data.dmp","w");
+    fp=fopen("cbfiodata.dmp","w");
     char inputcur[1024];
     char inputlast[1024];
     cbc_setcolor(Cyan|Bright);
@@ -39,11 +39,13 @@ int main(){
         }
         cbc_setcolor(Default);
         if(!strlen(inputcur)){
-            fprintf(fp,"%d.%d.%s",matchid,strlen(inputlast),inputlast);
+            int slen=strlen(inputlast);
+            fprintf(fp,"%d.%d.%s",matchid,slen,inputlast);
         }else{
             fclose(fp);
-            fp=fopen("data.dmp","w");
-            fprintf(fp,"%d.%d.%s",matchid,strlen(inputcur),inputcur);
+            fp=fopen("cbfiodata.dmp","w");
+            int slen=strlen(inputcur);
+            fprintf(fp,"%d.%d.%s",matchid,slen,inputcur);
             memset(inputlast,0,1024);
             strcpy(inputlast,inputcur);
         }
@@ -64,5 +66,5 @@ void exitfunc(){
     if(fp!=NULL){
         fclose(fp);
     }
-    remove("data.dmp");
+    remove("cbfiodata.dmp");
 }

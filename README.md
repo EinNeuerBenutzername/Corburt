@@ -10,7 +10,7 @@ Corburt is a pretty simple text-based RPG game developed based on the ideas of *
 
 Inspirations come from a game called [93 Realms](https://windows93.net:8083/), which my friends and I had a great time playing.
 
-### Dev Roadmap
+### Lite Dev
 
 **Important notes**: Corburt will undergo a huge overhaul in these versions, so a lot of the original content will be removed. Currently, there are no enemies or items in game, but please do not worry. They will be added back when their update is complete.
 
@@ -18,12 +18,12 @@ Items marked by "🔸" are implemented but untested.
 
 **DEV ROADMAP TO CORBURT LITE**
 
-Corburt Lite includes 3 or 4 major regions with 2 questlines. Corburt is not quest-driven, so there is no "main quest" in Corburt Lite. It should introduce most of the mechanisms planned in the official release, but the amount of data will be about *one-tenth (a very unreliable estimation!!)* of it.
+Please note that many of the items below might not be carried out in Corburt Lite, especially those that are in *italics*. 
 
 - **Code & data**
   - [x] ***REMOVE WCHAR DEPENDENCY!!!***
     - *(Should've used UTF-8 at the first place, but now it's ASCII anyway)*
-  - [x] Remove game database from source code to make hot updates easier.
+  - [x] Remove game database from source code.
   - [ ] Remake Nameless City:
     - [x] Map revision
     - [ ] Instances revision
@@ -31,28 +31,19 @@ Corburt Lite includes 3 or 4 major regions with 2 questlines. Corburt is not que
   - [ ] Enemy database reworks.
   - [ ] Item database reworks.
   - [ ] Implement interactable database.
-  - [ ] Add regions:
-    - [ ] Forests of Wrath
-    - [ ] Southwest Coast
-    - [ ] **[SPOILER ALERT]**
-    - [ ] **[PRETTY HEAVY SPOILER ALERT]**
+  - [ ] Other regions
 
 - **Mechanisms**
   - [ ] Implement bosses.
   - [ ] **Reimplement stats!!!**
   - [ ] Implement new battle mechanisms:
     - [x] Ready
-    - [ ] Breach stun
     - [ ] Break / Counter
-    - [ ] Dodge
+    - [ ] *Dodge*
     - [ ] Parry
-    - [ ] Sight
+    - [ ] *Sight*
     - [ ] Abilities
-      - [ ] Talents
-      - [ ] Skills
-      - [ ] Spells
     - [ ] *Enemy AI*
-    - [ ] *Combos*
   - [ ] Rework formulas:
     - [x] EXP formula
     - [ ] Stat formula
@@ -62,19 +53,14 @@ Corburt Lite includes 3 or 4 major regions with 2 questlines. Corburt is not que
     - [ ] NPCs
     - [ ] Doors
     - [ ] Mobility
-    - [ ] Containers
+    - [ ] *Containers*
     - [ ] Hazards
-    - [ ] Mechanisms
-    - [ ] Switches
+    - [ ] *Mechanisms*
+    - [ ] *Switches*
   - [ ] Implement miscellaneous items:
     - [ ] Rank
     - [ ] Debuffs
-    - [ ] Blessings & Curses
-    - [ ] Standard boosts
-    - [ ] Item affixes and power sources
-    - [ ] *Gameplay modifiers?*
-- [ ] **Might or might not**
-  - [ ] *Implement achievements.*
+    - [ ] *Item affixes and power sources*
 
 
 ## Features/Highlights
@@ -85,63 +71,58 @@ Corburt Lite includes 3 or 4 major regions with 2 questlines. Corburt is not que
 - **Open source**.
 - **Easy to compile**: only two .c files, all other files are headers. friendly for C amateurs.
 
-## Please mind that Corburt...
+## Limitations
 
+Please mind that Corburt is a game that -
 - is in an **early stage of development**.
 - might **not** be finished.
 - might **not** work properly on non-Windows platforms.
-  - Might not even work properly on Windows platforms other than Windows 10.
-  - For this reason, please report if you encounter any problem.
-- is **not** C++-compatible.
-  - Actually, C++ compatibility is never taken into consideration.
 - **won't** receive updates frequently enough to implement all improvements and bug fixes. 
 
 ## Requirements
 
 ### Compiling
 
-- Your computer should either be **non-prehistorical Windows** or **POSIX-compliant \*nix**.
-  - This is largely because Corburt's curses library rely on platform-specific headers.
-- On your computer, a byte **must** contain exactly 8 bits.
-  - **Bit-wise endianness**, **non-ASCII interchange codes** (e.g. EBCDIC), et cetera, are **not** allowed.
-- It is recommended to use GCC compiler.
-  - It's especially recommended to use Code::Blocks to compile. I am using Code::Blocks to develop Corburt and would provide my C::B project files along with the source.
+- Corburt relies on system-specific headers and haven't been ported to systems other than Windows and POSIX. POSIX support is implemented but not tested, and bugs might still present.
+- It is recommended to use GCC compiler, and especially recommended to use Code::Blocks to compile. I myself am using Code::Blocks to develop Corburt and would provide project files along with the source.
+- It is also applicable to simply `make cbinput` and `make corburt` on *nixes.
 
 ### Performance
 
 - **System Resources**
-  - Naturally, Corburt is a lightweight and lightspeed game. On a regular modern PC, Corburt's memory and CPU power usage should be negligible and lags should not present unless disk I/O is blocked by other programs.
-    - \*Please note that Corburt is a game that heavily relies on disk I/O. Running Corburt while you are compressing or decompressing files, for example, is not recommended because it is likely to ruin your game experience.
+  - Corburt is a lightspeed and lightweight game that doesn't require much resources. It should be able to work properly on even very old computers.
+    - Please note that Corburt is a game that relies on disk I/O. Running Corburt while disk I/O is occupied (for example, when you are copying, compressing or extracting files) is not recommended because it is likely to ruin your game experience.
 - **Graphics**
-  - Corburt is designed to run in PC's console terminals with 68 or more columns. Word wrapping is handled by Corburt, but fixed-width-character output (which should be the case on most terminals) is necessary, otherwise the game would look "broken".
-  - The character limit for the word wrap could be changed in the code. It is not recommended to set it into a number that is too big because it makes it harder for gamers to rapidly glance down lines.
+  - Corburt is designed to run in PC's console terminals with no less than 64 columns. Fixed-width-character output (which should be the case on most terminals) is necessary, otherwise the game would look "broken".
+  - It is recommended to use black as default background color and white as foreground. Having white background is also okay (which is tested on MacOS's terminal), but it is not recommended to have any other color as background.
 
 ## How to
 
 ### Compile and Launch Corburt
 - Please compile `cbinput.c` and `corburt.c` separately into 2 binary/executable files.
-  - `cb.dat`,  `cbinput` and `corburt` should all be under the same directory. 
-- Then launch the two programs simultaneously.
+  - `cb.dat`,  `cbinput` and `corburt` should all be under the same directory.
+  - Try `make cbinput` and then `make corburt` on *nix terminals. 
+- Then run the two programs simultaneously. Open `cbinput` **first**, and **then** open `corburt`. On systems like MacOS, opening `corburt` before `cbinput` launches causes the main game to lose input from `cbinput`.
 - Send your input at `cbinput` and the main Corburt program should be able to receive and process it.
 - Please do not run two or more instances of `corburt`  simultaneously. That might cause unwanted consequences, i.e. destroy your save file.
 - If you encounter problems, please report.
 
 ### Port Corburt to Other Platforms
 - It shouldn't be hard for Corburt to be ported to other platforms as long as they support C99. Currently, there are only two files that rely on OS-specific headers. One is `cbcurses.h` and the other is `cbsys.h`.
-  - However, Corburt opens and reads/writes one single file with two programs simultaneously. This might not work on certain systems.
+  - However, Corburt opens and reads/writes one single file with two programs simultaneously. This **might** not work on certain systems.
 - Generally, Corburt is expected to work on Windows, Linux, Mac and many other \*nixes. If that's not the case, please report.
 
 ## Acknowledgements
 
-- For inspiration:
+- Inspiration:
   - **Ron Penton**, author of *MUD Game Programming*
   - **Jankenpopp** and other developers of *93 Realms*
-- For libraries:
-  - **JC Wang** (@jcwangxp) for [Crossline](https://github.com/jcwangxp/Crossline)
+- Libraries:
+  - **JC Wang** (@jcwangxp) for [Crossline](https://github.com/jcwangxp/Crossline), where I snatched snippets to make `cbcurses.h`.
   - **Evan Sultanik** (@ESultanik) for [MTwister](https://github.com/ESultanik/mtwister)
-- For dev:
+- Dev:
   - My friend **emf** and **Jack Q** for supporting me, giving valuable advice, contributing to Corburt and testing it.
-- You, probably ;)
+- And you, probably ;)
 
 ## Report
 
@@ -150,9 +131,9 @@ If you are not sure what kind of report you are sending, or if your report conta
 Will your report be seen? Very probably...
 
 - I may not have time to review your report and your content may be ignored.
-- Also, if the advice isn't given in a language I can use, or it's clearly incomplete, or I don't know how to implement it, I'll ignore it.
-- Even if I like your suggestion a lot, I might not be able to implement it if it's too difficult to implement due to my very limited programming ability.
-- Since I'm busy, if I can't or don't plan to implement a suggestion, I'll probably just ignore it or close it.
+- Also, if the advice isn't given in a language I can use, or it's clearly incomplete, or I don't know how to implement it, I'll ignore it. Please use English when possible.
+- Even if I like your suggestion a lot, I might not be able to implement it if it's too difficult to implement due to my very limited programming ability or time.
+- Since I'm busy, if I can't or don't plan to implement a suggestion, I might just ignore it or close it.
 
 ### Bug Report
 
@@ -204,8 +185,15 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
 
 ## Version History
 
-###  Road to Lite
+### Road to Lite
 
+-  **0.3.4** (Oct 10, 2023)
+  - **What's new:** Portability fixes
+  - Corburt is tested on MacOS, and many platform-related bugs are fixed. Now it works properly (almost) on Mac.
+  - Fixed the problem that Corburt doesn't open files from the correct directory, as working directory is not where Corburt is located on MacOS.
+  - Fixed color display on MacOS.
+  - Added a hint to remind the player to change the background color of the terminal if the background isn't black.
+  - Made slight visual improvements.
 - **0.3.3** (Jul 24, 2023)
   - **What's new:** **Colored text** and FPS calculation
   - FPS calculation is implemented and is shown in the title of Corburt when Corburt is running real-time.
@@ -239,7 +227,7 @@ This mainly refers to suggestions for new content. If it is an adjustment to exi
   - Attacking before the cooldown is over would cause cooldown time to reset.
   - The new region "Forest of Wrath" is in development, and half of its rooms are done and accessible by now.
 
-###  Demo
+### Demo
 
 - **0.2.4** (Apr 23, 2022)
   - **What's new:** Money loot and **REAL-TIME COMBAT**

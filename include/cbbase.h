@@ -19,6 +19,7 @@
 #include "msg.h"
 #include "mtwister.h"
 #include "cbcurses.h"
+#include "cbfio_base.h"
 #include "cbsys.h"
 #include <limits.h>
 #include <time.h>
@@ -133,6 +134,7 @@ struct save{
     struct inventory inv;
 };
 struct { // palette
+    int bg;
     int input; // $G<
     int msg; // $Gm regular message
     int load; // %Gl
@@ -767,7 +769,7 @@ void fatalerror(enum errorenum error_id){
         m=msg->error_unknown;break;
     }
     printr(palette.warning, m);
-    FILE *errorlog=fopen("err.log", "a");
+    FILE *errorlog=fopenrelative("err.log", "a");
     fprintf(errorlog, "%s", m);
     fclose(errorlog);
     exit(-1);
@@ -864,8 +866,6 @@ void strlower(char **target_str_pos){
     }
 }
 
-void launchcb();
-void endcb();
 void assertcheck();
 nat match(const char *sub_str, const char *main_str);
 void initrng();
@@ -909,6 +909,7 @@ void initrng(){
     tracelog(msg->trace_rngtest, genRandLong(&mtrand));
 }
 void initpalette(){
+    palette.bg=Black;
     palette.input=Yellow;
     palette.msg=Default;
     palette.load=Cyan;

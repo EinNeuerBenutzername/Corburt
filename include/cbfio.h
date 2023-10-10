@@ -305,7 +305,7 @@ void readsaves(){
     FILE *fp_save=NULL;
     int foundsaves=0;
     fio_getfilesize("save.txt");
-    fp_save=fopen("save.txt", "rb");
+    fp_save=fopenrelative("save.txt", "rb");
     if(fp_save==NULL){
         et_initenemies();
         printr(palette.load, msg->global_nosave);
@@ -377,7 +377,7 @@ void readsaves(){
 }
 void savesaves(){
     FILE *fp_save=NULL;
-    fp_save=fopen("save.txt", "wb");
+    fp_save=fopenrelative("save.txt", "wb");
     if(fp_save==NULL){
         fatalerror(error_cannotsave);
         return;
