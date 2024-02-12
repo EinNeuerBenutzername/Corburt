@@ -8,16 +8,12 @@
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/corburt" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin/Debug" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-O3" />
+					<Add option="-g" />
 				</Compiler>
-				<Linker>
-					<Add option="-s" />
-				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/corburt" prefix_auto="1" extension_auto="1" />
@@ -31,38 +27,45 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
+			<Target title="cbinput">
+				<Option output="bin/Release/cbinput" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add option="-m32" />
 		</Compiler>
-		<Linker>
-			<Add option="-static-libstdc++" />
-			<Add option="-static-libgcc" />
-			<Add option="-static" />
-			<Add option="-m32" />
-		</Linker>
+		<Unit filename="cbinput.c">
+			<Option compilerVar="CC" />
+			<Option target="cbinput" />
+		</Unit>
 		<Unit filename="corburt.c">
 			<Option compilerVar="CC" />
+			<Option target="Debug" />
+			<Option target="Release" />
 		</Unit>
-		<Unit filename="include/cbbase.h" />
 		<Unit filename="include/cbcurses.h" />
 		<Unit filename="include/cbfio.h" />
-		<Unit filename="include/cbfio_base.h" />
 		<Unit filename="include/cbio.h" />
-		<Unit filename="include/cbplayer.h" />
+		<Unit filename="include/cbproto.h" />
+		<Unit filename="include/cbrng.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="include/cbsys.h" />
-		<Unit filename="include/cbturn.h" />
-		<Unit filename="include/dbability.h" />
-		<Unit filename="include/dbbuff.h" />
-		<Unit filename="include/dbenemy.h" />
-		<Unit filename="include/dbentity.h" />
-		<Unit filename="include/dbfio_.h" />
-		<Unit filename="include/dbinteract.h" />
-		<Unit filename="include/dbitem.h" />
-		<Unit filename="include/dbmap.h" />
-		<Unit filename="include/msg.h" />
-		<Unit filename="include/mtwister.h" />
+		<Unit filename="include/cbutils.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/corburt.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

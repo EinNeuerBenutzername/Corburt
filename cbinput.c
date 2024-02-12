@@ -1,51 +1,49 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "include/cbio.h"
 #include "include/cbcurses.h"
-#include "include/cbbase.h"
-#include "include/msg.h"
-FILE *fp;
-void exitfunc();
-int main(){
-    cbc_init();
-    cbc_setwindowtitle("cbinput");
-    cbc_setcolor(Default);
-    cbc_clearscreen();
-    remove("cbfiodata.dmp");
-    fp=fopen("cbfiodata.dmp","r");
+
+FILE *fp=NULL;
+void exitfunc(void);
+
+int main(void){
+    remove("_cbfiodata.dmp");
+    fp=fopen("_cbfiodata.dmp","r");
     if(fp!=NULL){
-        return 1;
+        return -1;
     }
     fclose(fp);
+    fp=fopen("_cbfiodata.dmp","w");
     atexit(exitfunc);
-    int matchid=0;
-    fp=fopen("cbfiodata.dmp","w");
+
+    Curses.init();
+    Curses.setTitle("cbinput");
+    Curses.hideCursor();
+
     char inputcur[1024];
     char inputlast[1024];
-    cbc_setcolor(Cyan|Bright);
-    printc(Cyan|Bright,msg->global_input);
-    cbc_setcolor(Default);
+    i32 matchid=0;
+
     while(1){
         matchid++;
         matchid=matchid%10000;
         printf(">>");
-        cbc_setcolor(Yellow);
-        fflush(stdout);
+        Curses.setColor(Yellow);
         memset(inputcur,0,1024);
         fgets(inputcur,1024,stdin);
         fflush(stdin);
-        if(inputcur[strlen(inputcur)-1]==L'\n'){
+        while(inputcur[strlen(inputcur)-1]=='\n' || inputcur[strlen(inputcur)-1]=='\r'){
             inputcur[strlen(inputcur)-1]=0;
         }
-        cbc_setcolor(Default);
+        Curses.setColor(Default);
         if(!strlen(inputcur)){
-            int slen=strlen(inputlast);
-            fprintf(fp,"%d.%d.%s",matchid,slen,inputlast);
+            i32 slen=strlen(inputlast);
+            fprintf(fp,"%" SPECi32 ".%" SPECi32 ".%s",matchid,slen,inputlast);
         }else{
             fclose(fp);
-            fp=fopen("cbfiodata.dmp","w");
-            int slen=strlen(inputcur);
-            fprintf(fp,"%d.%d.%s",matchid,slen,inputcur);
+            fp=fopen("_cbfiodata.dmp","w");
+            i32 slen=strlen(inputcur);
+            fprintf(fp,"%" SPECi32 ".%" SPECi32 ".%s",matchid,slen,inputcur);
             memset(inputlast,0,1024);
             strcpy(inputlast,inputcur);
         }
@@ -58,11 +56,13 @@ int main(){
             return 0;
         }
     }
+
     fclose(fp);
-    fp=NULL;
+
     return 0;
 }
-void exitfunc(){
+
+void exitfunc(void){
     if(fp!=NULL){
         fclose(fp);
     }
