@@ -8,17 +8,17 @@
 
 The game draws heavy influence from [Traditional Roguelikes](https://roguebasin.com) and [Interactive Fictions](https://www.ifarchive.org/), and aims to create a somewhat novel yet nostalgic atmosphere and gameplay experience. For portability and personal preference, Corburt is written in C99, and theoretically it supports Windows and most POSIX-compliant platforms.
 
-
+<br>
 
 **Current state of development**
 
 Corburt is undergoing a major refactor starting from February 2024. Every line in Corburt's codebase would get rewritten. Up till now, Corburt is in a state of complete unplayability.
 
-Time remaining before completion is unknown. Maybe it would never get finished; *perhaps the pressure to survive brought by rapid-growing AI models, or other social changes, will force me to give up the project forever.* Don't get your hopes too high.
+Time remaining before completion is unknown. Maybe it would never get finished; don't get your hopes too high.
 
 I am an indie developer and would **not** fix issues, receive feedbacks or accept collabs or PRs (if there could ever possibly be any). This repo serves merely as an archive for Corburt's codebases, and if my development ends eventually, a tomb for it to rest.
 
-
+<br>
 
 ## Guide to
 
@@ -40,7 +40,7 @@ I am an indie developer and would **not** fix issues, receive feedbacks or accep
 - Compile `cbinput.c` and `corburt.c` separately into 2 binary/executable files. There are no other source files in Corburt's codebase.
   - Simply `make cbinput` and `make corburt` if you have `make` installed. Alternatively, compile them with *Code::Blocks* (very recommended) or other C/C++ IDEs.
 
-
+<br>
 
 **Before launching**
 
@@ -51,7 +51,7 @@ I am an indie developer and would **not** fix issues, receive feedbacks or accep
   - **Fixed-width font**.
 - None of the above are mandatory, but it might heavily affect Corburt's graphic displays.
 
-
+<br>
 
 **Launch**
 
@@ -60,7 +60,7 @@ I am an indie developer and would **not** fix issues, receive feedbacks or accep
 - Send input in `cbinput`, end line and send with return. The input **should** be received by `corburt`.
 - To end game session, type `quit` in `cbinput` and return. The main game will close at the command and normally does not need to be closed manually.
 
-
+<br>
 
 **Port Corburt to other platforms**
 
@@ -70,7 +70,7 @@ I am an indie developer and would **not** fix issues, receive feedbacks or accep
 - Endianness issues are currently not a problem to consider. Nor are non 8-bit bytes or non 8-bit chars, or lack of support for 32-bit and 64-bit integral types whatsoever.
 - Any portability issue not listed in this list are not taken into consideration.
 
-
+<br>
 
 ## Acknowledgements
 
@@ -83,9 +83,16 @@ I am an indie developer and would **not** fix issues, receive feedbacks or accep
   - My friend **emf** and **Jack Q** for supporting me all the time, giving valuable advice, contributing to Corburt and testing it.
 - And you, probably ;)
 
-
+<br>
 
 ## Updates
+
+**v0.4.1** on May 10, 2024
+
+- `CBSYS`: Indicate a fatal error and force exit on allocation failure. Also fixed the problem that the wrapping of time measurement is incorrect.
+- `CBIO`: Implemented colored word wrap with inline color indicator support. Color indicators in the middle of words do not affect the behavior of word wrapping.
+- `CBPALETTE`: Setup palette templates.
+- `CBRNG`: Tested and probably stable.
 
 **v0.4.0** on Feb 12, 2024
 

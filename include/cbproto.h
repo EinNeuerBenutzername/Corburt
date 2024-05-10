@@ -16,6 +16,9 @@ typedef struct NPCData NPCData;
 typedef struct RoomData RoomData;
 typedef struct RegionData RegionData;
 
+typedef struct AbilityData AbilityData;
+typedef struct BuffData BuffData;
+
 struct ItemData { // tbd
     i32 id;
     i32 type;
@@ -147,8 +150,8 @@ typedef struct NPCInstance NPCInstance;
 typedef struct RoomInstance RoomInstance;
 typedef struct RegionInstance RegionInstance;
 
-typedef struct Ability Ability;
-typedef struct Buff Buff;
+typedef struct AbilityEffect AbilityEffect;
+typedef struct BuffEffect BuffEffect;
 
 struct ItemInstance {
     i32 id;

@@ -1,7 +1,55 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
-	<ActiveTarget name="Release" />
+	<ActiveTarget name="Debug" />
+	<File name="include\cbio.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5416" topLine="41" />
+		</Cursor>
+		<Folding>
+			<Collapse line="25" />
+			<Collapse line="49" />
+			<Collapse line="67" />
+			<Collapse line="74" />
+			<Collapse line="77" />
+			<Collapse line="81" />
+			<Collapse line="84" />
+			<Collapse line="91" />
+			<Collapse line="98" />
+			<Collapse line="100" />
+			<Collapse line="105" />
+			<Collapse line="110" />
+			<Collapse line="113" />
+			<Collapse line="128" />
+			<Collapse line="129" />
+			<Collapse line="173" />
+			<Collapse line="182" />
+			<Collapse line="186" />
+			<Collapse line="191" />
+			<Collapse line="193" />
+			<Collapse line="194" />
+			<Collapse line="206" />
+			<Collapse line="246" />
+			<Collapse line="284" />
+			<Collapse line="293" />
+			<Collapse line="294" />
+			<Collapse line="295" />
+			<Collapse line="307" />
+			<Collapse line="319" />
+			<Collapse line="320" />
+			<Collapse line="322" />
+			<Collapse line="323" />
+			<Collapse line="333" />
+			<Collapse line="334" />
+			<Collapse line="341" />
+			<Collapse line="348" />
+			<Collapse line="355" />
+			<Collapse line="358" />
+			<Collapse line="367" />
+			<Collapse line="368" />
+			<Collapse line="372" />
+		</Folding>
+	</File>
 	<File name="include\cbutils.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="265" topLine="0" />
@@ -14,99 +62,42 @@
 			<Collapse line="39" />
 		</Folding>
 	</File>
-	<File name="include\cbproto.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="include\corburt.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1978" topLine="0" />
+			<Cursor1 position="90" topLine="3" />
 		</Cursor>
-		<Folding>
-			<Collapse line="18" />
-			<Collapse line="26" />
-			<Collapse line="38" />
-			<Collapse line="45" />
-			<Collapse line="52" />
-			<Collapse line="63" />
-			<Collapse line="71" />
-			<Collapse line="76" />
-			<Collapse line="86" />
-			<Collapse line="92" />
-			<Collapse line="94" />
-			<Collapse line="107" />
-			<Collapse line="115" />
-			<Collapse line="124" />
-			<Collapse line="130" />
-			<Collapse line="152" />
-			<Collapse line="159" />
-			<Collapse line="167" />
-			<Collapse line="173" />
-			<Collapse line="180" />
-			<Collapse line="192" />
-		</Folding>
 	</File>
 	<File name="include\cbcurses.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="5652" topLine="5" />
+			<Cursor1 position="8400" topLine="21" />
 		</Cursor>
 		<Folding>
 			<Collapse line="40" />
-			<Collapse line="68" />
-			<Collapse line="92" />
-			<Collapse line="99" />
-			<Collapse line="108" />
-			<Collapse line="112" />
-			<Collapse line="117" />
-			<Collapse line="123" />
-			<Collapse line="125" />
-			<Collapse line="129" />
-			<Collapse line="133" />
-			<Collapse line="138" />
+			<Collapse line="93" />
+			<Collapse line="100" />
+			<Collapse line="109" />
+			<Collapse line="124" />
+			<Collapse line="126" />
 			<Collapse line="139" />
-			<Collapse line="155" />
-			<Collapse line="163" />
-			<Collapse line="167" />
-			<Collapse line="172" />
-			<Collapse line="186" />
-			<Collapse line="189" />
-			<Collapse line="196" />
-			<Collapse line="199" />
-			<Collapse line="205" />
-			<Collapse line="211" />
-			<Collapse line="217" />
-			<Collapse line="220" />
-			<Collapse line="225" />
-			<Collapse line="231" />
-			<Collapse line="234" />
-			<Collapse line="242" />
-			<Collapse line="248" />
-			<Collapse line="251" />
-			<Collapse line="259" />
-			<Collapse line="265" />
-			<Collapse line="278" />
-			<Collapse line="283" />
-			<Collapse line="289" />
-			<Collapse line="292" />
-			<Collapse line="301" />
-			<Collapse line="307" />
-			<Collapse line="318" />
-		</Folding>
-	</File>
-	<File name="include\cbio.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3052" topLine="0" />
-		</Cursor>
-		<Folding>
-			<Collapse line="17" />
-			<Collapse line="23" />
-			<Collapse line="35" />
-			<Collapse line="38" />
-			<Collapse line="41" />
-			<Collapse line="55" />
-			<Collapse line="75" />
-			<Collapse line="90" />
+			<Collapse line="156" />
+			<Collapse line="164" />
+			<Collapse line="168" />
+			<Collapse line="187" />
+			<Collapse line="197" />
+			<Collapse line="200" />
+			<Collapse line="206" />
+			<Collapse line="212" />
+			<Collapse line="218" />
+			<Collapse line="232" />
+			<Collapse line="249" />
+			<Collapse line="266" />
+			<Collapse line="290" />
+			<Collapse line="319" />
 		</Folding>
 	</File>
 	<File name="include\cbrng.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="260" topLine="5" />
+			<Cursor1 position="260" topLine="14" />
 		</Cursor>
 		<Folding>
 			<Collapse line="22" />
@@ -123,81 +114,113 @@
 			<Collapse line="94" />
 		</Folding>
 	</File>
-	<File name="include\cbsys.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="include\cbpalette.h" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="786" topLine="16" />
+			<Cursor1 position="1953" topLine="43" />
+		</Cursor>
+	</File>
+	<File name="corburt.c" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1054" topLine="3" />
 		</Cursor>
 		<Folding>
-			<Collapse line="54" />
-			<Collapse line="68" />
-			<Collapse line="84" />
-			<Collapse line="96" />
-			<Collapse line="128" />
-			<Collapse line="149" />
-			<Collapse line="161" />
-			<Collapse line="166" />
-			<Collapse line="186" />
-			<Collapse line="206" />
-			<Collapse line="211" />
-			<Collapse line="221" />
-			<Collapse line="230" />
-			<Collapse line="233" />
-			<Collapse line="241" />
-			<Collapse line="249" />
-			<Collapse line="256" />
-			<Collapse line="269" />
-			<Collapse line="285" />
-			<Collapse line="288" />
-			<Collapse line="289" />
-			<Collapse line="294" />
-			<Collapse line="301" />
-			<Collapse line="310" />
-			<Collapse line="319" />
-			<Collapse line="322" />
-			<Collapse line="331" />
-			<Collapse line="338" />
-			<Collapse line="352" />
-			<Collapse line="358" />
-			<Collapse line="359" />
-			<Collapse line="380" />
-			<Collapse line="390" />
-			<Collapse line="392" />
-			<Collapse line="399" />
-			<Collapse line="404" />
-			<Collapse line="406" />
+			<Collapse line="42" />
 		</Folding>
 	</File>
-	<File name="corburt.c" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="include\cbfio.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="431" topLine="0" />
-		</Cursor>
-		<Folding>
-			<Collapse line="5" />
-			<Collapse line="21" />
-		</Folding>
-	</File>
-	<File name="include\corburt.h" open="1" top="1" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="330" topLine="4" />
-		</Cursor>
-	</File>
-	<File name="include\cbfio.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="566" topLine="0" />
+			<Cursor1 position="5244" topLine="30" />
 		</Cursor>
 		<Folding>
 			<Collapse line="11" />
-			<Collapse line="24" />
-			<Collapse line="33" />
-			<Collapse line="41" />
-			<Collapse line="56" />
-			<Collapse line="73" />
-			<Collapse line="90" />
+			<Collapse line="36" />
+			<Collapse line="50" />
+			<Collapse line="80" />
+			<Collapse line="86" />
+			<Collapse line="95" />
+			<Collapse line="112" />
+			<Collapse line="129" />
+			<Collapse line="139" />
+			<Collapse line="150" />
+			<Collapse line="153" />
 		</Folding>
 	</File>
-	<File name="cbinput.c" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="include\cbproto.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="397" topLine="0" />
+			<Cursor1 position="3172" topLine="53" />
 		</Cursor>
+		<Folding>
+			<Collapse line="21" />
+			<Collapse line="29" />
+			<Collapse line="41" />
+			<Collapse line="48" />
+			<Collapse line="55" />
+			<Collapse line="66" />
+			<Collapse line="74" />
+			<Collapse line="79" />
+			<Collapse line="89" />
+			<Collapse line="95" />
+			<Collapse line="97" />
+			<Collapse line="118" />
+			<Collapse line="127" />
+			<Collapse line="133" />
+			<Collapse line="155" />
+			<Collapse line="162" />
+			<Collapse line="170" />
+			<Collapse line="176" />
+			<Collapse line="183" />
+			<Collapse line="195" />
+		</Folding>
+	</File>
+	<File name="include\cbsys.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4196" topLine="128" />
+		</Cursor>
+		<Folding>
+			<Collapse line="58" />
+			<Collapse line="72" />
+			<Collapse line="88" />
+			<Collapse line="100" />
+			<Collapse line="134" />
+			<Collapse line="155" />
+			<Collapse line="167" />
+			<Collapse line="172" />
+			<Collapse line="192" />
+			<Collapse line="212" />
+			<Collapse line="217" />
+			<Collapse line="227" />
+			<Collapse line="247" />
+			<Collapse line="257" />
+			<Collapse line="264" />
+			<Collapse line="277" />
+			<Collapse line="293" />
+			<Collapse line="296" />
+			<Collapse line="297" />
+			<Collapse line="302" />
+			<Collapse line="305" />
+			<Collapse line="312" />
+			<Collapse line="321" />
+			<Collapse line="330" />
+			<Collapse line="333" />
+			<Collapse line="342" />
+			<Collapse line="349" />
+			<Collapse line="363" />
+			<Collapse line="369" />
+			<Collapse line="370" />
+			<Collapse line="393" />
+			<Collapse line="403" />
+			<Collapse line="412" />
+			<Collapse line="417" />
+		</Folding>
+	</File>
+	<File name="cbinput.c" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="358" topLine="0" />
+		</Cursor>
+		<Folding>
+			<Collapse line="9" />
+			<Collapse line="35" />
+			<Collapse line="39" />
+		</Folding>
 	</File>
 </CodeBlocks_layout_file>

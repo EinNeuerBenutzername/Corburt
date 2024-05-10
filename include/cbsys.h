@@ -31,7 +31,9 @@ typedef double real;
 
 // System-level defines and APIs
 
-// Global Platform Detection -----------
+//===========================================
+//  Global Platform Detection
+//===========================================
 
 #if !defined(__CB_WINDOWS) && !defined(__CB_POSIX)
     #if defined(_WIN32)
@@ -46,7 +48,9 @@ typedef double real;
     #endif
 #endif
 
-// Logging Module ---------------------------
+//===========================================
+//  Logging Module
+//===========================================
 
 void __CBLOG_Debug(const char *format, ...);
 void __CBLOG_Error(const char *format, ...);
@@ -108,7 +112,9 @@ void __CBLOG_Fatal(const char *format, ...){
     exit(-1);
 }
 
-// Time Module ---------------------------
+//===========================================
+//  Time Module
+//===========================================
 
 real GetTime(void);
 void SleepMs(real ms);
@@ -161,7 +167,7 @@ const struct {
 
 real __CBSYS_TimeDiff(void){
     real diff=__CBSYS_GetTime()-__CBSYS_time.previous;
-    if(diff>60.0f)diff-=60.0f;
+    if(diff<0)diff+=60.0f;
     return diff;
 }
 real __CBSYS_GetTime(void){
@@ -243,7 +249,9 @@ real __CBSYS_GetFPS(void){
     return __CBSYS_time.fps;
 }
 
-// Linked List Module ----------------------
+//===========================================
+//  Linked List Data Structure
+//===========================================
 
 typedef struct Node Node;
 typedef struct LList LList;
@@ -260,26 +268,26 @@ struct LList {
     Node *tail;
 };
 
-LList __CBLL_NewList(void); // REMEMBER TO suicide() THE LISTS!!
+LList __CBLL_NewList(void); // REMEMBER TO kill() THE LISTS!!
 Node *__CBLL_Locate(LList *llist, void *data);
 void __CBLL_Push(LList *llist, void *data);
-void __CBLL_Kill(Node *node);
-void __CBLL_Suicide(LList *llist);
+void __CBLL_Delete(Node *node);
+void __CBLL_Kill(LList *llist);
 void __CBLL_MoveNode(Node *node, LList *dest);
 
 const struct {
     LList (*newList)(void);
     Node *(*locate)(LList *llist, void *data);
     void (*push)(LList *llist, void *data);
-    void (*kill)(Node *node);
-    void (*suicide)(LList *llist);
+    void (*delete)(Node *node);
+    void (*kill)(LList *llist);
     void (*moveNode)(Node *node, LList *dest);
 } LL = {
     .newList=__CBLL_NewList,
     .locate=__CBLL_Locate,
     .push=__CBLL_Push,
+    .delete=__CBLL_Delete,
     .kill=__CBLL_Kill,
-    .suicide=__CBLL_Suicide,
     .moveNode=__CBLL_MoveNode
 };
 
@@ -294,7 +302,10 @@ Node *__CBLL_Locate(LList *llist, void *data){
 }
 void __CBLL_Push(LList *llist, void *data){
     if(!llist || !data)return;
-    Node *node=malloc(sizeof(Node));
+    Node *node=calloc(1, sizeof(Node));
+    if(!node){
+        Log.fatal("Cannot allocate memory.");
+    }
     node->prev=NULL;
     node->next=NULL;
     node->data=data;
@@ -308,7 +319,7 @@ void __CBLL_Push(LList *llist, void *data){
     llist->tail=node;
     llist->len++;
 }
-void __CBLL_Kill(Node *node){
+void __CBLL_Delete(Node *node){
     if(!node)return;
     if(node->mother->head==node)node->mother->head=node->next;
     if(node->mother->tail==node)node->mother->tail=node->prev;
@@ -317,7 +328,7 @@ void __CBLL_Kill(Node *node){
     node->mother->len--;
     free(node);
 }
-void __CBLL_Suicide(LList *llist){
+void __CBLL_Kill(LList *llist){
     if(!llist)return;
     Node *node=llist->tail;
     while(node){
@@ -369,47 +380,50 @@ void __CBLL_PrintLList(LList *llist, void (*printFunc)(void *NodeData)){
     printf("}\n");
 }
 
-// Memory Module ---------------------------
-// (Requires linked list module)
+//===========================================
+//  Memory Module
+//===========================================
+// (Requires linked list data structure)
 
-void *__CBMEM_Malloc(size_t size);
+void *__CBMEM_Calloc(size_t nitems, size_t size);
 void __CBMEM_Free(void *ptr);
 void __CBMEM_FreeAll(void);
 
 LList __CBMEM_mem_list={.len=0, .head=NULL, .tail=NULL};
 
 const struct {
-    void *(*malloc)(size_t size);
+    void *(*calloc)(size_t nitems, size_t size);
     void (*free)(void *ptr);
     void (*freeAll)(void);
 } Mem = {
-    .malloc=__CBMEM_Malloc,
+    .calloc=__CBMEM_Calloc,
     .free=__CBMEM_Free,
     .freeAll=__CBMEM_FreeAll
 };
 
-void *__CBMEM_Malloc(size_t size){
-    void *ptr=malloc(size);
+void *__CBMEM_Calloc(size_t nitems, size_t size){
+    void *ptr=calloc(nitems, size);
     if(!ptr){
+        Log.fatal("Cannot allocate memory.");
         return NULL;
     }
-    // void *ptr=calloc(1, size);
     LL.push(&__CBMEM_mem_list, ptr);
     return ptr;
 }
 void __CBMEM_Free(void *ptr){
     if(!ptr)return;
-    LL.kill(LL.locate(&__CBMEM_mem_list, ptr));
+    LL.delete(LL.locate(&__CBMEM_mem_list, ptr));
     free(ptr);
 }
 void __CBMEM_FreeAll(void){
-        Node *node=__CBMEM_mem_list.head;
+    Node *node=__CBMEM_mem_list.head;
     while(node){
         Node *next=node->next;
         free(node->data);
         node=next;
     }
-    LL.suicide(&__CBMEM_mem_list);
+    Log.debug("%" SPECu32 " allocation%s freed.", __CBMEM_mem_list.len, __CBMEM_mem_list.len>1?"s":"");
+    LL.kill(&__CBMEM_mem_list);
 }
 
 #endif

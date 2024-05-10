@@ -5,12 +5,15 @@
 	"include/cbio.h"
 	"include/cbcurses.h"
 
-1707729267 d:\dev\c\corburt\include\cbio.h
+1715356582 d:\dev\c\corburt\include\cbio.h
 	<stdio.h>
 	<string.h>
+	"cbsys.h"
 	"cbcurses.h"
+	"cbrng.h"
+	"cbpalette.h"
 
-1707478972 d:\dev\c\corburt\include\cbcurses.h
+1707731883 d:\dev\c\corburt\include\cbcurses.h
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -21,7 +24,7 @@
 	<unistd.h>
 	<signal.h>
 
-1707713970 d:\dev\c\corburt\include\cbsys.h
+1715333132 d:\dev\c\corburt\include\cbsys.h
 	<limits.h>
 	<stdbool.h>
 	<inttypes.h>
@@ -33,10 +36,10 @@
 	<unistd.h>
 	<sys/time.h>
 
-1707714375 source:d:\dev\c\corburt\corburt.c
+1715355962 source:d:\dev\c\corburt\corburt.c
 	"include/corburt.h"
 
-1707715656 d:\dev\c\corburt\include\corburt.h
+1707730832 d:\dev\c\corburt\include\corburt.h
 	"cbcurses.h"
 	"cbsys.h"
 	"cbrng.h"
@@ -45,7 +48,7 @@
 	"cbio.h"
 	"cbutils.h"
 
-1707709052 d:\dev\c\corburt\include\cbproto.h
+1707810450 d:\dev\c\corburt\include\cbproto.h
 	"cbsys.h"
 
 1707490021 d:\dev\c\corburt\include\cbutils.h
@@ -53,11 +56,14 @@
 	<time.h>
 	"cbsys.h"
 
-1707658620 d:\dev\c\corburt\include\cbfio.h
+1715356271 d:\dev\c\corburt\include\cbfio.h
 	<stdio.h>
 	<string.h>
 
 1707477785 d:\dev\c\corburt\include\cbrng.h
 	"cbsys.h"
 	<inttypes.h>
+
+1715355881 d:\dev\c\corburt\include\cbpalette.h
+	"cbcurses.h"
 
